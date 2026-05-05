@@ -54,6 +54,13 @@ class BlogPostPage extends StatelessComponent {
           ),
         article(classes: 'post', attributes: {'dir': isAr ? 'rtl' : 'ltr'}, [
           a(classes: 'post-back', href: '/', [text('← العودة · BACK TO HOME')]),
+          if (post.metaString('og_image') != null)
+            img(
+              classes: 'post-hero',
+              src: '/images/${post.metaString('og_image')}',
+              alt: post.titleAr.isNotEmpty ? post.titleAr : post.titleEn,
+              attributes: const {'loading': 'lazy', 'decoding': 'async'},
+            ),
           header(classes: 'post-head', [
             div(classes: 'post-meta', [
               if (post.date.isNotEmpty) span([text(post.date)]),

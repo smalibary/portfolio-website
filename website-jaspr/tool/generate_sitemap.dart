@@ -1,8 +1,12 @@
 /// Generates `web/sitemap.xml` from site.yaml + content/blog/*/post.json.
 ///
-/// Run from the `website-jaspr/` directory before `jaspr build`:
+/// Two ways to invoke:
+///   1. CLI:   `dart run tool/generate_sitemap.dart` (from website-jaspr/)
+///   2. Lib:   `import 'tool/generate_sitemap.dart'; await writeSitemap();`
 ///
-///   dart run tool/generate_sitemap.dart
+/// The save server (tool/save_server.dart) calls writeSitemap() on every
+/// post create/update/delete so the sitemap stays fresh while authoring.
+/// The build script (tool/build.dart) calls it before each jaspr build.
 ///
 /// Routes enumerated:
 ///   - `/`                          (homepage)
@@ -17,21 +21,31 @@ import 'dart:io';
 
 import 'package:yaml/yaml.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
+  try {
+    final count = await writeSitemap();
+    stdout.writeln('Wrote web/sitemap.xml ($count URLs).');
+  } on _SitemapException catch (e) {
+    stderr.writeln('generate_sitemap: ${e.message}');
+    exitCode = 1;
+  }
+}
+
+/// Generates the sitemap and writes it to `web/sitemap.xml`. Returns the
+/// number of URLs written. Throws `_SitemapException` on a fatal config
+/// problem (e.g. missing `base_url`).
+Future<int> writeSitemap() async {
   final siteFile = File('content/_data/site.yaml');
   if (!siteFile.existsSync()) {
-    stderr.writeln('generate_sitemap: content/_data/site.yaml not found.');
-    stderr.writeln('Run this script from the website-jaspr/ directory.');
-    exitCode = 1;
-    return;
+    throw _SitemapException(
+      'content/_data/site.yaml not found (run from website-jaspr/ root).',
+    );
   }
 
   final siteYaml = loadYaml(siteFile.readAsStringSync()) as YamlMap;
   final rawBase = (siteYaml['base_url'] as String?)?.trim() ?? '';
   if (rawBase.isEmpty) {
-    stderr.writeln('generate_sitemap: site.yaml is missing `base_url`.');
-    exitCode = 1;
-    return;
+    throw _SitemapException('site.yaml is missing `base_url`.');
   }
   final baseUrl = rawBase.replaceAll(RegExp(r'/+$'), '');
 
@@ -81,7 +95,7 @@ void main(List<String> args) {
   final outFile = File('web/sitemap.xml');
   outFile.parent.createSync(recursive: true);
   outFile.writeAsStringSync(buf.toString());
-  stdout.writeln('Wrote ${outFile.path} (${entries.length} URLs).');
+  return entries.length;
 }
 
 class _UrlEntry {
@@ -95,6 +109,13 @@ class _UrlEntry {
   final String lastmod;
   final String changefreq;
   final String priority;
+}
+
+class _SitemapException implements Exception {
+  _SitemapException(this.message);
+  final String message;
+  @override
+  String toString() => 'SitemapException: $message';
 }
 
 String _xmlEscape(String s) => s
