@@ -16,6 +16,7 @@ class HeroMetaItem {
 
 class SiteData {
   const SiteData({
+    required this.baseUrl,
     required this.nameAr,
     required this.nameEn,
     required this.taglineAr,
@@ -30,6 +31,10 @@ class SiteData {
     required this.heroMeta,
     required this.socials,
   });
+
+  /// Canonical site origin (no trailing slash). Used by sitemap generator
+  /// and by JSON-LD on blog posts.
+  final String baseUrl;
 
   final String nameAr;
   final String nameEn;
@@ -51,6 +56,7 @@ class SiteData {
   String social(String platform) => socials[platform] ?? '#';
 
   static const SiteData fallback = SiteData(
+    baseUrl: 'https://salemmalibary.com',
     nameAr: 'سالم مليباري',
     nameEn: 'Salem Malibary',
     taglineAr: '',
@@ -92,7 +98,10 @@ class SiteData {
 
       // Support legacy `photo` field as fallback for both variants.
       final legacy = (yaml['photo'] as String?) ?? '';
+      final rawBase = ((yaml['base_url'] as String?) ?? fallback.baseUrl).trim();
+      final baseUrl = rawBase.replaceAll(RegExp(r'/+$'), '');
       return SiteData(
+        baseUrl: baseUrl,
         nameAr: (yaml['name_ar'] as String?) ?? fallback.nameAr,
         nameEn: (yaml['name_en'] as String?) ?? fallback.nameEn,
         taglineAr: (yaml['tagline_ar'] as String?) ?? '',

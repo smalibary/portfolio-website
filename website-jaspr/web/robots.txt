@@ -1,0 +1,12 @@
+# salemmalibary.com — crawler directives.
+# Generated alongside sitemap.xml; keep these in sync if the host changes.
+
+User-agent: *
+Allow: /
+
+# Local-only admin panel and save-server endpoints. Not deployed to production,
+# but listed here as defence-in-depth.
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://salemmalibary.com/sitemap.xml

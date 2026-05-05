@@ -3,6 +3,10 @@
 # reads and writes this file in YAML form. Public site components will read
 # from here once the migration off hardcoded Dart copy is finished.
 
+# Canonical site origin. Used by tool/generate_sitemap.dart, by JSON-LD
+# emitted on blog posts, and by per-page Open Graph URLs. No trailing slash.
+base_url: https://salemmalibary.com
+
 name_ar: سالم بن محمد ماليباري
 name_en: Salem Malibary
 
