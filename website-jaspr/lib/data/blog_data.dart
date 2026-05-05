@@ -18,6 +18,7 @@ class BlogPost {
     required this.language,
     required this.wordCount,
     required this.tags,
+    this.meta = const {},
   });
 
   /// Directory name (e.g. `01-procrastination`).
@@ -32,6 +33,16 @@ class BlogPost {
   final String language;
   final int wordCount;
   final List<String> tags;
+
+  /// Raw `post.json` contents. Read fields like `excerpt_ar`, `og_image`,
+  /// `last_modified`, `summary`, `canonical_url` via `metaString(...)` rather
+  /// than promoting every field to a typed property.
+  final Map<String, dynamic> meta;
+
+  String? metaString(String key) {
+    final v = meta[key];
+    return v is String && v.isNotEmpty ? v : null;
+  }
 
   String get href => '/blog/$slug';
 
@@ -71,6 +82,7 @@ class BlogPost {
           language: (json['language'] as String?) ?? 'ar',
           wordCount: words,
           tags: ((json['tags'] as List?) ?? const []).cast<String>(),
+          meta: json,
         ));
       } catch (e) {
         stderr.writeln('blog_data: failed to parse $id: $e');
