@@ -22,6 +22,8 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
+import 'generate_sitemap.dart' as sitemap;
+
 const int _port = 9090;
 final File _siteYaml = File('content/_data/site.yaml');
 
@@ -240,6 +242,7 @@ Future<Response> _putPost(Request req, String id) async {
     if (body['body'] is String) {
       File('${dir.path}/final.md').writeAsStringSync(body['body'] as String);
     }
+    await _refreshSitemap('saved post $id');
     return Response.ok(
       jsonEncode({'ok': true, 'saved_at': DateTime.now().toIso8601String()}),
       headers: _jsonHeaders,
@@ -290,6 +293,7 @@ Future<Response> _newPost(Request req) async {
     File('${dir.path}/post.json').writeAsStringSync(_prettyJson(meta));
     File('${dir.path}/final.md').writeAsStringSync('# ${meta['title_ar']}\n\n');
 
+    await _refreshSitemap('created post $id');
     return Response.ok(
       jsonEncode({'ok': true, 'id': id}),
       headers: _jsonHeaders,
@@ -303,12 +307,13 @@ Future<Response> _newPost(Request req) async {
   }
 }
 
-Response _deletePost(Request req, String id) {
+Future<Response> _deletePost(Request req, String id) async {
   if (!_validId(id)) return Response.badRequest(body: jsonEncode({'error': 'bad id'}), headers: _jsonHeaders);
   try {
     final dir = Directory('${_blogDir.path}/$id');
     if (!dir.existsSync()) return Response.notFound(jsonEncode({'error': 'not found'}), headers: _jsonHeaders);
     dir.deleteSync(recursive: true);
+    await _refreshSitemap('deleted post $id');
     return Response.ok(jsonEncode({'ok': true}), headers: _jsonHeaders);
   } catch (e) {
     return Response.internalServerError(
@@ -319,6 +324,18 @@ Response _deletePost(Request req, String id) {
 }
 
 String _prettyJson(Object? v) => const JsonEncoder.withIndent('  ').convert(v);
+
+/// Best-effort: regenerate web/sitemap.xml after content changes. Failures
+/// are logged but do not break the parent save — a stale sitemap is less
+/// bad than rejecting a successful write.
+Future<void> _refreshSitemap(String reason) async {
+  try {
+    final n = await sitemap.writeSitemap();
+    stdout.writeln('save_server :: refreshed sitemap ($reason; $n URLs)');
+  } catch (e) {
+    stderr.writeln('save_server :: sitemap refresh failed ($reason): $e');
+  }
+}
 
 // ============================================================================
 //  RESEARCH PAPERS
