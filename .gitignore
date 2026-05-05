@@ -1,0 +1,66 @@
+# =====================================================================
+# Private working materials — never push to GitHub.
+# =====================================================================
+# Brand strategy, positioning, monetisation, and content brand context.
+context/
+
+# Drop zone for unsorted in-progress materials.
+inbox/
+
+# Throwaway design explorations (Track 1 / Track 2 mockup loops).
+mockups/
+
+# Private 100-item feature backlog.
+ROADMAP.md
+
+# Blog drafts and content folders — keep unpublished work out of public history.
+# (The deployed site builds locally, so the live build still has these.)
+website-jaspr/content/blog/
+
+# =====================================================================
+# Build artifacts and tool caches.
+# =====================================================================
+.dart_tool/
+build/
+website-jaspr/.dart_tool/
+website-jaspr/build/
+website-jaspr/.packages
+**/doc/api/
+*.class
+*.pyc
+__pycache__/
+
+# =====================================================================
+# Editor / IDE / Claude tooling.
+# =====================================================================
+.claude/
+.zed/
+.idea/
+.vscode/
+.history/
+.atom/
+.buildlog/
+*.iml
+*.ipr
+*.iws
+migrate_working_dir/
+
+# =====================================================================
+# OS / shell debug junk.
+# =====================================================================
+*.stackdump
+*.log
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =====================================================================
+# Secrets — defensive. None present today; this prevents accidental adds.
+# =====================================================================
+.env
+.env.*
+*.key
+*.pem
+*credentials*
+*secret*

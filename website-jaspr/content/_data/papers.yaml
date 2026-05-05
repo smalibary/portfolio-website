@@ -1,0 +1,56 @@
+# Salem Malibary — research papers
+# Edited via /admin/research, or by hand. Save server reads/writes the whole
+# papers list as one document. Order in the file = order on the homepage
+# research grid (unless `order` is set).
+
+papers:
+  - id: "01"
+    status: published          # published | active | design
+    pill_label: published      # human-readable label shown on the card
+    title_ar: التعرض للطبيعة والعافية النفسية، تحليل تلوي ثلاثي المستويات
+    title_en: "Nature exposure and psychological well-being: A three-level meta-analysis"
+    metric: g = -0.67
+    metric_label: 95% CI [-1.16, -0.18] · 16 studies · 45 effect sizes
+    caption: Indoor Environments · 2026
+    url: ""
+    order: 1
+    visible: true
+    abstract: |
+      Meta-analysis of 16 studies (45 effect sizes) examining the impact of
+      nature exposure on psychological well-being among remote workers.
+      Pooled effect Hedges g = -0.67, 95% CI [-1.16, -0.18], indicating a
+      moderate-to-large reduction in negative affect symptoms following
+      nature exposure interventions.
+
+  - id: "02"
+    status: active
+    pill_label: in field
+    title_ar: مؤشر الإمكانية الترميمية لمساحة العمل المنزلية
+    title_en: Restorative Potential Index for the home workspace
+    metric: N = 200–400
+    metric_label: Remote workers · Greater Sydney · Qualtrics
+    caption: "Cross-sectional survey · ethics 2025HE000215"
+    url: ""
+    order: 2
+    visible: true
+    abstract: |
+      Cross-sectional survey of remote workers in Greater Sydney measuring a
+      proposed Restorative Potential Index (RPI) for home workspaces against
+      well-being and productivity outcomes. Targeting N = 200–400.
+
+  - id: "03"
+    status: design
+    pill_label: in design
+    title_ar: المسارات الجزئية والكلية للطبيعة في التعافي المعرفي
+    title_en: Micro vs macro nature pathways for cognitive recovery
+    metric: "2 × 2"
+    metric_label: Within-subjects · 8 counterbalancing · DSB / Stroop / TMT-B
+    caption: Pre-ethics · pre-registration in prep
+    url: ""
+    order: 3
+    visible: true
+    abstract: |
+      Within-subjects 2×2 design comparing micro-nature (window/plants) and
+      macro-nature (walks) pathways for cognitive recovery, measured by
+      Digit Span Backwards, Stroop, and TMT-B. Pre-registration in
+      preparation.
