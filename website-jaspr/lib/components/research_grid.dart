@@ -27,7 +27,7 @@ class ResearchGrid extends StatelessComponent {
       else
         div(classes: 'research__grid', [
           for (final p in visible)
-            div(classes: 'card card--${p.status}', [
+            a(href: '/research/${p.id}', classes: 'card card--${p.status}', [
               div(classes: 'card__head', [
                 span(classes: 'pill pill--${p.status}', [text(p.pillLabel)]),
                 span(classes: 'card__index', [text(p.displayIndex)]),

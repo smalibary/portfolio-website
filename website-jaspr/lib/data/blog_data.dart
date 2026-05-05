@@ -8,6 +8,8 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'sections.dart';
+
 class BlogPost {
   const BlogPost({
     required this.id,
@@ -18,6 +20,8 @@ class BlogPost {
     required this.language,
     required this.wordCount,
     required this.tags,
+    this.category = '',
+    this.sections = const [],
     this.meta = const {},
   });
 
@@ -33,6 +37,26 @@ class BlogPost {
   final String language;
   final int wordCount;
   final List<String> tags;
+
+  /// Single category from `post.json`. Used by `/category/<slug>` routes.
+  /// Empty string means uncategorised.
+  final String category;
+
+  /// Section metadata from `post.json` (`sections: [...]`). Powers the
+  /// live-document feature (#101): per-section last_modified dates and
+  /// admin pinning. Empty list means the post hasn't been migrated yet —
+  /// the page should fall back to rendering the body as one block.
+  final List<Section> sections;
+
+  /// Lookup section metadata by anchor (slug). Returns null if a heading
+  /// in the body has no matching entry (e.g. brand-new section between
+  /// saves).
+  Section? sectionByAnchor(String anchor) {
+    for (final s in sections) {
+      if (s.anchor == anchor) return s;
+    }
+    return null;
+  }
 
   /// Raw `post.json` contents. Read fields like `excerpt_ar`, `og_image`,
   /// `last_modified`, `summary`, `canonical_url` via `metaString(...)` rather
@@ -82,6 +106,11 @@ class BlogPost {
           language: (json['language'] as String?) ?? 'ar',
           wordCount: words,
           tags: ((json['tags'] as List?) ?? const []).cast<String>(),
+          category: ((json['category'] as String?) ?? '').trim(),
+          sections: [
+            for (final s in (json['sections'] as List? ?? const []))
+              if (s is Map) Section.fromJson(Map<String, dynamic>.from(s)),
+          ],
           meta: json,
         ));
       } catch (e) {
@@ -97,5 +126,29 @@ class BlogPost {
   String loadBody() {
     final f = File('content/blog/$id/final.md');
     return f.existsSync() ? f.readAsStringSync() : '';
+  }
+
+  /// Sorted unique tags across the given posts. Used to generate the
+  /// `/tag/<slug>` routes at build time.
+  static List<String> uniqueTags(List<BlogPost> posts) {
+    final set = <String>{};
+    for (final p in posts) {
+      for (final t in p.tags) {
+        final trimmed = t.trim();
+        if (trimmed.isNotEmpty) set.add(trimmed);
+      }
+    }
+    final list = set.toList()..sort();
+    return list;
+  }
+
+  /// Sorted unique categories across the given posts.
+  static List<String> uniqueCategories(List<BlogPost> posts) {
+    final set = <String>{};
+    for (final p in posts) {
+      if (p.category.isNotEmpty) set.add(p.category);
+    }
+    final list = set.toList()..sort();
+    return list;
   }
 }

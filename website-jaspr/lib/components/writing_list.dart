@@ -35,6 +35,12 @@ class WritingList extends StatelessComponent {
               div(classes: 'writing__lang', [text(p.langLabel)]),
             ]),
         ]),
+      if (posts.isNotEmpty)
+        div(classes: 'writing__more', [
+          a(href: '/writing', classes: 'writing__more-link', [
+            text('كل الكتابات · ALL WRITING →'),
+          ]),
+        ]),
     ]);
   }
 }

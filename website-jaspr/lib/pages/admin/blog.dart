@@ -158,7 +158,168 @@ class AdminBlogPage extends StatelessComponent {
     });
     renderTags(meta.tags || []);
     renderPreview();
+    renderSections(meta.sections || []);
   }
+
+  // ---------- sections (live-document feature, #101) ----------
+  // Slugifier mirrors lib/data/sections.dart::slugify so anchors stay
+  // consistent between admin parsing and save_server merging.
+  function slugifySection(s){
+    s = (s || '').trim().toLowerCase();
+    s = s.replace(/[\s ]+/g, '-');
+    s = s.replace(/[^\\w\\u0600-\\u06FF\\-]/g, '');
+    s = s.replace(/-+/g, '-');
+    s = s.replace(/^-+|-+\$/g, '');
+    return s;
+  }
+
+  function parseBodySections(body){
+    var lines = (body || '').replace(/\\r\\n/g, '\\n').split('\\n');
+    var out = [];
+    for (var i = 0; i < lines.length; i++) {
+      var m = lines[i].match(/^##\\s+(.+?)\\s*\$/);
+      if (m) {
+        var title = m[1].trim();
+        out.push({ anchor: slugifySection(title), title: title });
+      }
+    }
+    return out;
+  }
+
+  function renderSections(savedSections){
+    var target = \$('.adm [data-sections]');
+    if (!target) return;
+    var bodyEl = \$('.adm [data-field="body"]');
+    var bodySections = parseBodySections(bodyEl ? bodyEl.value : '');
+
+    // Build a lookup of saved metadata by anchor.
+    var savedByAnchor = {};
+    (savedSections || []).forEach(function(s){
+      if (s && s.anchor) savedByAnchor[s.anchor] = s;
+    });
+
+    // For each section in the current body, merge in saved metadata.
+    var rows = bodySections.map(function(bs){
+      var saved = savedByAnchor[bs.anchor] || {};
+      return {
+        anchor: bs.anchor,
+        title: bs.title,
+        last_modified: saved.last_modified || '',
+        pinned: !!saved.pinned,
+        subtopic: saved.subtopic || ''
+      };
+    });
+
+    target.innerHTML = '';
+    if (rows.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'sections-empty';
+      empty.textContent = 'No ## sections in body yet — add H2 headings to the markdown to manage them here.';
+      target.appendChild(empty);
+      return;
+    }
+
+    rows.forEach(function(r, i){
+      var row = document.createElement('div');
+      row.className = 'section-row';
+      row.dataset.anchor = r.anchor;
+
+      var head = document.createElement('div');
+      head.className = 'section-row__head';
+      var idx = document.createElement('span');
+      idx.className = 'section-row__idx';
+      idx.textContent = String(i + 1).padStart(2, '0');
+      var title = document.createElement('div');
+      title.className = 'section-row__title';
+      title.textContent = r.title;
+      head.appendChild(idx); head.appendChild(title);
+
+      var controls = document.createElement('div');
+      controls.className = 'section-row__controls';
+
+      // Pin checkbox
+      var pinLabel = document.createElement('label');
+      pinLabel.className = 'section-row__pin';
+      var pin = document.createElement('input');
+      pin.type = 'checkbox';
+      pin.checked = r.pinned;
+      pin.dataset.role = 'pin';
+      pin.addEventListener('change', function(){ markDirty(); validatePinCount(); });
+      pinLabel.appendChild(pin);
+      pinLabel.appendChild(document.createTextNode(' PIN'));
+
+      // Date input
+      var dateLabel = document.createElement('label');
+      dateLabel.className = 'section-row__date';
+      dateLabel.appendChild(document.createTextNode('Updated '));
+      var dateInput = document.createElement('input');
+      dateInput.type = 'date';
+      dateInput.value = r.last_modified;
+      dateInput.dataset.role = 'date';
+      dateInput.addEventListener('input', markDirty);
+      dateLabel.appendChild(dateInput);
+
+      // Subtopic
+      var subLabel = document.createElement('label');
+      subLabel.className = 'section-row__sub';
+      subLabel.appendChild(document.createTextNode('Subtopic '));
+      var subInput = document.createElement('input');
+      subInput.type = 'text';
+      subInput.placeholder = 'optional label';
+      subInput.value = r.subtopic;
+      subInput.dataset.role = 'subtopic';
+      subInput.addEventListener('input', markDirty);
+      subLabel.appendChild(subInput);
+
+      controls.appendChild(pinLabel);
+      controls.appendChild(dateLabel);
+      controls.appendChild(subLabel);
+
+      row.appendChild(head);
+      row.appendChild(controls);
+      target.appendChild(row);
+    });
+
+    validatePinCount();
+  }
+
+  function validatePinCount(){
+    var pinned = \$\$('.adm [data-sections] input[data-role="pin"]').filter(function(el){ return el.checked; }).length;
+    var warn = \$('.adm [data-sections-warn]');
+    if (warn) {
+      if (pinned > 3) {
+        warn.textContent = '⚠ ' + pinned + ' sections pinned — pinning too many defeats the "promoted to top" signal. Consider keeping it ≤ 3.';
+        warn.style.display = 'block';
+      } else {
+        warn.style.display = 'none';
+      }
+    }
+  }
+
+  function readSections(){
+    var rows = \$\$('.adm [data-sections] .section-row');
+    return rows.map(function(row){
+      var pin = row.querySelector('input[data-role="pin"]');
+      var date = row.querySelector('input[data-role="date"]');
+      var sub = row.querySelector('input[data-role="subtopic"]');
+      return {
+        anchor: row.dataset.anchor,
+        title: row.querySelector('.section-row__title').textContent,
+        last_modified: date ? date.value : '',
+        pinned: pin ? !!pin.checked : false,
+        subtopic: sub ? sub.value : ''
+      };
+    });
+  }
+
+  // Re-render the sections list when the body markdown changes (so newly
+  // added/removed ## headings appear immediately, not only after save).
+  document.addEventListener('input', function(e){
+    if (e.target && e.target.dataset && e.target.dataset.field === 'body') {
+      // Preserve current pin/date/subtopic state from existing rows.
+      renderSections(readSections());
+    }
+  });
 
   // markdown live preview (marked.js loads via <script> at the bottom)
   function renderPreview(){
@@ -217,6 +378,7 @@ class AdminBlogPage extends StatelessComponent {
       meta[k] = v;
     });
     meta.tags = readTags();
+    meta.sections = readSections();
     var bodyEl = \$('.adm [data-field="body"]');
     return { meta: meta, body: bodyEl ? bodyEl.value : '' };
   }
@@ -384,6 +546,10 @@ class AdminBlogPage extends StatelessComponent {
               [text('البيانات الوصفية · METADATA')],
             ),
             button(
+              attributes: const {'data-tab': 'sections', 'type': 'button'},
+              [text('الأقسام · SECTIONS')],
+            ),
+            button(
               attributes: const {'data-tab': 'seo', 'type': 'button'},
               [text('SEO · AEO')],
             ),
@@ -440,6 +606,19 @@ class AdminBlogPage extends StatelessComponent {
               _field('وقت القراءة · READING TIME (min)', '', 'reading_time', type: InputType.number),
               _field('اللغة · LANGUAGE', '', 'language', hint: 'ar / en'),
             ]),
+          ]),
+
+          // SECTIONS tab — live-document section management (#101)
+          div(classes: 'tab-panel', attributes: const {'data-tab': 'sections'}, [
+            div(classes: 'sections-intro', [
+              p([text(
+                'Each H2 (## ) heading in the body is a live-document section. '
+                'Pin to promote a section to the top (in original order). '
+                'Dates auto-update on save when section text changes — set manually here to override.',
+              )]),
+              div(classes: 'sections-warn', attributes: const {'data-sections-warn': '', 'style': 'display:none;'}, []),
+            ]),
+            div(classes: 'sections-list', attributes: const {'data-sections': ''}, []),
           ]),
 
           // SEO tab

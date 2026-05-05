@@ -241,6 +241,24 @@
 .adm .tab-panel{ display:none; }
 .adm .tab-panel.active{ display:block; }
 
+/* sections tab — live-document feature (#101) */
+.adm .sections-intro p{ margin:0 0 12px; color:var(--ink-muted); font-size:13px; line-height:1.6; }
+.adm .sections-warn{ margin-bottom:12px; padding:10px 14px; background:color-mix(in srgb, var(--accent-warm) 12%, transparent); border:1px solid var(--accent-warm); border-radius:6px; color:var(--accent-warm); font-family:'JetBrains Mono',monospace; font-size:12px; }
+.adm .sections-list{ display:flex; flex-direction:column; gap:6px; }
+.adm .sections-empty{ padding:24px; text-align:center; color:var(--ink-faint); font-style:italic; border:1px dashed var(--rule); border-radius:8px; }
+.adm .section-row{ background:var(--bg-elev); border:1px solid var(--rule); border-radius:8px; padding:12px 14px; transition:border-color .15s; }
+.adm .section-row:hover{ border-color:var(--ink-muted); }
+.adm .section-row__head{ display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.adm .section-row__idx{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); letter-spacing:.06em; }
+.adm .section-row__title{ flex:1; font-weight:500; font-size:14px; line-height:1.4; }
+.adm .section-row__controls{ display:flex; flex-wrap:wrap; gap:18px; align-items:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-muted); letter-spacing:.04em; text-transform:uppercase; }
+.adm .section-row__pin{ display:flex; align-items:center; gap:6px; cursor:pointer; }
+.adm .section-row__pin input{ accent-color:var(--accent); }
+.adm .section-row__date{ display:flex; align-items:center; gap:8px; }
+.adm .section-row__date input{ background:transparent; border:1px solid var(--rule); color:var(--ink); padding:4px 6px; font-family:inherit; font-size:12px; border-radius:4px; outline:none; }
+.adm .section-row__sub{ display:flex; align-items:center; gap:8px; flex:1; min-width:160px; }
+.adm .section-row__sub input{ flex:1; background:transparent; border:1px solid var(--rule); color:var(--ink); padding:4px 8px; font-family:inherit; font-size:12px; border-radius:4px; outline:none; text-transform:none; letter-spacing:0; }
+
 /* tag input */
 .adm .tag-input{ display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--bg-elev); border:1px solid var(--rule); border-radius:8px; }
 .adm .tag-input input{ flex:1; min-width:120px; background:transparent; border:none; color:var(--ink); padding:4px; font-family:inherit; font-size:13px; outline:none; }
