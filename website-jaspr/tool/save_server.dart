@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
+import 'package:website_jaspr/data/sections.dart' as sections_lib;
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
@@ -234,13 +235,38 @@ Future<Response> _putPost(Request req, String id) async {
     final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
     final dir = Directory('${_blogDir.path}/$id');
     if (!dir.existsSync()) dir.createSync(recursive: true);
+
+    // Capture old body + old post.json sections BEFORE overwriting, so
+    // the section-diff auto-stamp can compare.
+    final bodyFile = File('${dir.path}/final.md');
+    final oldBody = bodyFile.existsSync() ? bodyFile.readAsStringSync() : '';
+    final metaFile = File('${dir.path}/post.json');
+    final oldSections = metaFile.existsSync()
+        ? _readSectionsArray(metaFile.readAsStringSync())
+        : const <Map<String, dynamic>>[];
+
     if (body['meta'] is Map) {
       final meta = Map<String, dynamic>.from(body['meta'] as Map);
-      meta.remove('id'); // id is the directory name, not part of post.json
-      File('${dir.path}/post.json').writeAsStringSync(_prettyJson(meta));
+      meta.remove('id');
+
+      // Auto-stamp: compare new body vs old body section-by-section.
+      // Pinned/subtopic flags come from the incoming sections array if the
+      // admin manages them; otherwise we preserve the previous values.
+      final newBody = (body['body'] is String) ? body['body'] as String : oldBody;
+      final incomingSections = (meta['sections'] is List)
+          ? (meta['sections'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList()
+          : const <Map<String, dynamic>>[];
+      meta['sections'] = _mergeSections(
+        oldBody: oldBody,
+        newBody: newBody,
+        incomingSections: incomingSections,
+        oldSections: oldSections,
+      );
+
+      metaFile.writeAsStringSync(_prettyJson(meta));
     }
     if (body['body'] is String) {
-      File('${dir.path}/final.md').writeAsStringSync(body['body'] as String);
+      bodyFile.writeAsStringSync(body['body'] as String);
     }
     await _refreshSitemap('saved post $id');
     return Response.ok(
@@ -254,6 +280,79 @@ Future<Response> _putPost(Request req, String id) async {
       headers: _jsonHeaders,
     );
   }
+}
+
+/// Reads the `sections` array from a post.json file's text. Returns an
+/// empty list if the file is malformed or has no sections.
+List<Map<String, dynamic>> _readSectionsArray(String postJsonText) {
+  try {
+    final j = jsonDecode(postJsonText) as Map<String, dynamic>;
+    final raw = j['sections'];
+    if (raw is! List) return const [];
+    return raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+  } catch (_) {
+    return const [];
+  }
+}
+
+/// Builds the new `sections` array for a post.json save:
+///
+/// - Walks the new body's H2 sections in order.
+/// - For each anchor, compares the section's markdown text vs the old
+///   body's section with the same anchor (whitespace-stripped). If
+///   identical, keeps the old `last_modified`; otherwise stamps today.
+/// - Preserves `pinned` and `subtopic` from incoming admin payload if
+///   present, falling back to old metadata.
+/// - Sections that exist in old but not in new are dropped (they were
+///   removed or had their headings renamed beyond match).
+List<Map<String, dynamic>> _mergeSections({
+  required String oldBody,
+  required String newBody,
+  required List<Map<String, dynamic>> incomingSections,
+  required List<Map<String, dynamic>> oldSections,
+}) {
+  final today = DateTime.now().toUtc().toIso8601String().substring(0, 10);
+  final newParsed = sections_lib.parseBody(newBody);
+  final oldParsed = sections_lib.parseBody(oldBody);
+
+  // Index old by anchor for fast lookup.
+  final oldChunkByAnchor = <String, sections_lib.SectionChunk>{
+    for (final c in oldParsed.sections) c.anchor: c,
+  };
+  final oldMetaByAnchor = <String, Map<String, dynamic>>{
+    for (final m in oldSections)
+      if (m['anchor'] is String) (m['anchor'] as String): m,
+  };
+  final incomingByAnchor = <String, Map<String, dynamic>>{
+    for (final m in incomingSections)
+      if (m['anchor'] is String) (m['anchor'] as String): m,
+  };
+
+  String _strip(String s) => s.replaceAll(RegExp(r'\s+'), ' ').trim();
+
+  final result = <Map<String, dynamic>>[];
+  for (final chunk in newParsed.sections) {
+    final oldChunk = oldChunkByAnchor[chunk.anchor];
+    final oldMeta = oldMetaByAnchor[chunk.anchor];
+    final incoming = incomingByAnchor[chunk.anchor];
+
+    final unchanged = oldChunk != null && _strip(oldChunk.markdown) == _strip(chunk.markdown);
+    final lastModified = unchanged && oldMeta != null && oldMeta['last_modified'] is String
+        ? oldMeta['last_modified'] as String
+        : today;
+
+    final pinned = (incoming?['pinned'] as bool?) ?? (oldMeta?['pinned'] as bool?) ?? false;
+    final subtopic = (incoming?['subtopic'] as String?) ?? (oldMeta?['subtopic'] as String?) ?? '';
+
+    result.add({
+      'anchor': chunk.anchor,
+      'title': chunk.title,
+      'last_modified': lastModified,
+      'pinned': pinned,
+      if (subtopic.isNotEmpty) 'subtopic': subtopic,
+    });
+  }
+  return result;
 }
 
 Future<Response> _newPost(Request req) async {

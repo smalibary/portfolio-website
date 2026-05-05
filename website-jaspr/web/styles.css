@@ -248,7 +248,12 @@ main, nav, footer { position: relative; z-index: 1; }
   transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
   cursor: pointer;
   position: relative; overflow: hidden;
+  /* Card is rendered as <a>, so reset link styling — the click affordance
+     is the hover lift + accent border, not underlined blue text. */
+  color: inherit;
+  text-decoration: none;
 }
+.card:visited, .card:hover, .card:focus { color: inherit; text-decoration: none; }
 .card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0;
   height: 2px; background: var(--card-accent, var(--accent));
@@ -374,6 +379,170 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-body hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
 .post-body img { max-width: 100%; border-radius: 8px; margin: 24px 0; }
 .post-foot { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--rule); }
+
+/* LIVE-DOCUMENT SECTIONS (#101)
+   Rendered when post.json has a `sections` array. Pinned sections appear
+   first inside .post-pinned-block. Each section gets an anchor id, an
+   optional meta line (PINNED pill + last-updated date + subtopic) and a
+   teal left rail when pinned. */
+.post-section { margin: 0 0 12px; padding-block: 4px; }
+.post-section__title {
+  font-size: 26px; font-weight: 600; margin: 36px 0 4px;
+  letter-spacing: -.01em; line-height: 1.4;
+  scroll-margin-top: 24px;
+}
+.post-section__meta {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--ink-muted); letter-spacing: .06em; text-transform: uppercase;
+  margin: 0 0 18px;
+}
+.section-pin-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-weight: 500;
+}
+.section-subtopic {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.section-date { color: var(--ink-faint); }
+
+.post-pinned-block {
+  margin: 24px 0 48px;
+  padding: 16px 0 8px;
+  border-block: 1px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  border-radius: 8px;
+}
+.post-pinned-block__label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: .12em; color: var(--accent); font-weight: 500;
+  padding: 0 18px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, var(--rule));
+  margin-bottom: 12px;
+}
+.post-pinned-block .post-section { padding-inline: 18px; }
+
+.post-section--pinned {
+  border-inline-start: 3px solid var(--accent);
+  padding-inline-start: 14px;
+}
+.post-section--pinned .post-section__title { margin-top: 8px; }
+
+/* Section body inherits .post-body's typography rules — re-apply here so
+   markdown chunks rendered per-section look identical to a single-block
+   render. */
+.post-section__body { font-size: 17px; line-height: 1.85; color: var(--ink); }
+.post-section__body h3 { font-size: 21px; font-weight: 600; margin: 36px 0 12px; }
+.post-section__body p { margin: 0 0 18px; }
+.post-section__body strong, .post-section__body b { color: var(--ink); font-weight: 600; }
+.post-section__body em { color: var(--accent); font-style: normal; font-weight: 500; }
+.post-section__body a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.post-section__body blockquote { border-inline-start: 3px solid var(--accent); padding: 4px 18px; margin: 24px 0; color: var(--ink-muted); }
+.post-section__body code { font-family: 'JetBrains Mono', monospace; font-size: .92em; background: var(--bg-elev); padding: 2px 6px; border-radius: 4px; }
+.post-section__body ul, .post-section__body ol { padding-inline-start: 24px; margin: 0 0 18px; }
+.post-section__body li { margin: 0 0 8px; }
+.post-section__body hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
+.post-section__body img { max-width: 100%; border-radius: 8px; margin: 24px 0; }
+
+.post-preamble { font-size: 17px; line-height: 1.85; color: var(--ink); }
+.post-preamble p { margin: 0 0 18px; }
+.post-preamble hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
+.post-preamble strong, .post-preamble b { color: var(--ink); font-weight: 600; }
+
+
+/* TAG PILLS — used on blog post meta, /writing entries, /tag and /category headers */
+.post-meta__link { color: var(--ink-muted); text-decoration: none; border-bottom: 1px dashed var(--rule); transition: color .15s, border-color .15s; }
+.post-meta__link:hover { color: var(--accent); border-color: var(--accent); }
+.post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; margin-bottom: 18px; }
+.tag-pill {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.tag-pill:hover { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.tag-pill--header { background: color-mix(in srgb, var(--accent) 10%, transparent); border-color: var(--accent); color: var(--accent); margin-inline-start: 12px; vertical-align: middle; }
+
+/* INDEX PAGES — /writing, /tag/<x>, /category/<x> */
+.index-page { max-width: 1320px; margin: 0 auto; padding: 32px 48px 96px; position: relative; z-index: 1; }
+.index .post-back { margin-bottom: 32px; }
+.index h1 { font-size: 28px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+.index__group { margin-bottom: 56px; }
+.index__year {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-faint);
+  letter-spacing: .08em;
+  margin: 32px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.index__entry { padding-block: 4px; border-bottom: 1px solid var(--rule); }
+.index__entry:last-child { border-bottom: none; }
+.index__entry .writing__item { border-bottom: none; padding-bottom: 8px; }
+.index__tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 24px 16px; }
+
+/* "View all" link below the homepage writing list */
+.writing__more { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; justify-content: flex-end; }
+.writing__more-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  transition: color .15s, border-color .15s;
+}
+.writing__more-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* RESEARCH DETAIL PAGE — /research/<id> */
+.research-detail-page { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; position: relative; z-index: 1; }
+.research-detail .post-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted); text-decoration: none; margin-bottom: 24px; padding: 6px 12px; border: 1px solid var(--rule); border-radius: 6px; letter-spacing: .04em; }
+.research-detail .post-back:hover { color: var(--accent); border-color: var(--accent); }
+.research-detail__head { padding-bottom: 24px; margin-bottom: 32px; border-bottom: 1px solid var(--rule); }
+.research-detail__row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.research-detail__metric { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 500; letter-spacing: -.01em; color: var(--ink); margin-bottom: 6px; }
+.research-detail__metric-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-muted); margin-bottom: 28px; line-height: 1.5; }
+.research-detail__title-ar { font-size: 28px; font-weight: 600; line-height: 1.4; margin: 0 0 8px; letter-spacing: -.01em; }
+.research-detail__title-en { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--ink-muted); margin: 0 0 12px; letter-spacing: .02em; }
+.research-detail__caption { font-size: 13px; color: var(--ink-faint); font-style: italic; margin: 0; }
+.research-detail__body { font-size: 17px; line-height: 1.85; color: var(--ink); }
+.research-detail__body h2 { font-size: 22px; font-weight: 600; margin: 24px 0 12px; }
+.research-detail__body p { margin: 0 0 18px; }
+.research-detail__link { margin: 32px 0; }
+.btn-outline {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .04em;
+  padding: 12px 20px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent);
+  text-decoration: none;
+  transition: background .15s;
+}
+.btn-outline:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
 /* FOOTER */
 .footer {
