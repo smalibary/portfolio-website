@@ -47,7 +47,7 @@ being explored is composition.
 - One folder per exploration: `mockups/<feature-name>/`
 - Inside: `a.html`, `b.html`, `c.html` for direction phase; `a-1.html`, `a-2.html`, `a-3.html` for refinement phase
 - After porting to Jaspr: **delete the mockup folder.** It served its purpose; keeping it bloats `mockups/` and confuses future passes.
-- See `mockups/CLAUDE.md` for the full convention.
+- See `mockups/AGENTS.md` for the full convention.
 
 ---
 
