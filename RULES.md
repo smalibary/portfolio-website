@@ -1,6 +1,6 @@
 # RULES — always-on, read first
 
-Anything that's a *decision* or a *constraint* lives here. CLAUDE.md is the
+Anything that's a *decision* or a *constraint* lives here. AGENTS.md is the
 router; this file is the law. Before implementing anything new — a page,
 a feature, a piece of copy, a route, a schema — re-read the relevant
 section here.
@@ -120,7 +120,7 @@ the following must be true** before merging. Treat this as a checklist.
 - Repo is **public** at `https://github.com/smalibary/portfolio-website`. Anything committed becomes public history, even if force-pushed later.
 - Root `.gitignore` excludes private working materials. **Before adding a new top-level folder with anything sensitive, update `.gitignore` first**, then commit.
 - **Never track:** `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, `website-jaspr/content/blog/` (drafts), `.claude/`, `.zed/`, `.dart_tool/`, `build/`, `.env*`, `*.key`, `*credentials*`
-- Always tracked publicly: `website-jaspr/lib/`, `web/`, `tool/`, `pubspec.yaml`, `content/_data/site.yaml`, `content/_data/papers.yaml`, `tools/`, `CLAUDE.md`, `RULES.md`, `WORKFLOWS.md`, `website-jaspr/CLAUDE.md`, `website-jaspr/README.md`
+- Always tracked publicly: `website-jaspr/lib/`, `web/`, `tool/`, `pubspec.yaml`, `content/_data/site.yaml`, `content/_data/papers.yaml`, `tools/`, `AGENTS.md`, `RULES.md`, `WORKFLOWS.md`, `website-jaspr/AGENTS.md`, `website-jaspr/README.md`
 
 ## 8. Build + deploy
 
@@ -140,7 +140,7 @@ the following must be true** before merging. Treat this as a checklist.
 - Don't change the visual design without a mockup pass (Track 1 or Track 2 — see WORKFLOWS.md)
 - Don't add a third locale until ar is fully wired alongside en
 - Don't deploy `/admin/*` to production — passcode is cosmetic
-- Don't write public positioning text without reading `context/CLAUDE.md` first
+- Don't write public positioning text without reading `context/AGENTS.md` first
 - Don't suggest live-performance content formats before the medium ladder reaches that phase
 - Don't track `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, or blog drafts in git — listed in root `.gitignore` for a reason
 - Don't pass children to Jaspr `script(...)` — use `content:` (inline JS) or `src:` (external URL) only

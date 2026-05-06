@@ -10,7 +10,7 @@ papers:
     title_ar: التعرض للطبيعة والعافية النفسية، تحليل تلوي ثلاثي المستويات
     title_en: "Nature exposure and psychological well-being: A three-level meta-analysis"
     metric: g = -0.67
-    metric_label: 95% CI [-1.16, -0.18] · 16 studies · 45 effect sizes
+    metric_label: "95% CI [-1.16, -0.18] · 16 studies · 45 effect sizes"
     caption: Indoor Environments · 2026
     url: ""
     order: 1

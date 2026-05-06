@@ -1,7 +1,7 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
-/// Admin login. Cosmetic passcode gate (1379) — see CLAUDE.md for why this is
+/// Admin login. Cosmetic passcode gate (1379) — see AGENTS.md for why this is
 /// not real auth. On correct submit: sets `sessionStorage['admin-auth'] = 'ok'`
 /// and redirects to `/admin/profile`. Other admin pages will check that flag
 /// and bounce to here if it's missing.

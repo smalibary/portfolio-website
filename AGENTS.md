@@ -23,17 +23,17 @@ Built with **Jaspr** (Dart web framework, Flutter-like component model,
 renders real HTML for SEO/AEO). Content is markdown/yaml-driven — public
 site reads from `website-jaspr/content/` at build time, with a local-only
 admin panel at `/admin/*` for editing those files via a UI (passcode 1379,
-cosmetic). See `website-jaspr/CLAUDE.md` for the full architecture.
+cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 
 ## Subdirectories
 
 | Folder | Purpose | Read first |
 |---|---|---|
-| `website-jaspr/` | The live site — Jaspr, source of truth | `website-jaspr/CLAUDE.md` |
-| `mockups/` | HTML design exploration before applying to Jaspr | `mockups/CLAUDE.md` |
-| `inbox/` | Drop zone for unsorted materials (move them out, don't reference) | `inbox/CLAUDE.md` |
+| `website-jaspr/` | The live site — Jaspr, source of truth | `website-jaspr/AGENTS.md` |
+| `mockups/` | HTML design exploration before applying to Jaspr | `mockups/AGENTS.md` |
+| `inbox/` | Drop zone for unsorted materials (move them out, don't reference) | `inbox/AGENTS.md` |
 | `thesis-structure/` | Quarto+Typst PhD thesis build (separate concern) | `thesis-structure/rules/` |
-| `context/` | Brand context for The Design Eye / عين التصميم content brand | `context/CLAUDE.md` then `context/INDEX.md` |
+| `context/` | Brand context for The Design Eye / عين التصميم content brand | `context/AGENTS.md` then `context/INDEX.md` |
 | `tools/` | Small Python utilities (word counter, OG card generator) |  |
 
 ## Entry points by task
@@ -41,16 +41,16 @@ cosmetic). See `website-jaspr/CLAUDE.md` for the full architecture.
 | Task | Read |
 |---|---|
 | any decision, rule, or constraint | `RULES.md` |
-| visual / layout / new route changes | `WORKFLOWS.md` then `mockups/CLAUDE.md` |
+| visual / layout / new route changes | `WORKFLOWS.md` then `mockups/AGENTS.md` |
 | what to build next on the site | `ROADMAP.md` (100+ items, gitignored — local only) |
-| Jaspr component code (live site) | `website-jaspr/CLAUDE.md` |
-| admin panel changes (`/admin/*`) | `website-jaspr/CLAUDE.md` "Admin panel" section |
+| Jaspr component code (live site) | `website-jaspr/AGENTS.md` |
+| admin panel changes (`/admin/*`) | `website-jaspr/AGENTS.md` "Admin panel" section |
 | save server / API endpoints | `website-jaspr/tool/save_server.dart` |
 | sitemap / SEO scaffolding | `website-jaspr/tool/generate_sitemap.dart`; RULES.md §5 |
 | OG card generation | `tools/generate_og.py`; RULES.md §5.4 |
-| sorting dropped files | `inbox/CLAUDE.md` |
+| sorting dropped files | `inbox/AGENTS.md` |
 | brand voice / Arabic writing | `context/voice.md` |
-| brand strategy / positioning / content scope | `context/CLAUDE.md` |
+| brand strategy / positioning / content scope | `context/AGENTS.md` |
 | writing a public-facing post / article / script / bio | RULES.md §3 first; then `context/voice.md`, `topical-scope.md`, `guardrails.md` |
 | thesis chapters / pipeline | `thesis-structure/rules/` |
 
