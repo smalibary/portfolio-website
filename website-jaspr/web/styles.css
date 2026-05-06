@@ -382,9 +382,8 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* LIVE-DOCUMENT SECTIONS (#101)
    Rendered when post.json has a `sections` array. Pinned sections appear
-   first inside .post-pinned-block. Each section gets an anchor id, an
-   optional meta line (PINNED pill + last-updated date + subtopic) and a
-   teal left rail when pinned. */
+   first inside .post-pinned-block with teal border all sides, title-only
+   rows with expand/collapse. Dimmed repeats appear in-place. */
 .post-section { margin: 0 0 12px; padding-block: 4px; }
 .post-section__title {
   font-size: 26px; font-weight: 600; margin: 36px 0 4px;
@@ -397,15 +396,6 @@ main, nav, footer { position: relative; z-index: 1; }
   color: var(--ink-muted); letter-spacing: .06em; text-transform: uppercase;
   margin: 0 0 18px;
 }
-.section-pin-pill {
-  display: inline-block;
-  padding: 2px 8px;
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
-  font-weight: 500;
-}
 .section-subtopic {
   display: inline-block;
   padding: 2px 8px;
@@ -417,37 +407,142 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .section-date { color: var(--ink-faint); }
 
+/* ── Pinned block (redesigned) ── */
 .post-pinned-block {
-  margin: 24px 0 48px;
-  padding: 16px 0 8px;
-  border-block: 1px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
-  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  margin: 24px 0 0;
+  border: 2px solid var(--accent);
   border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  overflow: hidden;
 }
-.post-pinned-block__label {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  letter-spacing: .12em; color: var(--accent); font-weight: 500;
-  padding: 0 18px 12px;
+.post-pinned-block__header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, var(--rule));
-  margin-bottom: 12px;
 }
-.post-pinned-block .post-section { padding-inline: 18px; }
-
-.post-section--pinned {
-  border-inline-start: 3px solid var(--accent);
-  padding-inline-start: 14px;
+.pinned-badge {
+  background: var(--accent); color: var(--bg);
+  padding: 3px 12px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: .08em;
 }
-.post-section--pinned .post-section__title { margin-top: 8px; }
+.pinned-expand-all {
+  margin-inline-start: auto;
+  color: var(--accent); font-size: 11px;
+  cursor: pointer; opacity: .7;
+  background: none; border: none; font-family: inherit;
+}
+.pinned-expand-all:hover { opacity: 1; text-decoration: underline; }
 
-/* Section body inherits .post-body's typography rules — re-apply here so
-   markdown chunks rendered per-section look identical to a single-block
-   render. */
-.post-section__body { font-size: 17px; line-height: 1.85; color: var(--ink); }
+/* Pinned section row (title + date + arrow) */
+.post-pinned-section {
+  padding: 12px 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
+  cursor: pointer;
+}
+.post-pinned-section:last-child { border-bottom: none; }
+.post-pinned-section:hover {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+.post-pinned-section__row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+}
+.post-pinned-section__title {
+  font-size: 15px; font-weight: 600; color: var(--ink);
+  margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.post-pinned-section__meta {
+  display: flex; align-items: baseline; gap: 8px; white-space: nowrap; flex-shrink: 0;
+}
+.post-pinned-section__date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-faint);
+}
+.post-pinned-section__arrow {
+  color: var(--accent); font-size: 12px;
+  transition: transform .15s ease;
+}
+.post-pinned-section__arrow.open { transform: rotate(180deg); }
+
+/* Expanded pinned section body */
+.post-pinned-section__body {
+  display: none;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  font-size: 16px; line-height: 1.85; color: var(--ink);
+  text-align: justify; hyphens: auto;
+}
+.post-pinned-section__body.open { display: block; }
+.post-pinned-section__body strong,
+.post-pinned-section__body b { color: var(--accent); font-weight: 600; }
+.post-pinned-section__body a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.post-pinned-section__body sup { font-size: 11px; color: var(--accent); font-weight: 500; }
+.post-pinned-section__body sup a { text-decoration: none; font-weight: 600; }
+.post-pinned-section__body blockquote { border-inline-start: 3px solid var(--accent); padding: 4px 18px; margin: 24px 0; color: var(--ink-muted); }
+.post-pinned-section__body p { margin: 0 0 18px; }
+
+/* ── Dimmed in-place repeat of pinned sections ── */
+.dimmed-pinned-repeat {
+  border: 1px dashed color-mix(in srgb, var(--accent) 20%, var(--rule));
+  border-radius: 6px;
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--accent) 2%, transparent);
+  opacity: .5;
+  margin: 20px 0;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+}
+.dimmed-pinned-repeat__left { display: flex; align-items: center; gap: 8px; }
+.dimmed-pinned-repeat__pin { color: var(--accent); font-size: 10px; }
+.dimmed-pinned-repeat__note {
+  font-size: 10px; color: var(--ink-faint);
+}
+.dimmed-pinned-repeat__title {
+  font-size: 13px; color: var(--ink-muted); margin: 0; font-weight: 500;
+}
+.dimmed-pinned-repeat__date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--ink-faint); white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── Takeaways box ── */
+.post-takeaways {
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--rule));
+  border-radius: 8px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), color-mix(in srgb, var(--accent) 3%, transparent));
+  padding: 20px;
+  margin-top: 16px;
+}
+.post-takeaways__badge {
+  display: block;
+  color: var(--accent); font-size: 12px; font-weight: 600;
+  letter-spacing: .06em; margin-bottom: 14px;
+}
+.post-takeaways ul {
+  list-style: none; padding: 0; margin: 0;
+}
+.post-takeaways li {
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  font-size: 14px; line-height: 1.8; color: var(--ink);
+  display: flex; gap: 10px; align-items: flex-start;
+  text-align: justify; hyphens: auto;
+}
+.post-takeaways li:last-child { border-bottom: none; padding-bottom: 0; }
+.post-takeaways li::before {
+  content: "●"; color: var(--accent); font-size: 8px;
+  margin-top: 8px; flex-shrink: 0;
+}
+.post-takeaways li strong { color: var(--accent); font-weight: 600; }
+.post-takeaways li a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Section body typography — bold in accent, justified */
+.post-section__body { font-size: 17px; line-height: 1.85; color: var(--ink); text-align: justify; hyphens: auto; }
 .post-section__body h3 { font-size: 21px; font-weight: 600; margin: 36px 0 12px; }
 .post-section__body p { margin: 0 0 18px; }
-.post-section__body strong, .post-section__body b { color: var(--ink); font-weight: 600; }
+.post-section__body strong, .post-section__body b { color: var(--accent); font-weight: 600; }
 .post-section__body em { color: var(--accent); font-style: normal; font-weight: 500; }
 .post-section__body a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.post-section__body sup { font-size: 11px; color: var(--accent); font-weight: 500; }
+.post-section__body sup a { text-decoration: none; font-weight: 600; }
 .post-section__body blockquote { border-inline-start: 3px solid var(--accent); padding: 4px 18px; margin: 24px 0; color: var(--ink-muted); }
 .post-section__body code { font-family: 'JetBrains Mono', monospace; font-size: .92em; background: var(--bg-elev); padding: 2px 6px; border-radius: 4px; }
 .post-section__body ul, .post-section__body ol { padding-inline-start: 24px; margin: 0 0 18px; }
@@ -455,10 +550,9 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-section__body hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
 .post-section__body img { max-width: 100%; border-radius: 8px; margin: 24px 0; }
 
-.post-preamble { font-size: 17px; line-height: 1.85; color: var(--ink); }
+.post-preamble { font-size: 17px; line-height: 1.85; color: var(--ink); text-align: justify; hyphens: auto; }
 .post-preamble p { margin: 0 0 18px; }
 .post-preamble hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
-.post-preamble strong, .post-preamble b { color: var(--ink); font-weight: 600; }
 
 
 /* TAG PILLS — used on blog post meta, /writing entries, /tag and /category headers */
