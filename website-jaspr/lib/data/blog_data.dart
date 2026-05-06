@@ -22,6 +22,7 @@ class BlogPost {
     required this.tags,
     this.category = '',
     this.sections = const [],
+    this.takeaways = const [],
     this.meta = const {},
   });
 
@@ -47,6 +48,11 @@ class BlogPost {
   /// admin pinning. Empty list means the post hasn't been migrated yet —
   /// the page should fall back to rendering the body as one block.
   final List<Section> sections;
+
+  /// Key takeaway bullet points from `post.json` (`takeaways: [...]`).
+  /// Rendered in a highlighted box after pinned sections. Empty list means
+  /// no takeaways box.
+  final List<String> takeaways;
 
   /// Lookup section metadata by anchor (slug). Returns null if a heading
   /// in the body has no matching entry (e.g. brand-new section between
@@ -111,6 +117,7 @@ class BlogPost {
             for (final s in (json['sections'] as List? ?? const []))
               if (s is Map) Section.fromJson(Map<String, dynamic>.from(s)),
           ],
+          takeaways: ((json['takeaways'] as List?) ?? const []).cast<String>(),
           meta: json,
         ));
       } catch (e) {
