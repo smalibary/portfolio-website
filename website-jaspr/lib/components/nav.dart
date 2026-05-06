@@ -17,7 +17,7 @@ class Nav extends StatelessComponent {
     final rest = lower.length > 1 ? '.${lower.skip(1).join('.')}' : '';
 
     return nav(classes: 'nav', [
-      div(classes: 'nav__monogram', [
+      a(href: '/', classes: 'nav__monogram', [
         text(first),
         if (rest.isNotEmpty) span([text(rest)]),
       ]),

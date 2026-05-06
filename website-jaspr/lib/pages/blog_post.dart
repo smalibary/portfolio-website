@@ -35,6 +35,8 @@ class BlogPostPage extends StatelessComponent {
     final faqPairs = _parseFaq(body);
     final faqJsonLd = faqPairs.isEmpty ? null : _buildFaqSchema(faqPairs);
 
+    final headings = _extractHeadings(body);
+
     return Component.fragment([
       Nav(site: site),
       main_(classes: 'post-page', [
@@ -48,46 +50,84 @@ class BlogPostPage extends StatelessComponent {
             attributes: const {'type': 'application/ld+json'},
             content: faqJsonLd,
           ),
-        article(classes: 'post', attributes: {'dir': isAr ? 'rtl' : 'ltr'}, [
-          a(classes: 'post-back', href: '/', [text('← العودة · BACK TO HOME')]),
-          if (post.metaString('og_image') != null)
-            img(
-              classes: 'post-hero',
-              src: '/images/${post.metaString('og_image')}',
-              alt: post.titleAr.isNotEmpty ? post.titleAr : post.titleEn,
-              attributes: const {'loading': 'lazy', 'decoding': 'async'},
-            ),
-          header(classes: 'post-head', [
-            div(classes: 'post-meta', [
-              if (post.date.isNotEmpty) span([text(post.date)]),
-              if (post.category.isNotEmpty) ...[
-                span(classes: 'post-meta__sep', [text('·')]),
-                a(href: '/category/${post.category}', classes: 'post-meta__link', [
-                  text(post.category),
-                ]),
-              ],
-              if (post.wordCount > 0) ...[
-                span(classes: 'post-meta__sep', [text('·')]),
-                span([text(post.langLabel)]),
-              ],
-            ]),
-            if (post.tags.isNotEmpty)
-              div(classes: 'post-tags', [
-                for (final tag in post.tags)
-                  a(href: '/tag/$tag', classes: 'tag-pill', [text('#$tag')]),
+        // Hero image — full width, outside the 2-column layout
+        if (post.metaString('og_image') != null)
+          img(
+            classes: 'post-hero',
+            src: '/images/${post.metaString('og_image')}',
+            alt: post.titleAr.isNotEmpty ? post.titleAr : post.titleEn,
+            attributes: const {'loading': 'lazy', 'decoding': 'async'},
+          ),
+        div(classes: 'post-layout', [
+          article(classes: 'post', attributes: {'dir': isAr ? 'rtl' : 'ltr'}, [
+            header(classes: 'post-head', [
+              div(classes: 'post-meta', [
+                if (post.date.isNotEmpty) span([text(post.date)]),
+                if (post.category.isNotEmpty) ...[
+                  span(classes: 'post-meta__sep', [text('·')]),
+                  a(href: '/category/${post.category}', classes: 'post-meta__link', [
+                    text(post.category),
+                  ]),
+                ],
+                if (post.wordCount > 0) ...[
+                  span(classes: 'post-meta__sep', [text('·')]),
+                  span([text(post.langLabel)]),
+                ],
               ]),
-            if (post.titleAr.isNotEmpty)
-              h1(classes: 'post-title-ar', [text(post.titleAr)]),
-            if (post.titleEn.isNotEmpty)
-              p(classes: 'post-title-en', [text(post.titleEn)]),
+              if (post.tags.isNotEmpty)
+                div(classes: 'post-tags', [
+                  for (final tag in post.tags)
+                    a(href: '/tag/$tag', classes: 'tag-pill', [text('#$tag')]),
+                ]),
+              if (post.titleAr.isNotEmpty)
+                h1(classes: 'post-title-ar', [text(post.titleAr)]),
+              if (post.titleEn.isNotEmpty)
+                p(classes: 'post-title-en', [text(post.titleEn)]),
+            ]),
+            _renderBody(post: post, body: body),
+            footer(classes: 'post-foot', [
+              a(href: '/', classes: 'post-back', [text('← العودة للصفحة الرئيسية · BACK TO HOME')]),
+            ]),
           ]),
-          _renderBody(post: post, body: body),
-          footer(classes: 'post-foot', [
-            a(href: '/', classes: 'post-back', [text('← العودة للصفحة الرئيسية · BACK TO HOME')]),
+          // Sticky sidebar: TOC + newsletter
+          aside(classes: 'post-sidebar', attributes: {'data-post-sidebar': ''}, [
+            if (headings.isNotEmpty) ...[
+              nav(classes: 'toc', [
+                div(classes: 'toc__title', [text('المحتويات · Contents')]),
+                ul(classes: 'toc__list', [
+                  for (final h in headings)
+                    li(classes: 'toc__item toc__item--${h.level}', [
+                      a(href: '#${h.id}', classes: 'toc__link', [text(h.text)]),
+                    ]),
+                ]),
+              ]),
+              div(classes: 'sidebar-divider', [text('')]),
+            ],
+            div(classes: 'newsletter', [
+              div(classes: 'newsletter__title', [text('النشرة البريدية · Newsletter')]),
+              p(classes: 'newsletter__desc', [text('آخر الأبحاث والمقالات مباشرة لبريدك')]),
+              form(classes: 'newsletter__form', attributes: {'data-newsletter': ''}, [
+                input(
+                  classes: 'newsletter__input',
+                  attributes: const {
+                    'type': 'email', 'name': 'email',
+                    'placeholder': 'email@example.com',
+                    'required': '', 'autocomplete': 'email',
+                    'aria-label': 'Email address',
+                  },
+                ),
+                button(classes: 'newsletter__btn', attributes: const {'type': 'submit'}, [
+                  text('اشترك · Subscribe'),
+                ]),
+              ]),
+              div(classes: 'newsletter__msg', attributes: {'data-newsletter-msg': ''}, [text('')]),
+            ]),
           ]),
         ]),
       ]),
       SiteFooter(),
+      // Sidebar active-section tracking + newsletter handler
+      script(content: _sidebarScript),
     ]);
   }
 }
@@ -103,7 +143,7 @@ Component _renderBody({required BlogPost post, required String body}) {
       extensionSet: md.ExtensionSet.gitHubWeb,
       inlineSyntaxes: [md.InlineHtmlSyntax()],
     );
-    return div(classes: 'post-body', [raw(html)]);
+    return div(classes: 'post-body', [raw(html), script(content: _footnoteHighlightScript)]);
   }
 
   final parsed = parseBody(body);
@@ -167,6 +207,7 @@ Component _renderBody({required BlogPost post, required String body}) {
 
     // Client-side expand/collapse script.
     script(content: _pinToggleScript),
+    script(content: _footnoteHighlightScript),
   ]);
 }
 
@@ -228,22 +269,31 @@ Component _renderPinnedRow({
 }
 
 /// Renders a dimmed in-place repeat of a pinned section at its natural
-/// position in the article. Title-only, ghosted, with ★ note.
+/// position in the article. Full body shown with a subtle dimmed border,
+/// plus a ★ pinned note.
 Component _renderDimmedRepeat({
   required SectionChunk chunk,
   required Section? meta,
 }) {
   final date = meta?.lastModified ?? '';
-  return div(classes: 'dimmed-pinned-repeat', [
-    div([
+  final newlineAt = chunk.markdown.indexOf('\n');
+  final bodyAfterHeading = newlineAt < 0 ? '' : chunk.markdown.substring(newlineAt + 1);
+  final inner = md.markdownToHtml(
+    bodyAfterHeading,
+    extensionSet: md.ExtensionSet.gitHubWeb,
+    inlineSyntaxes: [md.InlineHtmlSyntax()],
+  );
+  return div(classes: 'dimmed-pinned-repeat', attributes: {'id': chunk.anchor}, [
+    div(classes: 'dimmed-pinned-repeat__header', [
       div(classes: 'dimmed-pinned-repeat__note', [
         text('★ مثبتة'),
         span(classes: 'dimmed-pinned-repeat__note-sep', [text('·')]),
         text('هذا القسم مثبت في الأعلى'),
       ]),
       span(classes: 'dimmed-pinned-repeat__title', [text(chunk.title)]),
+      if (date.isNotEmpty) span(classes: 'dimmed-pinned-repeat__date', [text(date)]),
     ]),
-    if (date.isNotEmpty) span(classes: 'dimmed-pinned-repeat__date', [text(date)]),
+    div(classes: 'dimmed-pinned-repeat__body', [raw(inner)]),
   ]);
 }
 
@@ -346,7 +396,95 @@ const _pinToggleScript = r'''
 })();
 ''';
 
+/// Client-side script for footnote/reference highlight on click.
+const _footnoteHighlightScript = r'''
+(function(){
+  function flashRef(id){
+    var el = document.getElementById(id);
+    if(!el || !el.closest('.ref-list')) return;
+    el.classList.remove('ref-flash');
+    void el.offsetWidth;
+    el.classList.add('ref-flash');
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(function(){ el.classList.remove('ref-flash'); }, 5500);
+  }
+  function flashFn(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('fn-flash');
+    void el.offsetWidth;
+    el.classList.add('fn-flash');
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(function(){ el.classList.remove('fn-flash'); }, 5500);
+  }
+
+  // Auto-ID each .fn span and insert back-links in ref list
+  var seen = {};
+  document.querySelectorAll('.post-body .fn').forEach(function(fn, i){
+    var a = fn.querySelector('a');
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(href.charAt(0) !== '#') return;
+    var refId = href.substring(1);
+    // Add fn-ID for back-linking (fn-1, fn-1b for duplicates)
+    var fnId = 'fn-' + refId.replace('ref-', '');
+    if(seen[fnId]) fnId = fnId + 'b';
+    seen[fnId] = true;
+    fn.id = fnId;
+    // Insert back-arrow into the matching ref list item
+    var refLi = document.getElementById(refId);
+    if(refLi){
+      var back = document.createElement('a');
+      back.href = '#' + fnId;
+      back.className = 'ref-back';
+      back.textContent = '↑';
+      back.addEventListener('click', function(e){
+        e.preventDefault();
+        flashFn(fnId);
+        history.replaceState(null, '', '#' + fnId);
+      });
+      refLi.querySelector('.ref-num').appendChild(back);
+    }
+    // Handle clicks on footnote links
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      flashRef(refId);
+      history.replaceState(null, '', '#' + refId);
+    });
+  });
+
+  // Make external links in post body open in new tab
+  document.querySelectorAll('.post-body a').forEach(function(a){
+    var href = a.getAttribute('href') || '';
+    if(href.indexOf('://') > -1 || href.indexOf('doi.org') > -1){
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+  // Handle initial page load with hash
+  if(location.hash){
+    setTimeout(function(){
+      var hash = location.hash.substring(1);
+      if(hash.indexOf('ref-') === 0) flashRef(hash);
+      else flashFn(hash);
+    }, 300);
+  }
+})();
+''';
+
 /// Extracts FAQ Q/A pairs from the markdown body. Looks for a section
+/// Extracts H2 headings from the markdown body for the TOC sidebar.
+List<({String id, String text, int level})> _extractHeadings(String rawBody) {
+  final body = rawBody.replaceAll('\r\n', '\n');
+  final headings = <({String id, String text, int level})>[];
+  final h2Re = RegExp(r'^##\s+(.+?)\s*$', multiLine: true);
+  for (final m in h2Re.allMatches(body)) {
+    final title = m.group(1)!.trim();
+    headings.add((id: slugify(title), text: title, level: 2));
+  }
+  return headings;
+}
+
 /// starting with `## أسئلة شائعة` (or "FAQ"/"Frequently") and collects
 /// pairs of `**Question?**\nAnswer` within it.
 List<({String q, String a})> _parseFaq(String rawBody) {
@@ -383,3 +521,57 @@ List<({String q, String a})> _parseFaq(String rawBody) {
   }
   return pairs;
 }
+
+/// Client-side script for sidebar active-section tracking + newsletter.
+const _sidebarScript = r'''
+(function(){
+  // Active TOC tracking
+  var tocLinks = document.querySelectorAll('.toc__link');
+  var sections = [];
+  tocLinks.forEach(function(link){
+    var id = link.getAttribute('href');
+    if(!id || id.charAt(0) !== '#') return;
+    var targetId = id.substring(1);
+    var el = document.getElementById(targetId);
+    if(el) sections.push({el: el, link: link});
+    // Prevent base href from hijacking anchor links
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      if(el){
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+        history.replaceState(null, '', '#' + targetId);
+      }
+    });
+  });
+  if(sections.length){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          tocLinks.forEach(function(l){ l.classList.remove('active'); });
+          var match = sections.find(function(s){ return s.el === entry.target; });
+          if(match) match.link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-20% 0px -70% 0px'});
+    sections.forEach(function(s){ observer.observe(s.el); });
+  }
+
+  // Newsletter form
+  var form = document.querySelector('[data-newsletter]');
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var msg = document.querySelector('[data-newsletter-msg]');
+      var email = form.querySelector('input[name=email]');
+      if(!email || !email.value) return;
+      if(msg){
+        msg.textContent = '✓ شكراً! تم التسجيل · Thanks for subscribing!';
+        msg.classList.add('success');
+      }
+      email.value = '';
+      form.querySelector('button').disabled = true;
+      form.querySelector('button').textContent = 'تم · Done';
+    });
+  }
+})();
+''';
