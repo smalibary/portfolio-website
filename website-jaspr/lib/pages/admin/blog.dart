@@ -153,6 +153,7 @@ class AdminBlogPage extends StatelessComponent {
     \$\$('.adm [data-field]').forEach(function(el){
       var k = el.dataset.field;
       if (k === 'body') el.value = data.body || '';
+      else if (k === 'takeaways') { var ta = Array.isArray(meta[k]) ? meta[k] : []; el.value = ta.join('\\n'); }
       else if (meta[k] !== undefined && meta[k] !== null) el.value = meta[k];
       else el.value = '';
     });
@@ -379,6 +380,8 @@ class AdminBlogPage extends StatelessComponent {
     });
     meta.tags = readTags();
     meta.sections = readSections();
+    var taEl = \$('.adm [data-field="takeaways"]');
+    if (taEl) meta.takeaways = taEl.value.split('\\n').map(function(l){return l.trim();}).filter(Boolean);
     var bodyEl = \$('.adm [data-field="body"]');
     return { meta: meta, body: bodyEl ? bodyEl.value : '' };
   }
@@ -606,6 +609,8 @@ class AdminBlogPage extends StatelessComponent {
               _field('وقت القراءة · READING TIME (min)', '', 'reading_time', type: InputType.number),
               _field('اللغة · LANGUAGE', '', 'language', hint: 'ar / en'),
             ]),
+            _textarea('خلاصة المقال · KEY TAKEAWAYS', '', 'takeaways', rows: 6),
+            div(classes: 'hint', [text('One line per takeaway. Supports **bold** and [links](url).')]),
           ]),
 
           // SECTIONS tab — live-document section management (#101)
