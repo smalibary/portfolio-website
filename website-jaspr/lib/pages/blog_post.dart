@@ -107,14 +107,13 @@ Component _renderBody({required BlogPost post, required String body}) {
   }
 
   final parsed = parseBody(body);
-  final pinnedFirst = <SectionChunk>[];
-  final rest = <SectionChunk>[];
+  final pinnedChunks = <SectionChunk>[];
+  final pinnedAnchors = <String>{};
   for (final s in parsed.sections) {
     final meta = post.sectionByAnchor(s.anchor);
     if (meta != null && meta.pinned) {
-      pinnedFirst.add(s);
-    } else {
-      rest.add(s);
+      pinnedChunks.add(s);
+      pinnedAnchors.add(s.anchor);
     }
   }
 
@@ -129,33 +128,53 @@ Component _renderBody({required BlogPost post, required String body}) {
         )),
       ]),
 
-    // Pinned sections — promoted to top, wrapped in a labelled block so the
-    // reader knows these aren't the article's natural flow.
-    if (pinnedFirst.isNotEmpty)
+    // Pinned sections — title-only rows in a teal-bordered block.
+    if (pinnedChunks.isNotEmpty)
       div(classes: 'post-pinned-block', [
-        div(classes: 'post-pinned-block__label', [
-          raw('★ مثبتة · PINNED BY AUTHOR'),
+        div(classes: 'post-pinned-block__header', [
+          span(classes: 'pinned-badge', [text('★ مثبتة')]),
+          button(
+            classes: 'pinned-expand-all',
+            attributes: {'type': 'button', 'data-pin-expand-all': ''},
+            [text('توسيع الكل · Expand all')],
+          ),
         ]),
-        for (final chunk in pinnedFirst)
-          _renderSection(chunk: chunk, meta: post.sectionByAnchor(chunk.anchor), pinned: true),
+        for (final chunk in pinnedChunks)
+          _renderPinnedRow(chunk: chunk, meta: post.sectionByAnchor(chunk.anchor)),
       ]),
 
-    // Remaining sections in original order.
-    for (final chunk in rest)
-      _renderSection(chunk: chunk, meta: post.sectionByAnchor(chunk.anchor), pinned: false),
+    // Takeaways box — rendered after pinned block, before article body.
+    if (post.takeaways.isNotEmpty)
+      div(classes: 'post-takeaways', [
+        span(classes: 'post-takeaways__badge', [text('● خلاصة المقال · KEY TAKEAWAYS')]),
+        ul([
+          for (final t in post.takeaways)
+            li([raw(md.markdownToHtml(
+              t,
+              extensionSet: md.ExtensionSet.gitHubWeb,
+              inlineSyntaxes: [md.InlineHtmlSyntax()],
+            ))]),
+        ]),
+      ]),
+
+    // All sections in original document order. Pinned sections that were
+    // promoted to the top block also appear here as dimmed repeats.
+    for (final chunk in parsed.sections)
+      if (pinnedAnchors.contains(chunk.anchor))
+        _renderDimmedRepeat(chunk: chunk, meta: post.sectionByAnchor(chunk.anchor))
+      else
+        _renderSection(chunk: chunk, meta: post.sectionByAnchor(chunk.anchor)),
+
+    // Client-side expand/collapse script.
+    script(content: _pinToggleScript),
   ]);
 }
 
-/// Renders one section: heading (with anchor id) + meta line (date + pin pill
-/// + optional subtopic) + body. The H2 line is stripped from the chunk
-/// before markdown rendering since we render the heading manually to get
-/// the anchor id and meta line in.
+/// Renders one regular (non-pinned) section: heading + meta line + body.
 Component _renderSection({
   required SectionChunk chunk,
   required Section? meta,
-  required bool pinned,
 }) {
-  // Strip the leading `## heading` line; render the rest via markdown.
   final newlineAt = chunk.markdown.indexOf('\n');
   final bodyAfterHeading = newlineAt < 0 ? '' : chunk.markdown.substring(newlineAt + 1);
   final inner = md.markdownToHtml(
@@ -165,13 +184,12 @@ Component _renderSection({
   );
 
   return section(
-    classes: 'post-section${pinned ? ' post-section--pinned' : ''}',
+    classes: 'post-section',
     attributes: {'id': chunk.anchor},
     [
       h2(classes: 'post-section__title', [text(chunk.title)]),
-      if (meta != null && (meta.lastModified.isNotEmpty || pinned || meta.subtopic.isNotEmpty))
+      if (meta != null && (meta.lastModified.isNotEmpty || meta.subtopic.isNotEmpty))
         div(classes: 'post-section__meta', [
-          if (pinned) span(classes: 'section-pin-pill', [text('PINNED')]),
           if (meta.subtopic.isNotEmpty)
             span(classes: 'section-subtopic', [text(meta.subtopic)]),
           if (meta.lastModified.isNotEmpty)
@@ -180,6 +198,53 @@ Component _renderSection({
       div(classes: 'post-section__body', [raw(inner)]),
     ],
   );
+}
+
+/// Renders one pinned section as a title-only row with date + expand arrow.
+/// The full body is rendered but hidden; toggled by client-side JS.
+Component _renderPinnedRow({
+  required SectionChunk chunk,
+  required Section? meta,
+}) {
+  final newlineAt = chunk.markdown.indexOf('\n');
+  final bodyAfterHeading = newlineAt < 0 ? '' : chunk.markdown.substring(newlineAt + 1);
+  final inner = md.markdownToHtml(
+    bodyAfterHeading,
+    extensionSet: md.ExtensionSet.gitHubWeb,
+    inlineSyntaxes: [md.InlineHtmlSyntax()],
+  );
+  final date = meta?.lastModified ?? '';
+
+  return div(classes: 'post-pinned-section', attributes: {'data-pin-section': ''}, [
+    div(classes: 'post-pinned-section__row', [
+      span(classes: 'post-pinned-section__title', [text(chunk.title)]),
+      div(classes: 'post-pinned-section__meta', [
+        if (date.isNotEmpty) span(classes: 'post-pinned-section__date', [text(date)]),
+        span(classes: 'post-pinned-section__arrow', [text('▼')]),
+      ]),
+    ]),
+    div(classes: 'post-pinned-section__body', [raw(inner)]),
+  ]);
+}
+
+/// Renders a dimmed in-place repeat of a pinned section at its natural
+/// position in the article. Title-only, ghosted, with ★ note.
+Component _renderDimmedRepeat({
+  required SectionChunk chunk,
+  required Section? meta,
+}) {
+  final date = meta?.lastModified ?? '';
+  return div(classes: 'dimmed-pinned-repeat', [
+    div([
+      div(classes: 'dimmed-pinned-repeat__note', [
+        text('★ مثبتة'),
+        span(classes: 'dimmed-pinned-repeat__note-sep', [text('·')]),
+        text('هذا القسم مثبت في الأعلى'),
+      ]),
+      span(classes: 'dimmed-pinned-repeat__title', [text(chunk.title)]),
+    ]),
+    if (date.isNotEmpty) span(classes: 'dimmed-pinned-repeat__date', [text(date)]),
+  ]);
 }
 
 /// Builds a schema.org/Article JSON-LD payload as a JSON string.
@@ -247,6 +312,39 @@ String _buildFaqSchema(List<({String q, String a})> pairs) {
   };
   return const JsonEncoder.withIndent('  ').convert(data);
 }
+
+/// Client-side script for pinned section expand/collapse and "expand all".
+const _pinToggleScript = r'''
+(function(){
+  function toggle(el){
+    var body = el.querySelector('.post-pinned-section__body');
+    var arrow = el.querySelector('.post-pinned-section__arrow');
+    if(!body) return;
+    var open = body.classList.toggle('open');
+    if(arrow) arrow.classList.toggle('open', open);
+  }
+  document.querySelectorAll('[data-pin-section]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      if(e.target.closest('.post-pinned-section__body')) return;
+      toggle(el);
+    });
+  });
+  document.querySelectorAll('[data-pin-expand-all]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var block = btn.closest('.post-pinned-block');
+      if(!block) return;
+      var bodies = block.querySelectorAll('.post-pinned-section__body');
+      var arrows = block.querySelectorAll('.post-pinned-section__arrow');
+      var anyClosed = false;
+      bodies.forEach(function(b){ if(!b.classList.contains('open')) anyClosed = true; });
+      bodies.forEach(function(b){ b.classList.toggle('open', anyClosed); });
+      arrows.forEach(function(a){ a.classList.toggle('open', anyClosed); });
+      btn.textContent = anyClosed ? 'توسيع أقل · Collapse all' : 'توسيع الكل · Expand all';
+    });
+  });
+})();
+''';
 
 /// Extracts FAQ Q/A pairs from the markdown body. Looks for a section
 /// starting with `## أسئلة شائعة` (or "FAQ"/"Frequently") and collects
