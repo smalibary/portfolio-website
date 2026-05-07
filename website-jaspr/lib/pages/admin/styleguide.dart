@@ -97,8 +97,8 @@ class StyleguidePage extends StatelessComponent {
           // ── Borders ──
           _section('الحدود', 'BORDERS', [
             div(classes: 'sg-border-row', [
-              _borderBox('var(--border-rule-val)', 'border-rule'),
-              _borderBox('var(--border-accent-val)', 'border-accent'),
+              _borderBox('var(--border-rule)', 'border-rule'),
+              _borderBox('var(--border-accent)', 'border-accent'),
               _borderBox(
                 'none; border-inline-start: var(--border-bar-w) solid var(--accent)',
                 'border-bar',
