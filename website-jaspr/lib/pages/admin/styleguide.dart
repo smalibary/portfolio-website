@@ -393,7 +393,7 @@ const _css = r'''
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: var(--bg-elev);
+  background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   min-width: 260px;
@@ -527,7 +527,7 @@ const _css = r'''
   justify-content: center;
   width: 160px;
   height: 64px;
-  background: var(--bg-elev);
+  background: var(--color-surface-elevated);
   border-radius: var(--radius-sm);
 }
 
