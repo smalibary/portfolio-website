@@ -274,7 +274,7 @@ main, nav, footer { position: relative; z-index: 1; }
   transform: translateY(-3px); box-shadow: var(--shadow-card);
 }
 .card--published { --card-accent: var(--accent); }
-.card--active { --card-accent: var(--accent-warm); }
+.card--active { --card-accent: var(--color-status-warm); }
 .card--design { --card-accent: var(--color-status-cool); }
 .card__head {
   display: flex; justify-content: space-between; align-items: center;
@@ -287,8 +287,8 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .pill--published { color: var(--accent); border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, transparent); }
-.pill--active { color: var(--accent-warm); border-color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent); }
+.pill--active { color: var(--color-status-warm); border-color: var(--color-status-warm);
+  background: color-mix(in srgb, var(--color-status-warm) 8%, transparent); }
 .pill--design { color: var(--color-status-cool); border-color: var(--color-status-cool);
   background: color-mix(in srgb, var(--color-status-cool) 8%, transparent); }
 .card__index {
