@@ -112,7 +112,7 @@ class StyleguidePage extends StatelessComponent {
               classes: 'sg-shadow-box',
               attributes: {
                 'style':
-                    'box-shadow: var(--shadow); border-radius: var(--radius-sm);',
+                    'box-shadow: var(--shadow-card); border-radius: var(--radius-sm);',
               },
               [
                 span(classes: 'sg-label', [text('--shadow')]),
