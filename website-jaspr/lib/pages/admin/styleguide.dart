@@ -627,7 +627,7 @@ const _css = r'''
 }
 .adm .sg-main .theme-toggle button.active {
   background: var(--accent);
-  color: var(--color-surface-page);
+  color: var(--color-surface-page); /* TODO(token-semantics): should be --color-interactive-primary-text — see TODO_TOKENS.md */
   font-weight: 500;
 }
 
