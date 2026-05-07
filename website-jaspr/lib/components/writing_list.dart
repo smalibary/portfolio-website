@@ -23,7 +23,7 @@ class WritingList extends StatelessComponent {
       else
         div(classes: 'writing__list', [
           for (final p in posts)
-            a(href: p.href, classes: 'writing__item', [
+            a(href: p.href, classes: 'writing__item sq-bar', [
               div(classes: 'writing__date', [text(p.date)]),
               div(classes: 'bili', [
                 div(classes: 'bili__primary', [
