@@ -133,7 +133,22 @@ the following must be true** before merging. Treat this as a checklist.
 - The save server (`:9090`) is local-only. Never expose it.
 - If admin ever needs to leave localhost, `#98` (real auth) must ship first.
 
-## 10. Don'ts (consolidated)
+## 10. Visual work — verify before showing
+
+Any visual task (CSS changes, layout tweaks, new components, design fixes)
+must go through this loop before being shown to Salem:
+
+1. Make the change
+2. Use `agent-browser` to take a screenshot
+3. Evaluate: does it look right? Check alignment, spacing, consistency with `DESIGN.md` tokens
+4. If something is off — fix it and re-screenshot. Repeat until it looks good
+5. Only then tell Salem to check
+
+**Don't show broken work.** Iterate silently with screenshots until it passes
+your own eye, then hand it over. This applies to every visual change — no
+exceptions.
+
+## 11. Don'ts (consolidated)
 
 - Don't hardcode site copy in Dart components — yaml first, loader second
 - Don't reference files in `inbox/` from production code; move them first
