@@ -538,7 +538,7 @@ const _css = r'''
   justify-content: center;
   width: 200px;
   height: 80px;
-  background: var(--bg-card);
+  background: var(--color-surface-card);
 }
 
 /* ── Components ── */
@@ -592,7 +592,7 @@ const _css = r'''
 
 /* Card — reset admin overrides back to public-site styles */
 .adm .sg-main .card {
-  background: var(--bg-card);
+  background: var(--color-surface-card);
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
   padding: var(--space-6);
@@ -607,7 +607,7 @@ const _css = r'''
 .adm .sg-main .theme-toggle {
   display: inline-flex;
   width: fit-content;
-  background: var(--bg-card);
+  background: var(--color-surface-card);
   border: 1px solid var(--rule);
   border-radius: var(--radius-sharp);
   padding: var(--space-0-5);

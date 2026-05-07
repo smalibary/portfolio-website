@@ -83,7 +83,7 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .nav__menu a:hover { color: var(--ink); }
 .theme-toggle {
-  display: flex; background: var(--bg-card);
+  display: flex; background: var(--color-surface-card);
   border: var(--border-rule); border-radius: var(--c-pill-radius); padding: var(--c-toggle-pad);
   direction: ltr;
 }
@@ -187,7 +187,7 @@ main, nav, footer { position: relative; z-index: 1; }
   display: flex; align-items: center; justify-content: center;
   width: var(--c-social-size); height: var(--c-social-size);
   border-radius: 100px;
-  background: var(--bg-card);
+  background: var(--color-surface-card);
   border: var(--border-rule);
   color: var(--ink-muted);
   text-decoration: none;
@@ -209,7 +209,7 @@ main, nav, footer { position: relative; z-index: 1; }
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
-  background: var(--bg-card);
+  background: var(--color-surface-card);
   box-shadow: var(--shadow-card);
   border: var(--border-rule);
 }
@@ -256,7 +256,7 @@ main, nav, footer { position: relative; z-index: 1; }
   display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4);
 }
 .card {
-  background: var(--bg-card); border: var(--border-rule);
+  background: var(--color-surface-card); border: var(--border-rule);
   border-radius: var(--c-card-radius); padding: var(--c-card-pad);
   display: flex; flex-direction: column;
   min-height: var(--c-card-min-h);
