@@ -1,9 +1,9 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
-/// Top bar shown across admin pages. Section name on the left, save state +
-/// optional action button on the right. Picker dropdown comes in V3 phase 2 —
-/// for now this is a static label.
+/// Role: chrome
+/// Header bar for admin pages: section name + subtitle on the left,
+/// save state + optional action button on the right.
 class AdminTopbar extends StatelessComponent {
   const AdminTopbar({
     required this.sectionAr,

@@ -1,6 +1,8 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
+/// Role: chrome
+/// Site-wide footer with year, social text-links, and admin-login lock icon.
 class SiteFooter extends StatelessComponent {
   const SiteFooter({super.key});
 

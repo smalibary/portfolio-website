@@ -1,9 +1,9 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
-/// Vertical rail with section navigation. The `current` arg picks the active
-/// item ('profile' / 'blog' / 'research'). Logout JS clears the auth flag and
-/// returns to /admin/login.
+/// Role: chrome
+/// Vertical navigation rail for admin pages. `current` picks the active item
+/// (profile / blog / research); embeds logout and theme-toggle inline JS.
 class AdminRail extends StatelessComponent {
   const AdminRail({required this.current, super.key});
   final String current;

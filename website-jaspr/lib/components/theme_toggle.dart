@@ -1,8 +1,9 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
-/// Theme toggle (dark/light). Uses tiny inline JS for client-side switching
-/// — no Dart hydration needed, keeps the bundle small.
+/// Role: atom
+/// Side-effecting: pair of icon buttons that switch document data-theme
+/// via inline JS. No Dart hydration, keeps the client bundle small.
 class ThemeToggle extends StatelessComponent {
   const ThemeToggle({super.key});
 

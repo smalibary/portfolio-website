@@ -3,6 +3,8 @@ import 'package:jaspr/dom.dart';
 
 import '../data/blog_data.dart';
 
+/// Role: section
+/// Section listing recent blog posts; used on home and /writing.
 class WritingList extends StatelessComponent {
   const WritingList({required this.posts, super.key});
   final List<BlogPost> posts;

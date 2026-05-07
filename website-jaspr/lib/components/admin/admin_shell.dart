@@ -3,8 +3,9 @@ import 'package:jaspr/dom.dart';
 
 import 'rail.dart';
 
-/// Wraps an admin page in the standard shell: auth gate + rail + body slot.
-/// Topbar and main are passed in so each page controls its own structure.
+/// Role: layout
+/// Layout shell for /admin/* pages — runs the auth gate, mounts the rail,
+/// and slots the page-specific body. Topbar and main are passed in by each page.
 class AdminShell extends StatelessComponent {
   const AdminShell({
     required this.current,

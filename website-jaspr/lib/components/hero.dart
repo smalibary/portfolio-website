@@ -4,6 +4,8 @@ import 'package:jaspr/dom.dart';
 import '../data/site_data.dart';
 import 'social_icons.dart';
 
+/// Role: section
+/// Home-page hero with bilingual name, status line, and lede paragraph.
 class Hero extends StatelessComponent {
   const Hero({required this.site, super.key});
   final SiteData site;

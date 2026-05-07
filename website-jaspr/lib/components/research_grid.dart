@@ -3,6 +3,8 @@ import 'package:jaspr/dom.dart';
 
 import '../data/paper_data.dart';
 
+/// Role: section
+/// Home-page grid of visible research papers, sourced from papers.yaml.
 class ResearchGrid extends StatelessComponent {
   const ResearchGrid({required this.papers, super.key});
   final List<Paper> papers;
