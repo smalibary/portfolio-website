@@ -26,8 +26,7 @@ class AdminTopbar extends StatelessComponent {
         if (subtitle != null) ...[
           span(classes: 'section-en', [text('/')]),
           span(
-            classes: 'section-en',
-            attributes: const {'style': 'color: var(--accent);'},
+            classes: 'section-en section-en--accent',
             [text(subtitle!)],
           ),
         ],
