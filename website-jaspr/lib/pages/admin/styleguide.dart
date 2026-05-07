@@ -12,231 +12,177 @@ class StyleguidePage extends StatelessComponent {
   Component build(BuildContext context) {
     return AdminShell(
       current: 'styleguide',
-      body: [
-        header(classes: 'topbar', [
-          div(classes: 'topbar-l', [
-            span(style: {'font-size': 'var(--text-sm)', 'opacity': '0.6', 'font-family': 'JetBrains Mono, monospace', 'letter-spacing': '0.08em'}, [
-              text('ADMIN · STYLE GUIDE'),
-            ]),
-          ]),
-          div(classes: 'topbar-r', []),
+      body: [div(classes: 'styleguide', [
+        // Inline CSS for the styleguide layout
+        script(
+          attributes: const {'type': 'text/css'},
+          content: _css,
+        ),
+        main_(classes: 'sg-main', [
+          _section('Colours', _colors()),
+          _section('Spacing Scale', _spacing()),
+          _section('Radius Scale', _radius()),
+          _section('Typography', _typography()),
+          _section('Components', _components()),
         ]),
-
-        main_(classes: 'main', style: {'padding': '32px', 'max-width': '900px'}, [
-          _section('1. Colour Tokens', _colourSection()),
-          _section('2. Spacing Scale', _spacingSection()),
-          _section('3. Radius Scale', _radiusSection()),
-          _section('4. Typography Scale', _typographySection()),
-          _section('5. Components', _componentsSection()),
-        ]),
-      ],
+      ])],
     );
   }
 
-  // ---------- layout helpers ----------
-
-  Component _section(String title, Component content) {
-    return div(style: {'margin-bottom': '56px'}, [
-      h2(style: {
-        'font-family': 'JetBrains Mono, monospace',
-        'font-size': 'var(--text-sm)',
-        'letter-spacing': '0.08em',
-        'color': 'var(--accent)',
-        'margin-bottom': '20px',
-        'padding-bottom': '8px',
-        'border-bottom': '1px solid var(--rule)',
-      }, [text(title)]),
-      content,
+  Component _section(String title, List<Component> children) {
+    return div(classes: 'sg-section', [
+      h2(classes: 'sg-h2', [text(title)]),
+      div(classes: 'sg-section-body', children),
     ]);
   }
 
-  Component _label(String text_) {
-    return span(style: {
-      'font-family': 'JetBrains Mono, monospace',
-      'font-size': '10px',
-      'color': 'var(--ink-muted)',
-      'display': 'block',
-      'margin-top': '6px',
-    }, [text(text_)]);
-  }
-
-  // ---------- 1. Colours ----------
-
-  Component _colourSection() {
+  List<Component> _colors() {
     const tokens = [
-      ('--accent', 'accent'),
-      ('--bg', 'bg'),
-      ('--bg-elev', 'bg-elev'),
-      ('--bg-card', 'bg-card'),
-      ('--ink', 'ink'),
-      ('--ink-muted', 'ink-muted'),
-      ('--ink-faint', 'ink-faint'),
-      ('--rule', 'rule'),
+      '--bg', '--bg-elev', '--bg-card',
+      '--ink', '--ink-muted', '--ink-faint',
+      '--rule', '--accent', '--accent-warm', '--accent-cool',
     ];
-
-    return div(style: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': '16px'}, [
-      for (final (token, name) in tokens)
-        div(style: {'text-align': 'center'}, [
-          div(style: {
-            'width': '48px',
-            'height': '48px',
-            'background': 'var($token)',
-            'border': '1px solid var(--rule)',
-            'border-radius': 'var(--radius-sharp)',
-          }, []),
-          _label(name),
-          _label(token),
-        ]),
-    ]);
+    return [
+      div(classes: 'sg-color-grid', [
+        for (final t in tokens)
+          div(classes: 'sg-color-item', [
+            div(classes: 'sg-swatch', attributes: {'style': 'background:var($t)'}, []),
+            span(classes: 'sg-label', [text(t)]),
+          ]),
+      ]),
+    ];
   }
 
-  // ---------- 2. Spacing ----------
-
-  Component _spacingSection() {
+  List<Component> _spacing() {
     const tokens = [
-      ('--space-0-5', '2px'),
-      ('--space-1', '4px'),
-      ('--space-1-5', '6px'),
-      ('--space-2', '8px'),
-      ('--space-2-5', '10px'),
-      ('--space-3', '12px'),
-      ('--space-4', '16px'),
-      ('--space-5', '20px'),
-      ('--space-6', '24px'),
-      ('--space-8', '32px'),
-      ('--space-12', '48px'),
-      ('--space-16', '64px'),
+      '--space-0-5', '--space-1', '--space-1-5', '--space-2',
+      '--space-2-5', '--space-3', '--space-4', '--space-5',
+      '--space-6', '--space-8', '--space-12', '--space-16',
     ];
-
-    return div(style: {'display': 'flex', 'flex-direction': 'column', 'gap': '10px'}, [
-      for (final (token, px) in tokens)
-        div(style: {'display': 'flex', 'align-items': 'center', 'gap': '12px'}, [
-          div(style: {
-            'height': 'var($token)',
-            'width': '120px',
-            'background': 'var(--accent)',
-            'display': 'block',
-            'flex-shrink': '0',
-          }, []),
-          span(style: {
-            'font-family': 'JetBrains Mono, monospace',
-            'font-size': '11px',
-            'color': 'var(--ink-muted)',
-          }, [text('$token  ·  $px')]),
-        ]),
-    ]);
+    return [
+      div(classes: 'sg-spacing-list', [
+        for (final t in tokens)
+          div(classes: 'sg-spacing-row', [
+            span(classes: 'sg-bar sg-bar-accent', attributes: {'style': 'width:var($t)'}, []),
+            span(classes: 'sg-label', [text('$t → \${} (see actual width)')]),
+          ]),
+      ]),
+    ];
   }
 
-  // ---------- 3. Radius ----------
+  List<Component> _radius() {
+    const tokens = ['--radius-sharp', '--radius-sm', '--radius-md'];
+    return [
+      div(classes: 'sg-radius-row', [
+        for (final t in tokens)
+          div(classes: 'sg-radius-box', attributes: {'style': 'border-radius:var($t)'}, [
+            span(classes: 'sg-label', [text(t)]),
+          ]),
+      ]),
+    ];
+  }
 
-  Component _radiusSection() {
+  List<Component> _typography() {
     const tokens = [
-      ('--radius-sharp', '2px'),
-      ('--radius-sm', '4px'),
-      ('--radius-md', '8px'),
+      '--text-xs', '--text-sm', '--text-base', '--text-md',
+      '--text-lg', '--text-xl', '--text-2xl', '--text-3xl',
     ];
-
-    return div(style: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': '24px'}, [
-      for (final (token, px) in tokens)
-        div(style: {'text-align': 'center'}, [
-          div(style: {
-            'width': '64px',
-            'height': '32px',
-            'border': '2px solid var(--accent)',
-            'border-radius': 'var($token)',
-          }, []),
-          _label(token),
-          _label(px),
-        ]),
-    ]);
+    return [
+      div(classes: 'sg-type-list', [
+        for (final t in tokens)
+          div(classes: 'sg-type-row', [
+            span(classes: 'sg-type-sample', attributes: {'style': 'font-size:var($t)'}, [text('Salem سالم')]),
+            span(classes: 'sg-label', [text(t)]),
+          ]),
+      ]),
+    ];
   }
 
-  // ---------- 4. Typography ----------
-
-  Component _typographySection() {
-    const tokens = [
-      ('--text-xs', '10px'),
-      ('--text-sm', '12px'),
-      ('--text-base', '14px'),
-      ('--text-md', '16px'),
-      ('--text-lg', '18px'),
-      ('--text-xl', '20px'),
-      ('--text-2xl', '28px'),
-      ('--text-3xl', '34px'),
-    ];
-
-    return div(style: {'display': 'flex', 'flex-direction': 'column', 'gap': '12px'}, [
-      for (final (token, px) in tokens)
-        div(style: {'display': 'flex', 'align-items': 'baseline', 'gap': '16px'}, [
-          span(style: {
-            'font-size': 'var($token)',
-            'color': 'var(--ink)',
-            'min-width': '60px',
-          }, [text('Aa أأ')]),
-          span(style: {
-            'font-family': 'JetBrains Mono, monospace',
-            'font-size': '11px',
-            'color': 'var(--ink-muted)',
-          }, [text('$token  ·  $px')]),
+  List<Component> _components() {
+    return [
+      // Card sample
+      p([text('Card:')]),
+      div(classes: 'sg-comp card', [
+        div(classes: 'card__head', [
+          span(classes: 'pill pill--published', [text('PUBLISHED')]),
+          span(classes: 'card__index', [text('sample_01')]),
         ]),
-    ]);
-  }
+        div(classes: 'card__metric', [text('g = −0.67')]),
+        div(classes: 'card__metric-label', [text('95% CI [−1.16, −0.18] · 16 studies')]),
+        div(classes: 'card__title-ar', [text('عنوان تجريبي للمكون')]),
+        div(classes: 'card__title-en', [text('Sample component title')]),
+      ]),
 
-  // ---------- 5. Components ----------
-
-  Component _componentsSection() {
-    return div(style: {'display': 'flex', 'flex-direction': 'column', 'gap': '32px'}, [
-      _componentRow('pill', [
+      // Pills
+      p([text('Pills:')]),
+      div(classes: 'sg-comp-row', [
         span(classes: 'pill pill--published', [text('PUBLISHED')]),
-        span(style: {'width': '8px'}, []),
-        span(classes: 'pill pill--active', [text('ACTIVE')]),
-        span(style: {'width': '8px'}, []),
-        span(classes: 'pill pill--design', [text('DESIGN')]),
+        span(classes: 'pill pill--active', [text('IN FIELD')]),
+        span(classes: 'pill pill--design', [text('IN DESIGN')]),
       ]),
 
-      _componentRow('tag-pill', [
-        span(classes: 'tag-pill', [text('research')]),
-        span(style: {'width': '8px'}, []),
-        span(classes: 'tag-pill tag-pill--header', [text('IEQ')]),
+      // Tags
+      p([text('Tags:')]),
+      div(classes: 'sg-comp-row', [
+        a(href: '#', classes: 'tag-pill', [text('#architecture')]),
+        a(href: '#', classes: 'tag-pill', [text('#psychology')]),
+        a(href: '#', classes: 'tag-pill', [text('#research')]),
       ]),
 
-      _componentRow('sq-mark / sq-mark--sm', [
-        div(classes: 'sq-mark', []),
-        span(style: {'width': '12px'}, []),
-        div(classes: 'sq-mark sq-mark--sm', []),
+      // Toggle
+      p([text('Theme toggle:')]),
+      div(classes: 'theme-toggle', attributes: {'dir': 'ltr'}, [
+        button(classes: 'theme-toggle active-sim', [text('dark')]),
+        button(classes: 'theme-toggle', [text('light')]),
       ]),
 
-      _componentRow('card', [
-        a(
-          href: '#',
-          classes: 'card card--published',
-          [
-            div(classes: 'card__head', [
-              span(classes: 'pill pill--published', [text('PUBLISHED')]),
-              span(classes: 'card__index', [text('01')]),
-            ]),
-            div(classes: 'card__title-ar', [text('عنوان المقال')]),
-            div(classes: 'card__title-en', [text('Article Title Example')]),
-            div(classes: 'card__caption', [text('2 min · 400 words')]),
-          ],
-        ),
-      ]),
+      // Input
+      p([text('Input:')]),
+      input(classes: 'newsletter__input', attributes: const {
+        'type': 'email', 'placeholder': 'email@example.com',
+      }),
 
-      _componentRow('pinned-badge', [
-        div(classes: 'pinned-badge', [text('PINNED')]),
-      ]),
-    ]);
-  }
+      // Button
+      p([text('Button:')]),
+      button(classes: 'newsletter__btn', [text('اشترك · Subscribe')]),
 
-  Component _componentRow(String name, List<Component> children) {
-    return div(style: {'display': 'flex', 'flex-direction': 'column', 'gap': '8px'}, [
-      span(style: {
-        'font-family': 'JetBrains Mono, monospace',
-        'font-size': '11px',
-        'color': 'var(--ink-faint)',
-        'letter-spacing': '0.04em',
-      }, [text('.$name')]),
-      div(style: {'display': 'flex', 'align-items': 'center', 'flex-wrap': 'wrap', 'gap': '8px'}, children),
-    ]);
+      // Blockquote
+      p([text('Blockquote:')]),
+      blockquote([text('التسويف ليس مشكلة إدارة وقت — بل هو فشل في تنظيم المشاعر')]),
+
+      // Square motif
+      p([text('Square motif:')]),
+      div(classes: 'sg-comp-row', [
+        span(classes: 'sq-mark', []),
+        text(' sq-mark (10px) '),
+        span(classes: 'sq-mark--sm', []),
+        text(' sq-mark--sm (6px) '),
+        span(classes: 'sq-frame sg-inline-frame', [text(' sq-frame ')]),
+      ]),
+    ];
   }
 }
+
+const _css = r'''
+.sg-main { padding: 32px; max-width: 900px; margin: 0 auto; direction: ltr; text-align: left; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.sg-section { margin-bottom: 48px; }
+.sg-h2 { font-size: 18px; font-weight: 600; margin: 0 0 16px; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+.sg-section-body { }
+.sg-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.04em; }
+.sg-color-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.sg-color-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sg-swatch { width: 64px; height: 64px; border-radius: var(--radius-sm); border: 1px solid var(--rule); }
+.sg-spacing-list { display: flex; flex-direction: column; gap: 8px; }
+.sg-spacing-row { display: flex; align-items: center; gap: 12px; }
+.sg-bar { height: 12px; background: var(--accent); border-radius: var(--radius-sharp); }
+.sg-radius-row { display: flex; flex-wrap: wrap; gap: 24px; }
+.sg-radius-box { width: 80px; height: 80px; border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); display: flex; align-items: center; justify-content: center; }
+.sg-type-list { display: flex; flex-direction: column; gap: 8px; }
+.sg-type-row { display: flex; align-items: baseline; gap: 16px; }
+.sg-type-sample { color: var(--ink); }
+.sg-comp { margin-bottom: 12px; }
+.sg-comp-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.sg-inline-frame { display: inline-block; padding: 4px 12px; font-size: 12px; }
+p { margin: 16px 0 6px; font-size: 13px; color: var(--ink-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+blockquote { border-inline-start: 3px solid var(--accent); padding: 8px 18px; margin: 8px 0; color: var(--ink-muted); font-size: 14px; }
+''';
