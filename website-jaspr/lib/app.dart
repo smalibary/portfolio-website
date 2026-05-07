@@ -51,6 +51,9 @@ class App extends StatelessComponent {
           href:
               'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap',
         ),
+        link(rel: 'stylesheet', href: '/tokens/primitives.css'),
+        link(rel: 'stylesheet', href: '/tokens/semantic.css'),
+        link(rel: 'stylesheet', href: '/tokens/components.css'),
         link(rel: 'stylesheet', href: '/styles.css'),
         link(rel: 'stylesheet', href: '/admin.css'),
         // Apply persisted theme before paint to avoid flash of wrong theme
