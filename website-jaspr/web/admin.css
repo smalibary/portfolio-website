@@ -17,7 +17,7 @@
 .adm .brand .sep{ color:var(--ink-muted); }
 
 /* theme toggle */
-.adm .toggle{ display:flex; background:var(--bg-card); border:var(--border-rule); border-radius:var(--radius-pill); padding:var(--space-0-5); }
+.adm .toggle{ display:flex; background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--radius-pill); padding:var(--space-0-5); }
 .adm .toggle button{ background:none; border:none; cursor:pointer; padding:var(--space-1-5) var(--space-3); color:var(--ink-muted); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); border-radius:var(--radius-pill); }
 .adm .toggle button.active{ background:var(--accent); color:var(--bg); }
 
@@ -51,7 +51,7 @@
 .adm .chip .dot{ display:inline-block; width:var(--c-adm-chip-dot-size); height:var(--c-adm-chip-dot-size); border-radius:50%; background:currentColor; }
 
 /* card */
-.adm .card{ background:var(--bg-card); border:var(--border-rule); border-radius:var(--c-adm-card-radius); padding:var(--c-adm-card-pad); box-shadow:var(--c-adm-card-shadow); }
+.adm .card{ background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--c-adm-card-radius); padding:var(--c-adm-card-pad); box-shadow:var(--c-adm-card-shadow); }
 .adm .card-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:var(--space-6); padding-bottom:var(--space-4); border-bottom:var(--border-rule); }
 .adm .card-head h2{ margin:0; font-size:var(--text-lg); font-weight:500; }
 .adm .card-head .en{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--ink-muted); letter-spacing:.06em; text-transform:uppercase; }
@@ -66,7 +66,7 @@
 .adm .login-wrap{ position:relative; z-index:1; width:min(var(--c-adm-login-max),92vw); }
 .adm .login-brand{ font-family:'JetBrains Mono',monospace; font-size:var(--text-sm); color:var(--accent); letter-spacing:.12em; text-align:center; margin-bottom:var(--space-8); text-transform:uppercase; }
 .adm .login-brand .s{ color:var(--ink-muted); }
-.adm .login-card{ background:var(--bg-card); border:var(--border-rule); border-radius:var(--c-adm-card-radius); padding:var(--space-10) var(--space-9); box-shadow:var(--c-adm-card-shadow); }
+.adm .login-card{ background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--c-adm-card-radius); padding:var(--space-10) var(--space-9); box-shadow:var(--c-adm-card-shadow); }
 .adm .login-card h1{ margin:0 0 var(--space-1); font-size:var(--c-adm-login-h1-size); font-weight:500; letter-spacing:-.01em; }
 .adm .login-card .sub{ font-family:'JetBrains Mono',monospace; font-size:var(--text-sm); color:var(--ink-muted); margin:0 0 var(--space-7); letter-spacing:.04em; }
 .adm .pin{ display:flex; gap:var(--space-2-5); justify-content:center; direction:ltr; margin:0 0 var(--space-6); }
@@ -86,7 +86,7 @@
 /* rail */
 .adm .rail{
   position:fixed; top:0; bottom:0; inset-inline-start:0; width:var(--c-adm-rail-w);
-  background:var(--bg-card); border-inline-end:var(--border-rule);
+  background:var(--color-surface-card); border-inline-end:var(--border-rule);
   display:flex; flex-direction:column; align-items:center; padding:var(--space-4-5) 0; z-index:10;
 }
 .adm .rail-brand{ width:var(--c-adm-rail-brand-size); height:var(--c-adm-rail-brand-size); border-radius:var(--c-adm-rail-item-radius); background:color-mix(in srgb, var(--accent) 18%, transparent); color:var(--accent); display:grid; place-items:center; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:var(--text-sm); margin-bottom:var(--space-6); text-decoration:none; }
@@ -95,7 +95,7 @@
 .adm .rail-item:hover{ color:var(--ink); background:var(--bg-elev); }
 .adm .rail-item.active{ color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, transparent); }
 .adm .rail-item.active::before{ content:''; position:absolute; inset-inline-start:calc(-1 * var(--space-4-5)); top:var(--space-2); bottom:var(--space-2); width:var(--border-bar-w); background:var(--accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
-.adm .rail-tip{ position:absolute; inset-inline-start:var(--space-16); top:50%; transform:translateY(-50%); background:var(--bg-card); border:var(--border-rule); padding:var(--space-1-5) var(--space-3); border-radius:var(--radius-md); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--ink); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; box-shadow:var(--c-adm-tooltip-shadow); }
+.adm .rail-tip{ position:absolute; inset-inline-start:var(--space-16); top:50%; transform:translateY(-50%); background:var(--color-surface-card); border:var(--border-rule); padding:var(--space-1-5) var(--space-3); border-radius:var(--radius-md); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--ink); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; box-shadow:var(--c-adm-tooltip-shadow); }
 .adm .rail-item:hover .rail-tip{ opacity:1; }
 .adm .rail-bottom{ display:flex; flex-direction:column; gap:var(--space-2); align-items:center; }
 .adm .rail .toggle{ flex-direction:column; padding:var(--space-0-5); }
@@ -204,12 +204,12 @@
 .adm .picker-section{ font-family:'JetBrains Mono',monospace; font-size:var(--text-xs); color:var(--ink-muted); letter-spacing:.06em; text-transform:uppercase; }
 .adm .picker-title{ font-size:var(--text-base); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .adm .picker-chev{ color:var(--ink-muted); margin-inline-start:var(--space-1-5); }
-.adm .picker-kbd{ background:var(--bg-card); border:var(--border-rule); border-radius:var(--radius-sm); padding:1px var(--space-1-5); font-family:'JetBrains Mono',monospace; font-size:var(--text-xs); color:var(--ink-muted); margin-inline-start:var(--space-1-5); /* intentionally literal: 1px vertical padding sized to fit kbd inside picker-btn row */ }
+.adm .picker-kbd{ background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--radius-sm); padding:1px var(--space-1-5); font-family:'JetBrains Mono',monospace; font-size:var(--text-xs); color:var(--ink-muted); margin-inline-start:var(--space-1-5); /* intentionally literal: 1px vertical padding sized to fit kbd inside picker-btn row */ }
 
 .adm .picker-panel{
   position:absolute; top:calc(100% + var(--space-2)); inset-inline-start:0;
   width:var(--c-adm-picker-panel-w); max-width:calc(100vw - 100px); /* intentionally literal: 100px viewport-edge gutter for picker panel */
-  background:var(--bg-card); border:var(--border-rule); border-radius:var(--radius-lg);
+  background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--radius-lg);
   box-shadow:var(--c-adm-card-shadow);
   z-index:20;
   display:none; flex-direction:column;
