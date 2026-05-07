@@ -135,6 +135,22 @@ Registered in `app.dart` as `/admin/styleguide`. Not deployed to production
 | `lib/app.dart` | Register `/admin/styleguide` route |
 | `context/identity.md` | Add design system reference |
 
+## Component Minimalism Rule
+
+**Don't create new component variants.** The site has a small set of
+components (card, pill, tag, button, input, blockquote). Differentiate
+them with tokens (radius, spacing, border, accent colour), not new CSS
+classes or new Dart components.
+
+Before creating a new component, ask:
+1. Can an existing component with different token values do the job?
+2. Is the structural difference genuine (different HTML shape) or just
+   cosmetic (different size/colour/gap)?
+3. If cosmetic → use existing component + adjust tokens.
+4. If genuinely new → add it here in the component map first.
+
+**One card. One pill. One tag. One button.** Variants via tokens only.
+
 ## What Stays the Same
 
 - Colour values — already tokenised, no changes
