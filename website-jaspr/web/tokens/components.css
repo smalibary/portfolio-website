@@ -98,4 +98,14 @@
   --c-adm-input-radius:      var(--radius-md);
   --c-adm-pill-radius:       var(--radius-pill);
   --c-adm-chip-dot-size:     7px;
+  --c-adm-avatar-size:       56px;
+  --c-adm-switch-w:          44px;
+  --c-adm-switch-h:          24px;
+  --c-adm-switch-knob:       18px;
+  --c-adm-md-min-h:          480px;
+  --c-adm-md-max-h:          640px;
+  --c-adm-main-max:          1100px;
+  --c-adm-login-max:         440px;
+  --c-adm-login-h1-size:     22px;
+  --c-adm-tooltip-shadow:    0 12px 32px -16px rgba(var(--color-shadow-rgb), 0.5);
 }
