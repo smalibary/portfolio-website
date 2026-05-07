@@ -10,6 +10,12 @@ import 'dart:io';
 void main(List<String> args) async {
   stdout.writeln('dev :: starting jaspr serve + save_server');
 
+  // 0. CSS token sanity check. Catches references like var(--space-4-5)
+  //    that have no definition anywhere (the bug class fixed in Phase 2.5).
+  //    Non-blocking — just prints a banner if anything is broken so the
+  //    next bad reference shows up the next time dev boots.
+  await _runCssAudit();
+
   // 1. start save_server in background
   final save = await Process.start(
     Platform.executable,
@@ -59,6 +65,25 @@ void main(List<String> args) async {
   stdout.writeln('dev :: ${firstToExit.$1} exited (code ${firstToExit.$2}); killing the other');
   save.kill();
   jaspr.kill();
+}
+
+Future<void> _runCssAudit() async {
+  final r = await Process.run(
+    Platform.executable,
+    ['run', 'tool/audit_css_tokens.dart'],
+    workingDirectory: Directory.current.path,
+    runInShell: true,
+  );
+  if (r.exitCode == 0) {
+    stdout.writeln('dev :: css audit ok');
+    return;
+  }
+  stdout.writeln('');
+  stdout.writeln('!! CSS TOKEN AUDIT FAILED \u2014 unresolved var(--*) references:');
+  stdout.write(r.stdout);
+  stdout.write(r.stderr);
+  stdout.writeln('!! (non-blocking; fix before committing)');
+  stdout.writeln('');
 }
 
 void _pipe(Stream<List<int>> from, String prefix) {
