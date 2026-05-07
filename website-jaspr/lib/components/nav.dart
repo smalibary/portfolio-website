@@ -20,6 +20,7 @@ class Nav extends StatelessComponent {
       a(href: '/', classes: 'nav__monogram', [
         text(first),
         if (rest.isNotEmpty) span([text(rest)]),
+        span(classes: 'nav__monogram-square', [text('س')]),
       ]),
       div(classes: 'nav__right', [
         div(classes: 'nav__menu', [
