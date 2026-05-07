@@ -210,7 +210,7 @@ main, nav, footer { position: relative; z-index: 1; }
   overflow: hidden;
   position: relative;
   background: var(--bg-card);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-card);
   border: var(--border-rule);
 }
 .hero__portrait img {
@@ -271,11 +271,11 @@ main, nav, footer { position: relative; z-index: 1; }
 .card:visited, .card:hover, .card:focus { color: inherit; text-decoration: none; }
 .card:hover {
   border-color: var(--card-accent, var(--accent));
-  transform: translateY(-3px); box-shadow: var(--shadow);
+  transform: translateY(-3px); box-shadow: var(--shadow-card);
 }
 .card--published { --card-accent: var(--accent); }
 .card--active { --card-accent: var(--accent-warm); }
-.card--design { --card-accent: var(--accent-cool); }
+.card--design { --card-accent: var(--color-status-cool); }
 .card__head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: var(--c-card-head-mb); direction: ltr;
@@ -289,8 +289,8 @@ main, nav, footer { position: relative; z-index: 1; }
   background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .pill--active { color: var(--accent-warm); border-color: var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 8%, transparent); }
-.pill--design { color: var(--accent-cool); border-color: var(--accent-cool);
-  background: color-mix(in srgb, var(--accent-cool) 8%, transparent); }
+.pill--design { color: var(--color-status-cool); border-color: var(--color-status-cool);
+  background: color-mix(in srgb, var(--color-status-cool) 8%, transparent); }
 .card__index {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs); color: var(--ink-faint);
 }
