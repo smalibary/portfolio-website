@@ -60,8 +60,9 @@ class BlogPostPage extends StatelessComponent {
           ),
         div(classes: 'post-layout', [
           article(classes: 'post', attributes: {'dir': isAr ? 'rtl' : 'ltr'}, [
-            header(classes: 'post-head', [
+            header(classes: 'post-head sq-frame', [
               div(classes: 'post-meta', [
+                span(classes: 'sq-mark--sm', []),
                 if (post.date.isNotEmpty) span([text(post.date)]),
                 if (post.category.isNotEmpty) ...[
                   span(classes: 'post-meta__sep', [text('·')]),
@@ -74,11 +75,7 @@ class BlogPostPage extends StatelessComponent {
                   span([text(post.langLabel)]),
                 ],
               ]),
-              if (post.tags.isNotEmpty)
-                div(classes: 'post-tags', [
-                  for (final tag in post.tags)
-                    a(href: '/tag/$tag', classes: 'tag-pill', [text('#$tag')]),
-                ]),
+
               if (post.titleAr.isNotEmpty)
                 h1(classes: 'post-title-ar', [text(post.titleAr)]),
               if (post.titleEn.isNotEmpty)
@@ -93,7 +90,10 @@ class BlogPostPage extends StatelessComponent {
           aside(classes: 'post-sidebar', attributes: {'data-post-sidebar': ''}, [
             if (headings.isNotEmpty) ...[
               nav(classes: 'toc', [
-                div(classes: 'toc__title', [text('المحتويات · Contents')]),
+                div(classes: 'toc__title', [
+                  span(classes: 'sq-mark--sm', []),
+                  text(' المحتويات · Contents'),
+                ]),
                 ul(classes: 'toc__list', [
                   for (final h in headings)
                     li(classes: 'toc__item toc__item--${h.level}', [
@@ -103,7 +103,10 @@ class BlogPostPage extends StatelessComponent {
               ]),
               div(classes: 'sidebar-divider', [text('')]),
             ],
-            div(classes: 'newsletter', [
+            div(classes: 'newsletter sq-bar', attributes: {'data-newsletter-card': ''}, [
+              button(classes: 'newsletter__close', attributes: {'type': 'button', 'aria-label': 'Close', 'data-newsletter-close': ''}, [
+                text('✕'),
+              ]),
               div(classes: 'newsletter__title', [text('النشرة البريدية · Newsletter')]),
               p(classes: 'newsletter__desc', [text('آخر الأبحاث والمقالات مباشرة لبريدك')]),
               form(classes: 'newsletter__form', attributes: {'data-newsletter': ''}, [
@@ -122,6 +125,14 @@ class BlogPostPage extends StatelessComponent {
               ]),
               div(classes: 'newsletter__msg', attributes: {'data-newsletter-msg': ''}, [text('')]),
             ]),
+            if (post.tags.isNotEmpty)
+              div(classes: 'sidebar-tags-block', attributes: {'data-sidebar-tags-block': ''}, [
+                div(classes: 'sidebar-divider', [text('')]),
+                div(classes: 'sidebar-tags', [
+                  for (final tag in post.tags)
+                    a(href: '/tag/$tag', classes: 'tag-pill', [text('#$tag')]),
+                ]),
+              ]),
           ]),
         ]),
       ]),
@@ -172,7 +183,10 @@ Component _renderBody({required BlogPost post, required String body}) {
     if (pinnedChunks.isNotEmpty)
       div(classes: 'post-pinned-block', [
         div(classes: 'post-pinned-block__header', [
-          span(classes: 'pinned-badge', [text('★ مثبتة')]),
+          span(classes: 'pinned-badge', [
+            span(classes: 'sq-mark--sm', []),
+            text(' مثبتة'),
+          ]),
           button(
             classes: 'pinned-expand-all',
             attributes: {'type': 'button', 'data-pin-expand-all': ''},
@@ -186,7 +200,10 @@ Component _renderBody({required BlogPost post, required String body}) {
     // Takeaways box — rendered after pinned block, before article body.
     if (post.takeaways.isNotEmpty)
       div(classes: 'post-takeaways', [
-        span(classes: 'post-takeaways__badge', [text('● خلاصة المقال · KEY TAKEAWAYS')]),
+        span(classes: 'post-takeaways__badge', [
+          span(classes: 'sq-mark', []),
+          text(' خلاصة المقال · KEY TAKEAWAYS'),
+        ]),
         ul([
           for (final t in post.takeaways)
             li([raw(md.markdownToHtml(
@@ -228,7 +245,10 @@ Component _renderSection({
     classes: 'post-section',
     attributes: {'id': chunk.anchor},
     [
-      h2(classes: 'post-section__title', [text(chunk.title)]),
+      h2(classes: 'post-section__title', [
+        span(classes: 'sq-mark', []),
+        text(chunk.title),
+      ]),
       if (meta != null && (meta.lastModified.isNotEmpty || meta.subtopic.isNotEmpty))
         div(classes: 'post-section__meta', [
           if (meta.subtopic.isNotEmpty)
@@ -258,7 +278,10 @@ Component _renderPinnedRow({
 
   return div(classes: 'post-pinned-section', attributes: {'data-pin-section': ''}, [
     div(classes: 'post-pinned-section__row', [
-      span(classes: 'post-pinned-section__title', [text(chunk.title)]),
+      span(classes: 'post-pinned-section__title', [
+        span(classes: 'sq-mark--sm', []),
+        text(chunk.title),
+      ]),
       div(classes: 'post-pinned-section__meta', [
         if (date.isNotEmpty) span(classes: 'post-pinned-section__date', [text(date)]),
         span(classes: 'post-pinned-section__arrow', [text('▼')]),
@@ -554,6 +577,36 @@ const _sidebarScript = r'''
       });
     }, {rootMargin: '-20% 0px -70% 0px'});
     sections.forEach(function(s){ observer.observe(s.el); });
+  }
+
+  // Hero image offset — push sidebar below hero when present
+  var hero = document.querySelector('.post-hero');
+  var sidebar = document.querySelector('.post-sidebar');
+  if(hero && sidebar){
+    function adjustSidebarTop(){
+      var heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
+      var scrollY = window.scrollY;
+      var navH = 96;
+      var top = scrollY > heroBottom - navH ? navH : (heroBottom - scrollY + 24);
+      sidebar.style.top = Math.max(navH, top) + 'px';
+    }
+    adjustSidebarTop();
+    window.addEventListener('scroll', adjustSidebarTop, {passive: true});
+    window.addEventListener('resize', adjustSidebarTop, {passive: true});
+  }
+
+  // Newsletter close button — also hides divider before tags
+  var newsletterCard = document.querySelector('[data-newsletter-card]');
+  var closeBtn = document.querySelector('[data-newsletter-close]');
+  var tagsBlock = document.querySelector('[data-sidebar-tags-block]');
+  if(closeBtn && newsletterCard){
+    closeBtn.addEventListener('click', function(){
+      newsletterCard.style.display = 'none';
+      if(tagsBlock){
+        var divider = tagsBlock.querySelector('.sidebar-divider');
+        if(divider) divider.style.display = 'none';
+      }
+    });
   }
 
   // Newsletter form
