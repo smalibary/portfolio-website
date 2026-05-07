@@ -44,6 +44,49 @@ body::before {
 }
 main, nav, footer { position: relative; z-index: 1; }
 
+/* ── Square motif ── */
+.sq-mark {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.sq-mark--sm {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.sq-frame {
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--bg));
+}
+.sq-bar {
+  position: relative;
+}
+.sq-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--accent);
+}
+.nav__monogram-square {
+  width: 24px; height: 24px;
+  background: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 /* NAV */
 .nav {
   height: 64px;
@@ -256,9 +299,9 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .card:visited, .card:hover, .card:focus { color: inherit; text-decoration: none; }
 .card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; background: var(--card-accent, var(--accent));
-  opacity: 0; transition: opacity 0.25s;
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0;
+  width: 3px; background: var(--card-accent, var(--accent));
+  opacity: 0.5; transition: opacity 0.25s;
 }
 .card:hover {
   border-color: var(--card-accent, var(--accent));
@@ -275,7 +318,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .pill {
   font-family: 'JetBrains Mono', monospace; font-size: 10px;
   text-transform: uppercase; letter-spacing: 0.14em;
-  padding: 5px 11px; border-radius: 100px; border: 1px solid;
+  padding: 5px 11px; border-radius: 2px; border: 1px solid;
 }
 .pill--published { color: var(--accent); border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, transparent); }
@@ -324,6 +367,19 @@ main, nav, footer { position: relative; z-index: 1; }
   padding: 22px 4px; border-bottom: 1px solid var(--rule);
   text-decoration: none; color: var(--ink);
   transition: background 0.2s, padding 0.2s;
+  position: relative;
+}
+.writing__item::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.writing__item:hover::before {
+  opacity: 1;
 }
 .writing__item:hover {
   background: var(--bg-elev);
@@ -374,10 +430,10 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* ── Sticky sidebar — far right ── */
 .post-sidebar {
-  width: 180px;
-  position: absolute;
-  right: 0;
-  top: 0;
+  width: 240px;
+  position: fixed;
+  right: 48px;
+  top: 96px;
   direction: rtl; text-align: right;
   max-height: calc(100vh - 96px);
   overflow-y: auto;
@@ -411,10 +467,29 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* Newsletter card */
 .newsletter {
+  position: relative;
   border: 1px solid var(--rule);
   border-radius: 6px;
   background: color-mix(in srgb, var(--ink) 2%, var(--bg));
   padding: 10px 12px;
+}
+.newsletter__close {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 12px;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 3px;
+  transition: color .15s, background .15s;
+}
+.newsletter__close:hover {
+  color: var(--ink-muted);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
 }
 .newsletter__title {
   font-family: 'JetBrains Mono', monospace;
@@ -751,6 +826,9 @@ main, nav, footer { position: relative; z-index: 1; }
 /* TAG PILLS — used on blog post meta, /writing entries, /tag and /category headers */
 .post-meta__link { color: var(--ink-muted); text-decoration: none; border-bottom: 1px dashed var(--rule); transition: color .15s, border-color .15s; }
 .post-meta__link:hover { color: var(--accent); border-color: var(--accent); }
+.sidebar-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.sidebar-tags .tag-pill { font-size: 11px; padding: 3px 8px; }
+
 .post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; margin-bottom: 18px; }
 .tag-pill {
   display: inline-block;
@@ -759,7 +837,7 @@ main, nav, footer { position: relative; z-index: 1; }
   letter-spacing: .04em;
   padding: 4px 10px;
   border: 1px solid var(--rule);
-  border-radius: 20px;
+  border-radius: 2px;
   color: var(--ink-muted);
   text-decoration: none;
   transition: color .15s, border-color .15s, background .15s;
