@@ -21,24 +21,18 @@ status_line: سيدني · السنة الثالثة من الدكتوراه · 
 
 # Lede paragraphs. Wrap a phrase in *asterisks* to render it as <em>.
 # e.g. "research at *the intersection of nature*..."
-lede_ar: |
-  باحث في تقاطع *الطبيعة* و*العمل عن بُعد* و*الإدراك*. أُجري تجارب
-  وتحليلات تلوية لفهم كيف تشكّل البيئة انتباه الإنسان، عافيته النفسية،
-  وإنتاجيته في عمله.
+lede_ar: "باحث في تقاطع *الطبيعة* و*العمل عن بُعد* و*الإدراك*. أُجري تجارب\nوتحليلات تلوية لفهم كيف تشكّل البيئة انتباه الإنسان، عافيته النفسية،\nوإنتاجيته في عمله.\n"
 
-lede_en: |
-  Researcher at the intersection of *nature*, *remote work*, and *cognition*.
-  I run experiments and meta-analyses on how environments shape attention,
-  well-being, and productivity.
+lede_en: "Researcher at the intersection of *nature*, *remote work*, and *cognition*.\nI run experiments and meta-analyses on how environments shape attention,\nwell-being, and productivity.\n"
 
 # Meta items rendered in a small grid below the lede.
 hero_meta:
   - label: "الدكتوراه:"
-    value: "جامعة سيدني · مختبر البيئة الداخلية"
+    value: جامعة سيدني · مختبر البيئة الداخلية
   - label: "التدريس:"
-    value: "جامعة الملك عبدالعزيز · قسم العمارة"
+    value: جامعة الملك عبدالعزيز · قسم العمارة
   - label: "التخصص:"
-    value: "علم النفس البيئي"
+    value: علم النفس البيئي
 
 bio_ar: "باحث دكتوراه ف جامعة سيدني، أدرس أثر التعرض للطبيعة على العافية النفسية\nو إنتاجية العاملين عن بعد. اشتغل ف مختبر البيئة الداخلية ضمن كلية العمارة\nو التصميم. أيضاً محاضر ف قسم العمارة بجامعة الملك عبد العزيز.\n"
 
@@ -51,9 +45,6 @@ socials:
     url: https://orcid.org/0009-0004-7574-9048
   - platform: scholar
     url: https://scholar.google.com/citations?hl=en&user=brlrT0MAAAAJ
-  # ResearchGate profile not yet created — re-enable this entry once it exists.
-  # - platform: researchgate
-  #   url: https://www.researchgate.net/profile/...
   - platform: github
     url: https://github.com/smalibary
   - platform: youtube
@@ -61,4 +52,4 @@ socials:
   - platform: x
     url: https://x.com/salemmalibary
   - platform: email
-    url: mailto:salem.thecreativeconsult@gmail.com
+    url: mailto:salimmalibari@gmail.com
