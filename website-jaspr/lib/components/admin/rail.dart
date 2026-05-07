@@ -65,6 +65,14 @@ class AdminRail extends StatelessComponent {
             current == 'research',
           ),
         ]),
+        div(classes: 'rail-nav', [
+          item(
+            '/admin/styleguide',
+            'STYLE',
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>',
+            current == 'styleguide',
+          ),
+        ]),
         div(classes: 'rail-bottom', [
           div(classes: 'toggle', [
             button(attributes: const {'data-theme-set': 'dark'}, [text('DK')]),
