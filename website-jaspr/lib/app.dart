@@ -15,6 +15,7 @@ import 'pages/admin/login.dart';
 import 'pages/admin/profile.dart';
 import 'pages/admin/blog.dart';
 import 'pages/admin/research.dart';
+import 'pages/admin/styleguide.dart';
 
 class App extends StatelessComponent {
   const App({super.key});
@@ -135,6 +136,11 @@ class App extends StatelessComponent {
             path: '/admin/research',
             title: 'الأبحاث · Admin',
             builder: (context, state) => const AdminResearchPage(),
+          ),
+          Route(
+            path: '/admin/styleguide',
+            title: 'Style Guide · Admin',
+            builder: (context, state) => const StyleguidePage(),
           ),
         ],
       ),
