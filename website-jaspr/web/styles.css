@@ -369,13 +369,15 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 
 /* 2-column: article + sidebar */
-.post-layout { display: flex; gap: 40px; align-items: flex-start; justify-content: center; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
-.post { flex: 1; min-width: 0; max-width: 600px; }
+.post-layout { position: relative; max-width: 1320px; margin: 0 auto; padding: 0 48px; }
+.post { max-width: 600px; margin: 0 auto; }
 
 /* ── Sticky sidebar — far right ── */
 .post-sidebar {
-  width: 180px; flex-shrink: 0;
-  position: sticky; top: 80px;
+  width: 180px;
+  position: absolute;
+  right: 0;
+  top: 0;
   direction: rtl; text-align: right;
   max-height: calc(100vh - 96px);
   overflow-y: auto;
@@ -409,20 +411,20 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* Newsletter card */
 .newsletter {
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
+  border: 1px solid var(--rule);
   border-radius: 6px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), color-mix(in srgb, var(--accent) 3%, transparent));
-  padding: 12px 14px;
+  background: color-mix(in srgb, var(--ink) 2%, var(--bg));
+  padding: 10px 12px;
 }
 .newsletter__title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 600;
   letter-spacing: .08em; text-transform: uppercase;
-  color: var(--accent); margin: 0 0 4px;
+  color: var(--ink-muted); margin: 0 0 4px;
 }
 .newsletter__desc {
   font-size: 12px; color: var(--ink-muted); line-height: 1.4;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
 }
 .newsletter__form { display: flex; flex-direction: column; gap: 6px; }
 .newsletter__input {
@@ -438,12 +440,12 @@ main, nav, footer { position: relative; z-index: 1; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px; font-weight: 600;
   letter-spacing: .04em;
-  padding: 7px 12px;
-  border: 1px solid var(--accent); border-radius: 5px;
-  background: var(--accent); color: var(--bg);
-  cursor: pointer; transition: opacity .15s;
+  padding: 6px 10px;
+  border: 1px solid var(--rule); border-radius: 5px;
+  background: transparent; color: var(--ink-muted);
+  cursor: pointer; transition: border-color .15s, color .15s;
 }
-.newsletter__btn:hover { opacity: .85; }
+.newsletter__btn:hover { border-color: var(--accent); color: var(--accent); }
 .newsletter__btn:disabled { opacity: .5; cursor: default; }
 .newsletter__msg {
   font-size: 11px; color: var(--accent); margin-top: 4px;

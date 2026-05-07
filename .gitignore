@@ -64,3 +64,4 @@ desktop.ini
 *.pem
 *credentials*
 *secret*
+.superpowers/
