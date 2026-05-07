@@ -4,6 +4,8 @@ import 'package:jaspr/dom.dart';
 import '../data/site_data.dart';
 import 'theme_toggle.dart';
 
+/// Role: chrome
+/// Top navigation bar with split-monogram brand mark and theme toggle.
 class Nav extends StatelessComponent {
   const Nav({required this.site, super.key});
   final SiteData site;

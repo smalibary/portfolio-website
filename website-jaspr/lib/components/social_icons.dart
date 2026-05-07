@@ -1,6 +1,8 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
+/// Role: atom
+/// Row of small social-platform icon links, sourced from site.yaml.
 class SocialIcons extends StatelessComponent {
   const SocialIcons({this.socials = const {}, super.key});
 
