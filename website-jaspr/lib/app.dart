@@ -31,6 +31,11 @@ class App extends StatelessComponent {
     final tags = BlogPost.uniqueTags(posts);
     final categories = BlogPost.uniqueCategories(posts);
 
+    // jaspr Document uses a conditional export — the unnamed constructor
+    // is only on the server variant. Analyzer resolves to the client variant
+    // and doesn't see it. Remove this ignore if jaspr fixes the conditional-
+    // export analysis (track upstream).
+    // ignore: new_with_undefined_constructor_default
     return Document(
       title: 'سالم مليباري — Salem Malibary',
       lang: 'ar',
