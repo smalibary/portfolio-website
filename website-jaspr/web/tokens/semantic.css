@@ -1,0 +1,106 @@
+/* ─────────────────────────────────────────────────────────────────────
+   SEMANTIC TOKENS (Layer 2)
+   Purpose-named aliases composed from primitives. Theme-aware.
+   Component selectors should consume these (or component tokens),
+   never primitives directly.
+   ───────────────────────────────────────────────────────────────────── */
+
+:root,
+[data-theme="dark"] {
+  /* Surfaces */
+  --color-surface-page:     var(--black);
+  --color-surface-elevated: var(--gray-950);
+  --color-surface-card:     var(--gray-900);
+  --color-surface-overlay:  var(--overlay-black-45);
+
+  /* Text */
+  --color-text-default:  var(--gray-100);
+  --color-text-muted:    var(--gray-500);
+  --color-text-faint:    var(--gray-700);
+  --color-text-inverse:  var(--black);
+  --color-text-on-image: var(--overlay-white-92);
+
+  /* Borders / dividers */
+  --color-border-default: var(--gray-800);
+
+  /* Brand / interactive */
+  --color-brand:                    var(--teal-500);
+  --color-interactive-primary:      var(--teal-500);
+  --color-interactive-primary-text: var(--black);
+
+  /* Status accents */
+  --color-status-warm: var(--orange-500);
+  --color-status-cool: var(--blue-400);
+
+  /* Effects */
+  --color-shadow-rgb: 0,0,0;
+  --shadow-card:     0 24px 60px -30px rgba(var(--color-shadow-rgb), 0.7);
+  --grid-fade:       radial-gradient(ellipse 1200px 600px at 85% -10%,
+                       color-mix(in srgb, var(--color-brand) 7%, transparent),
+                       transparent 60%);
+
+  /* Border shorthands (mix width + semantic colour) */
+  --border-rule:   1px solid var(--color-border-default);
+  --border-accent: 2px solid var(--color-brand);
+}
+
+[data-theme="light"] {
+  --color-surface-page:     var(--cream-50);
+  --color-surface-elevated: var(--cream-100);
+  --color-surface-card:     var(--white);
+
+  --color-text-default: var(--cream-900);
+  --color-text-muted:   var(--cream-800);
+  --color-text-faint:   var(--cream-700);
+  --color-text-inverse: var(--cream-50);
+
+  --color-border-default: var(--cream-200);
+
+  --color-brand:                    var(--teal-700);
+  --color-interactive-primary:      var(--teal-700);
+  --color-interactive-primary-text: var(--cream-50);
+
+  --color-status-warm: var(--orange-700);
+  --color-status-cool: var(--blue-700);
+
+  --color-shadow-rgb: 28,32,38;
+  --shadow-card:     0 18px 40px -16px rgba(var(--color-shadow-rgb), 0.14);
+  /* --grid-fade and border shorthands inherit; their primitives are
+     already theme-aware via --color-brand and --color-border-default. */
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   DEPRECATED ALIASES — soft cutover.
+   These keep older selectors compiling until Phase 3 migrates them
+   to the semantic names above. Do not introduce new uses.
+   ───────────────────────────────────────────────────────────────────── */
+:root,
+[data-theme="dark"],
+[data-theme="light"] {
+  /* @deprecated — use --color-surface-page */
+  --bg:           var(--color-surface-page);
+  /* @deprecated — use --color-surface-elevated */
+  --bg-elev:      var(--color-surface-elevated);
+  /* @deprecated — use --color-surface-card */
+  --bg-card:      var(--color-surface-card);
+  /* @deprecated — use --color-text-default */
+  --ink:          var(--color-text-default);
+  /* @deprecated — use --color-text-muted */
+  --ink-muted:    var(--color-text-muted);
+  /* @deprecated — use --color-text-faint */
+  --ink-faint:    var(--color-text-faint);
+  /* @deprecated — use --color-border-default */
+  --rule:         var(--color-border-default);
+  /* @deprecated — use --color-brand or --color-interactive-primary */
+  --accent:       var(--color-brand);
+  /* @deprecated — use --color-status-warm */
+  --accent-warm:  var(--color-status-warm);
+  /* @deprecated — use --color-status-cool */
+  --accent-cool:  var(--color-status-cool);
+  /* @deprecated — use --shadow-card */
+  --shadow:       var(--shadow-card);
+  /* @deprecated — use --border-rule */
+  --border-rule-val:   var(--border-rule);
+  /* @deprecated — use --border-accent */
+  --border-accent-val: var(--border-accent);
+}

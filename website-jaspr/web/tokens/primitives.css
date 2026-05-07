@@ -1,0 +1,85 @@
+/* ─────────────────────────────────────────────────────────────────────
+   PRIMITIVE TOKENS (Layer 1)
+   Raw values. Never reference other tokens. Never change per theme.
+   Consumers: semantic.css + components.css. Component selectors must
+   NOT use these directly — go through a semantic or component token.
+   ───────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Colour palette ─────────────────────────────────────────────── */
+
+  /* Neutrals — dark scale */
+  --black:    #0a0c0e;
+  --gray-950: #11151a;
+  --gray-900: #14191f;
+  --gray-800: #1f262e;
+  --gray-700: #4a525c;
+  --gray-500: #8b95a1;
+  --gray-100: #e6e8eb;
+
+  /* Neutrals — warm light scale */
+  --white:    #ffffff;
+  --cream-50:  #f6f3ec;
+  --cream-100: #efeae0;
+  --cream-200: #e2dccf;
+  --cream-700: #a3acb5;
+  --cream-800: #5e6973;
+  --cream-900: #1a1f24;
+
+  /* Brand */
+  --teal-500:   #4dd4ac;  /* dark-theme accent */
+  --teal-700:   #006d5e;  /* light-theme accent */
+  --orange-500: #f0a868;  /* dark-theme warm */
+  --orange-700: #aa5d20;  /* light-theme warm */
+  --blue-400:   #8ab4f8;  /* dark-theme cool */
+  --blue-700:   #2654a0;  /* light-theme cool */
+
+  /* Functional overlays (raw rgba channels) */
+  --overlay-black-45: rgba(0,0,0,0.45);
+  --overlay-white-92: rgba(255,255,255,0.92);
+
+  /* ── Spacing scale (4px base + half-steps) ──────────────────────── */
+  --space-0-5: 2px;
+  --space-1:   4px;
+  --space-1-5: 6px;
+  --space-2:   8px;
+  --space-2-5: 10px;
+  --space-3:   12px;
+  --space-3-5: 14px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-5-5: 22px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-9:   36px;
+  --space-12:  48px;
+  --space-16:  64px;
+
+  /* ── Radius scale ───────────────────────────────────────────────── */
+  --radius-sharp: 2px;
+  --radius-sm:    4px;
+  --radius-md:    8px;
+  --radius-lg:    14px;   /* admin cards / login card */
+  --radius-pill:  100px;  /* fully-rounded pills, toggles, chips */
+
+  /* ── Typography scale ───────────────────────────────────────────── */
+  --text-xs:   10px;
+  --text-2xs:  11px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-md:   16px;
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  28px;
+  --text-3xl:  34px;
+
+  /* ── Border widths ──────────────────────────────────────────────── */
+  --border-bar-w: 3px;
+
+  /* ── Layout primitives ──────────────────────────────────────────── */
+  --width-content:   1320px;
+  --width-post-hero: 960px;
+  --width-post-body: 600px;
+  --width-sidebar:   240px;
+}
