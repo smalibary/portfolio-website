@@ -1,0 +1,101 @@
+/* ─────────────────────────────────────────────────────────────────────
+   COMPONENT TOKENS (Layer 3 of token graph)
+   Component-scoped names that compose from primitives + semantic tokens.
+   Component selectors should consume these (or semantic tokens).
+   ───────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Layout ─────────────────────────────────────────────────────── */
+  --c-content-max:           var(--width-content);
+  --c-post-hero-max:         var(--width-post-hero);
+  --c-post-body-max:         var(--width-post-body);
+  --c-post-sidebar-w:        var(--width-sidebar);
+  --c-section-scroll-margin: 80px;
+
+  /* ── Nav ────────────────────────────────────────────────────────── */
+  --c-nav-height: 64px;
+  --c-nav-px:     var(--space-12);
+  --c-nav-gap:    var(--space-7);
+
+  /* ── Monogram ───────────────────────────────────────────────────── */
+  --c-mono-size: 24px;
+
+  /* ── Theme toggle ───────────────────────────────────────────────── */
+  --c-toggle-pad:    var(--space-0-5);
+  --c-toggle-btn-px: var(--space-2-5);
+  --c-toggle-btn-py: 5px;
+
+  /* ── Hero ───────────────────────────────────────────────────────── */
+  --c-hero-gap:          var(--space-12);
+  --c-hero-portrait-max: 380px;
+  --c-hero-lede-border:  2px solid var(--color-border-default);
+
+  /* ── Status dot ─────────────────────────────────────────────────── */
+  --c-status-dot-size: 8px;
+
+  /* ── Social ─────────────────────────────────────────────────────── */
+  --c-social-size: 38px;
+  --c-social-icon: 16px;
+
+  /* ── Section head ───────────────────────────────────────────────── */
+  --c-section-head-mb: var(--space-7);
+  --c-section-bar-w:   24px;
+
+  /* ── Card ───────────────────────────────────────────────────────── */
+  --c-card-radius:  var(--radius-sm);
+  --c-card-pad:     var(--space-6);
+  --c-card-min-h:   300px;
+  --c-card-head-mb: var(--space-5-5);
+
+  /* ── Pill ───────────────────────────────────────────────────────── */
+  --c-pill-radius: var(--radius-sharp);
+  --c-pill-pad:    5px 11px;
+
+  /* ── Tag pill ───────────────────────────────────────────────────── */
+  --c-tag-radius: var(--radius-sharp);
+  --c-tag-pad:    3px var(--space-2);
+
+  /* ── Button (outline) ───────────────────────────────────────────── */
+  --c-btn-radius: var(--radius-sm);
+  --c-btn-pad:    var(--space-3) var(--space-5);
+
+  /* ── Input ──────────────────────────────────────────────────────── */
+  --c-input-radius: var(--radius-sharp);
+  --c-input-pad:    var(--space-2) var(--space-3);
+
+  /* ── Blockquote ─────────────────────────────────────────────────── */
+  --c-blockquote-pad: var(--space-1) var(--space-4);
+
+  /* ── Writing item ───────────────────────────────────────────────── */
+  --c-writing-py:  var(--space-5-5);
+  --c-writing-col: 110px;
+
+  /* ── Newsletter ─────────────────────────────────────────────────── */
+  --c-newsletter-radius: var(--radius-sm);
+  --c-newsletter-pad:    var(--space-2-5) var(--space-3);
+
+  /* ── sq-mark ────────────────────────────────────────────────────── */
+  --c-sq-mark:    var(--space-2-5);
+  --c-sq-mark-sm: var(--space-1-5);
+
+  /* ── Post layout ────────────────────────────────────────────────── */
+  --c-post-margin-hr:  var(--space-9);
+  --c-portrait-bottom: var(--space-5);
+
+  /* ── Admin (--c-adm-*) ──────────────────────────────────────────── */
+  --c-adm-card-radius:       var(--radius-lg);
+  --c-adm-card-pad:          var(--space-8);
+  --c-adm-card-shadow:       0 24px 60px -30px rgba(var(--color-shadow-rgb), 0.4);
+  --c-adm-rail-w:            72px;
+  --c-adm-rail-item-size:    48px;
+  --c-adm-rail-item-radius:  10px;
+  --c-adm-rail-brand-size:   40px;
+  --c-adm-pin-input-w:       56px;
+  --c-adm-pin-input-h:       64px;
+  --c-adm-picker-panel-w:    480px;
+  --c-adm-picker-list-h:     320px;
+  --c-adm-input-pad-y:       11px;
+  --c-adm-input-radius:      var(--radius-md);
+  --c-adm-pill-radius:       var(--radius-pill);
+  --c-adm-chip-dot-size:     7px;
+}
