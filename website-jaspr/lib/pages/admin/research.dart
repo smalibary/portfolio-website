@@ -91,7 +91,7 @@ class AdminResearchPage extends StatelessComponent {
     });
     if (filtered.length === 0) {
       var empty = document.createElement('div');
-      empty.style.padding = '20px'; empty.style.textAlign = 'center'; empty.style.color = 'var(--ink-faint)';
+      empty.style.padding = '20px'; empty.style.textAlign = 'center'; empty.style.color = 'var(--color-text-faint)';
       empty.style.fontFamily = 'JetBrains Mono, monospace'; empty.style.fontSize = '12px';
       empty.textContent = 'NO PAPERS MATCH';
       pickerList.appendChild(empty);
