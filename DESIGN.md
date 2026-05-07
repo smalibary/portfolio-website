@@ -1,23 +1,30 @@
 # Salem Malibary Design System — Spec
 
 **Date:** 2026-05-07
-**Status:** Approved for implementation
+**Status:** Implemented
 **Scope:** Whole-site design tokens + `/admin/styleguide` reference page
 
 ---
 
-## Problem
+## Architecture — 3-Layer Token System
 
-The site's CSS has ~900 lines of hardcoded values. Changing "all corners"
-means hunting through every component. The recent square motif implementation
-exposed the lack of a systematic approach — individual radius, spacing, and
-border values were changed one by one, creating inconsistencies.
+```
+Layer 1: Scale tokens (primitives)
+   Raw pixel values in :root. Never change per theme.
+   --space-6: 24px;  --radius-sm: 4px;  --text-base: 14px;
+        ↓
+Layer 2: Component tokens (semantic)
+   Purpose-named tokens composing from scale tokens. Set once in :root.
+   --c-card-pad: var(--space-6);  --c-card-radius: var(--radius-sm);
+        ↓
+Layer 3: Component styles
+   CSS rules reference ONLY component tokens, never scale tokens directly.
+   .card { padding: var(--c-card-pad); border-radius: var(--c-card-radius); }
+```
 
-## Decision
-
-Build a design token system (CSS custom properties) that every component
-references, plus a live `/admin/styleguide` page that renders every token
-and component for visual verification.
+Theme overrides (dark/light) only change Layer 1 colour values.
+Scale tokens (spacing, radius, typography) are identical across themes,
+so Layer 2 doesn't need per-theme duplication.
 
 ## Design Tokens
 
@@ -39,10 +46,14 @@ and component for visual verification.
 --space-2: 8px;      /* default: list spacing, sidebar padding */
 --space-2-5: 10px;   /* sidebar internal padding, newsletter padding */
 --space-3: 12px;     /* comfortable: card internal gaps, nav menu gap */
+--space-3-5: 14px;   /* admin input padding, picker padding */
 --space-4: 16px;     /* medium: between sections, card padding alternatives */
 --space-5: 20px;     /* large section gaps */
+--space-5-5: 22px;   /* writing item padding, card head margin */
 --space-6: 24px;     /* large: section separation, card padding */
+--space-7: 28px;     /* nav gap, section-head margin */
 --space-8: 32px;     /* xl: page section top/bottom, post-head margin */
+--space-9: 36px;     /* post body h2/h3/hr margins */
 --space-12: 48px;    /* 2xl: page edge padding (nav, hero), major spacing */
 --space-16: 64px;    /* 3xl: page bottom margin */
 ```
@@ -55,6 +66,7 @@ Existing font sizes mapped to tokens:
 
 ```css
 --text-xs: 10px;     /* pills, badges, meta labels, monogram */
+--text-2xs: 11px;    /* admin labels, meta text, small monospace UI */
 --text-sm: 12px;     /* secondary text, inputs, sidebar TOC */
 --text-base: 14px;   /* body text, nav items */
 --text-md: 16px;     /* card titles, section text */
@@ -67,9 +79,9 @@ Existing font sizes mapped to tokens:
 ### Border tokens
 
 ```css
---border-rule: 1px solid var(--rule);           /* standard divider */
---border-accent: 2px solid var(--accent);        /* sq-frame */
---border-accent-bar: 3px solid var(--accent);    /* sq-bar, blockquote side */
+--border-rule-val: 1px solid var(--rule);           /* standard divider */
+--border-accent-val: 2px solid var(--accent);        /* sq-frame */
+--border-bar-w: 3px;                                  /* sq-bar, blockquote side width */
 ```
 
 ### Existing tokens (keep as-is)
@@ -77,31 +89,32 @@ Existing font sizes mapped to tokens:
 Colours (`--bg`, `--ink`, `--accent`, etc.) and shadows (`--shadow`) are
 already tokenised. No changes needed.
 
-## Component Token Map
+## Component Token Map (Layer 2)
 
-Every component references tokens, never hardcoded values.
+Every public-site component has semantic tokens (`--c-*`) that compose
+from scale tokens. Components reference ONLY `--c-*` tokens, never raw
+scale tokens directly.
 
-| Component | radius | key spacing | border |
-|---|---|---|---|
-| Nav | — | `px: var(--space-12)` h: 64px | `border-bottom: var(--border-rule)` |
-| Nav monogram square | — | 24×24px | bg: accent |
-| Theme toggle outer | `var(--radius-sharp)` | `p: var(--space-0-5)` | `var(--border-rule)` |
-| Theme toggle button | `var(--radius-sharp)` | `px: 10px py: 5px` | — (active bg: accent) |
-| Card | `var(--radius-sm)` | `p: var(--space-6)` | `var(--border-rule)` |
-| Pill | `var(--radius-sharp)` | `p: 5px 11px` | `border: 1px solid (colour)` |
-| Tag pill | `var(--radius-sharp)` | `p: 3px 8px` | `border: 1px solid (colour)` |
-| Button | `var(--radius-sm)` | `p: 5px 12px` | `var(--border-rule)` |
-| Input | `var(--radius-sharp)` | `p: 8px 12px` | `var(--border-rule)` |
-| Blockquote | — | `p: 4px 18px` | `border-inline-start: var(--border-accent-bar)` |
-| Hero image | `var(--radius-sm)` | — | — |
-| Portrait | `var(--radius-sm)` | — | — |
-| Newsletter card | `var(--radius-sm)` | `p: 10px 12px` | `var(--border-rule)` + sq-bar |
-| Writing list item | — | `py: 22px` | `border-bottom: var(--border-rule)` |
-| Modal/dialog | `var(--radius-md)` | `p: var(--space-4)` | `var(--border-rule)` |
-| sq-mark | — | 10×10px | bg: accent |
-| sq-mark--sm | — | 6×6px | bg: accent |
-| sq-frame | — | — | `var(--border-accent)` |
-| sq-bar | — | — | `var(--border-accent-bar)` on right |
+| Component | Token prefix | radius | key spacing | border |
+|---|---|---|---|---|
+| Nav | `--c-nav-*` | — | `--c-nav-px`, `--c-nav-gap`, `--c-nav-height` | `var(--border-rule-val)` |
+| Monogram square | `--c-mono-*` | — | `--c-mono-size` | bg: accent |
+| Theme toggle | `--c-toggle-*` | `--c-pill-radius` | `--c-toggle-pad`, `--c-toggle-btn-px/py` | `var(--border-rule-val)` |
+| Hero | `--c-hero-*` | — | `--c-hero-gap`, `--c-hero-portrait-max` | `--c-hero-lede-border` |
+| Social | `--c-social-*` | — | `--c-social-size`, `--c-social-icon` | — |
+| Section head | `--c-section-*` | — | `--c-section-head-mb`, `--c-section-bar-w` | — |
+| Card | `--c-card-*` | `--c-card-radius` | `--c-card-pad`, `--c-card-min-h`, `--c-card-head-mb` | `var(--border-rule-val)` |
+| Pill | `--c-pill-*` | `--c-pill-radius` | `--c-pill-pad` | `border: 1px solid (colour)` |
+| Tag pill | `--c-tag-*` | `--c-tag-radius` | `--c-tag-pad` | `border: 1px solid (colour)` |
+| Blockquote | `--c-blockquote-*` | — | `--c-blockquote-pad` | `border-inline-start: var(--border-bar-w)` |
+| Writing item | `--c-writing-*` | — | `--c-writing-py`, `--c-writing-col` | `var(--border-rule-val)` |
+| Newsletter | `--c-newsletter-*` | `--c-newsletter-radius` | `--c-newsletter-pad` | `var(--border-rule-val)` |
+| sq-mark | `--c-sq-mark` | — | width/height: `--c-sq-mark` | bg: accent |
+| sq-mark--sm | `--c-sq-mark-sm` | — | width/height: `--c-sq-mark-sm` | bg: accent |
+| sq-frame | — | — | — | `var(--border-accent-val)` |
+| sq-bar | — | — | — | width: `var(--border-bar-w)` |
+| Post layout | `--c-post-*` | — | `--c-post-margin-hr` | — |
+| Portrait | `--c-portrait-*` | — | `--c-portrait-bottom` | — |
 
 ## Styleguide Page — `/admin/styleguide`
 
@@ -130,10 +143,11 @@ Registered in `app.dart` as `/admin/styleguide`. Not deployed to production
 
 | File | Change |
 |---|---|
-| `web/styles.css` | Add all design tokens to `:root`. Replace hardcoded values with `var(--token)` throughout. |
-| `lib/pages/admin/styleguide.dart` | New file — the styleguide page |
-| `lib/app.dart` | Register `/admin/styleguide` route |
-| `context/identity.md` | Add design system reference |
+| `web/styles.css` | 3-layer tokens in `:root`. Scale + component tokens. Hardcoded values → `var(--token)`. Light theme only overrides colour values. |
+| `web/admin.css` | All hardcoded spacing/radius/typography → token references. Added `.card--spaced` and `.flex-1` utility classes. |
+| `lib/pages/admin/profile.dart` | Removed `Styles(raw:)` inline styles → CSS class `.card--spaced` |
+| `lib/pages/admin/blog.dart` | Removed `Styles(raw:)` inline style → CSS class `.flex-1` |
+| `lib/pages/admin/research.dart` | Removed `Styles(raw:)` inline style → CSS class `.flex-1` |
 
 ## Component Minimalism Rule
 

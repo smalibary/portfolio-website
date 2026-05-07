@@ -644,7 +644,7 @@ class AdminBlogPage extends StatelessComponent {
               attributes: const {'data-delete': '', 'type': 'button'},
               [text('حذف · DELETE')],
             ),
-            div(styles: Styles(raw: {'flex': '1'}), []),
+            div(classes: 'flex-1', []),
             button(
               classes: 'btn ghost',
               attributes: const {'type': 'button'},
