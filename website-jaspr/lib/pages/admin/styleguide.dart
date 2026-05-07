@@ -220,7 +220,7 @@ class StyleguidePage extends StatelessComponent {
                   classes: 'sg-bar-demo sq-bar',
                   attributes: {
                     'style':
-                        'width:60px; height:28px; border-radius:var(--radius-sm); border:1px solid var(--rule);',
+                        'width:60px; height:28px; border-radius:var(--radius-sm); border:1px solid var(--color-border-default);',
                   },
                   [],
                 ),
@@ -342,7 +342,7 @@ const _css = r'''
 .adm .sg-section {
   margin-bottom: 48px;
   padding-bottom: 48px;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--color-border-default);
 }
 .adm .sg-section:last-child { border-bottom: none; }
 .adm .sg-section-head {
@@ -394,7 +394,7 @@ const _css = r'''
   gap: 10px;
   padding: 8px 12px;
   background: var(--bg-elev);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   min-width: 260px;
 }
@@ -402,7 +402,7 @@ const _css = r'''
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-border-default);
   flex-shrink: 0;
   /* Visible outline ensures even near-black colours are distinguishable */
   outline: 1px solid color-mix(in srgb, var(--ink-faint) 50%, transparent);
@@ -495,7 +495,7 @@ const _css = r'''
   align-items: baseline;
   gap: 16px;
   padding: 6px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--rule) 50%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border-default) 50%, transparent);
 }
 .adm .sg-type-row:last-child { border-bottom: none; }
 .adm .sg-type-sample {
@@ -593,7 +593,7 @@ const _css = r'''
 /* Card — reset admin overrides back to public-site styles */
 .adm .sg-main .card {
   background: var(--color-surface-card);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   padding: var(--space-6);
   box-shadow: none;
@@ -608,7 +608,7 @@ const _css = r'''
   display: inline-flex;
   width: fit-content;
   background: var(--color-surface-card);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sharp);
   padding: var(--space-0-5);
   direction: ltr;
