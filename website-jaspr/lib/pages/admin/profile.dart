@@ -206,7 +206,7 @@ class AdminProfilePage extends StatelessComponent {
           ]),
 
           // Identity (name + tagline + photos)
-          div(classes: 'card', styles: Styles(raw: {'margin-bottom': '20px'}), [
+          div(classes: 'card card--spaced', [
             div(classes: 'card-head', [
               h2([text('الهوية')]),
               div(classes: 'en', [text('IDENTITY')]),
@@ -226,7 +226,7 @@ class AdminProfilePage extends StatelessComponent {
           ]),
 
           // Hero copy
-          div(classes: 'card', styles: Styles(raw: {'margin-bottom': '20px'}), [
+          div(classes: 'card card--spaced', [
             div(classes: 'card-head', [
               h2([text('نص الصفحة الرئيسية')]),
               div(classes: 'en', [text('HERO COPY')]),
@@ -263,7 +263,7 @@ class AdminProfilePage extends StatelessComponent {
           ]),
 
           // Bio
-          div(classes: 'card', styles: Styles(raw: {'margin-bottom': '20px'}), [
+          div(classes: 'card card--spaced', [
             div(classes: 'card-head', [
               h2([text('النبذة')]),
               div(classes: 'en', [text('BIO')]),
