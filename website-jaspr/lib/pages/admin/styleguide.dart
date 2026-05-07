@@ -360,14 +360,14 @@ const _css = r'''
 .adm .sg-section-en {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .adm .sg-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   letter-spacing: 0.04em;
 }
 
@@ -378,7 +378,7 @@ const _css = r'''
   display: block;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -418,7 +418,7 @@ const _css = r'''
 .adm .sg-swatch-desc {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
 }
 
 /* ── Spacing ── */
@@ -449,7 +449,7 @@ const _css = r'''
 .adm .sg-spacing-val {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
 }
 
 /* ── Radius ── */
@@ -479,7 +479,7 @@ const _css = r'''
 .adm .sg-radius-desc {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   text-align: center;
   max-width: 120px;
 }
@@ -512,7 +512,7 @@ const _css = r'''
 .adm .sg-type-usage {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
 }
 
 /* ── Borders ── */
@@ -545,7 +545,7 @@ const _css = r'''
 .adm .sg-comp-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -570,7 +570,7 @@ const _css = r'''
   padding: 4px 14px;
   font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
 }
 .adm .sg-motif-row { gap: 20px; }
 .adm .sg-motif-item {
@@ -581,7 +581,7 @@ const _css = r'''
 .adm .sg-motif-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
 }
 .adm .sg-bar-demo { position: relative; }
 
@@ -617,7 +617,7 @@ const _css = r'''
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   font-family: 'JetBrains Mono', monospace;
   font-size: var(--text-xs);
   letter-spacing: 0.06em;
@@ -636,7 +636,7 @@ const _css = r'''
   border-inline-start: 3px solid var(--accent);
   padding: 4px 18px;
   margin: 0 0 12px;
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
   font-size: 14px;
   line-height: 1.7;
 }
