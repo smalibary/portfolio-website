@@ -19,7 +19,7 @@
 /* theme toggle */
 .adm .toggle{ display:flex; background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--radius-pill); padding:var(--space-0-5); }
 .adm .toggle button{ background:none; border:none; cursor:pointer; padding:var(--space-1-5) var(--space-3); color:var(--ink-muted); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); border-radius:var(--radius-pill); }
-.adm .toggle button.active{ background:var(--accent); color:var(--color-surface-page); }
+.adm .toggle button.active{ background:var(--accent); color:var(--color-surface-page); /* TODO(token-semantics): should be --color-interactive-primary-text — see TODO_TOKENS.md */ }
 
 /* form primitives */
 .adm .field{ display:block; margin-bottom:var(--space-5); }
@@ -37,7 +37,7 @@
 @media (max-width:700px){ .adm .row{ grid-template-columns:1fr; } }
 
 /* buttons */
-.adm .btn{ padding:var(--c-adm-input-pad-y) var(--space-5); border:none; border-radius:var(--radius-md); background:var(--accent); color:var(--color-surface-page); font-weight:500; font-size:var(--text-base); font-family:inherit; cursor:pointer; transition:filter .15s; }
+.adm .btn{ padding:var(--c-adm-input-pad-y) var(--space-5); border:none; border-radius:var(--radius-md); background:var(--accent); color:var(--color-surface-page); /* TODO(token-semantics): should be --color-interactive-primary-text — see TODO_TOKENS.md */ font-weight:500; font-size:var(--text-base); font-family:inherit; cursor:pointer; transition:filter .15s; }
 .adm .btn:hover{ filter:brightness(1.08); }
 .adm .btn.ghost{ background:transparent; border:var(--border-rule); color:var(--ink-muted); }
 .adm .btn.ghost:hover{ color:var(--ink); border-color:var(--ink-muted); filter:none; }
