@@ -405,7 +405,7 @@ const _css = r'''
   border: 1px solid var(--color-border-default);
   flex-shrink: 0;
   /* Visible outline ensures even near-black colours are distinguishable */
-  outline: 1px solid color-mix(in srgb, var(--ink-faint) 50%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--color-text-faint) 50%, transparent);
   outline-offset: 1px;
 }
 .adm .sg-swatch-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
