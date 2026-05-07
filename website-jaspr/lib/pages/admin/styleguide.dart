@@ -354,7 +354,7 @@ const _css = r'''
 .adm .sg-section-head h2 {
   font-size: 20px;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--color-text-default);
   margin: 0;
 }
 .adm .sg-section-en {
@@ -412,7 +412,7 @@ const _css = r'''
 .adm .sg-swatch-name {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  color: var(--ink);
+  color: var(--color-text-default);
   letter-spacing: 0.02em;
 }
 .adm .sg-swatch-desc {
@@ -443,7 +443,7 @@ const _css = r'''
 .adm .sg-spacing-name {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  color: var(--ink);
+  color: var(--color-text-default);
   min-width: 100px;
 }
 .adm .sg-spacing-val {
@@ -473,7 +473,7 @@ const _css = r'''
 .adm .sg-radius-token {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--ink);
+  color: var(--color-text-default);
   text-align: center;
 }
 .adm .sg-radius-desc {
@@ -499,7 +499,7 @@ const _css = r'''
 }
 .adm .sg-type-row:last-child { border-bottom: none; }
 .adm .sg-type-sample {
-  color: var(--ink);
+  color: var(--color-text-default);
   min-width: 200px;
   white-space: nowrap;
 }
@@ -507,7 +507,7 @@ const _css = r'''
 .adm .sg-type-token {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  color: var(--ink);
+  color: var(--color-text-default);
 }
 .adm .sg-type-usage {
   font-family: 'JetBrains Mono', monospace;
