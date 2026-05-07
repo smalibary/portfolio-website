@@ -627,7 +627,7 @@ const _css = r'''
 }
 .adm .sg-main .theme-toggle button.active {
   background: var(--accent);
-  color: var(--bg);
+  color: var(--color-surface-page);
   font-weight: 500;
 }
 
