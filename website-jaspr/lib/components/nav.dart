@@ -29,7 +29,7 @@ class Nav extends StatelessComponent {
           a(href: '/contact', [text('تواصل')]),
         ]),
         div(classes: 'nav__split-btn', [
-          a(href: '/writing', classes: 'nav__split-main', [text('اقرأ المزيد · READ MORE')]),
+          a(href: '/writing', classes: 'nav__split-main', [text('اقرأ المزيد')]),
           div(classes: 'nav__split-arrow', attributes: {'aria-label': 'More actions'}, [
             span(classes: 'nav__split-arrow-up', [text('▲')]),
             span(classes: 'nav__split-arrow-down', [text('▼')]),
