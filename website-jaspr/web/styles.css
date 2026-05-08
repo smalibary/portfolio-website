@@ -86,8 +86,8 @@ main, nav, footer { position: relative; z-index: 1; }
   padding: var(--c-toggle-btn-py) var(--space-3) var(--c-toggle-btn-py) var(--c-toggle-btn-px);
   background: var(--color-brand); color: var(--color-surface-page);
   border: none; border-radius: var(--c-pill-radius) 0 0 var(--c-pill-radius);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: var(--text-xs); letter-spacing: 0.06em; font-weight: 500;
+  font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
+  font-size: var(--text-base); font-weight: 500;
   text-decoration: none; cursor: pointer; transition: filter 0.2s;
 }
 .nav__split-main:hover { filter: brightness(1.1); }
@@ -409,14 +409,16 @@ main, nav, footer { position: relative; z-index: 1; }
   margin-left: auto;
   flex-shrink: 0;
 }
-.bili { display: flex; gap: var(--space-2); align-items: baseline; }
+.bili { display: flex; gap: var(--space-2); align-items: baseline; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
 .bili__primary {
   font-size: var(--text-sm); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
+  overflow: hidden; text-overflow: ellipsis;
 }
 .bili__secondary {
   font-family: 'Inter', sans-serif;
   font-size: var(--text-sm); color: var(--color-text-faint); line-height: 1.4;
   direction: ltr;
+  overflow: hidden; text-overflow: ellipsis;
 }
 
 /* PORTRAIT — light/dark variants. Both images render; CSS hides the wrong
