@@ -1139,22 +1139,31 @@ body { background: transparent; }
 .contact-form__field select {
   width: 100%; padding: var(--space-2) var(--space-3);
   padding-inline-start: var(--space-7);
-  background: var(--color-surface-elevated); border: var(--border-rule);
-  border-radius: var(--radius-sm); color: var(--color-text-default);
-  font-family: inherit; font-size: var(--text-sm);
-  transition: border-color .15s;
+  background: var(--color-brand); color: var(--color-surface-page);
+  border: none; border-radius: var(--c-pill-radius);
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
+  letter-spacing: 0.06em; font-weight: 500;
+  transition: filter .15s;
   appearance: none; -webkit-appearance: none; -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234dd4ac' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: left var(--space-3) center;
   cursor: pointer;
 }
+.contact-form__field select:hover { filter: brightness(1.1); }
+.contact-form__field select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand) 30%, transparent);
+}
 .contact-form__field select option {
   background: var(--color-surface-elevated); color: var(--color-text-default);
   padding: var(--space-2);
+  font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
+  font-size: var(--text-sm);
+  letter-spacing: 0;
+  font-weight: 400;
 }
 .contact-form__field input:focus,
-.contact-form__field select:focus,
 .contact-form__field textarea:focus {
   outline: none; border-color: var(--color-brand);
 }
