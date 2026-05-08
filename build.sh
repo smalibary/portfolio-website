@@ -5,8 +5,9 @@ set -euo pipefail
 if ! command -v dart &>/dev/null; then
   echo "Installing Dart SDK..."
   curl -sS "https://storage.googleapis.com/dart-archive/channels/stable/release/3.11.5/sdk/dartsdk-linux-x64-release.zip" -o /tmp/dart-sdk.zip
-  unzip -qo /tmp/dart-sdk.zip -d /tmp/dart
+  unzip -qo /tmp/dart-sdk.zip -d /tmp
   export PATH="/tmp/dart-sdk/bin:$PATH"
+  echo "Dart installed at $(which dart)"
 fi
 
 echo "Dart version: $(dart --version)"
