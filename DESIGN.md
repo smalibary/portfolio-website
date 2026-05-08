@@ -1,184 +1,139 @@
-# Salem Malibary Design System — Spec
+# Salem Malibary Design System
 
-**Date:** 2026-05-07
-**Status:** Implemented
-**Scope:** Whole-site design tokens + `/admin/styleguide` reference page
+The design system for this project. Philosophy and architecture live here;
+procedural rules are in scoped files loaded when working in those areas:
+- `/website-jaspr/web/tokens/TOKENS.md` — token decision tree
+- `/website-jaspr/lib/components/COMPONENTS.md` — component decision tree
 
 ---
 
-## Architecture — 3-Layer Token System
+## Architecture: 3-tier token system
+
+Three CSS files, each a layer with a strict dependency direction:
 
 ```
-Layer 1: Scale tokens (primitives)
-   Raw pixel values in :root. Never change per theme.
-   --space-6: 24px;  --radius-sm: 4px;  --text-base: 14px;
-        ↓
-Layer 2: Component tokens (semantic)
-   Purpose-named tokens composing from scale tokens. Set once in :root.
-   --c-card-pad: var(--space-6);  --c-card-radius: var(--radius-sm);
-        ↓
-Layer 3: Component styles
-   CSS rules reference ONLY component tokens, never scale tokens directly.
-   .card { padding: var(--c-card-pad); border-radius: var(--c-card-radius); }
+primitives.css    raw values — colours, spacing, radii, typography
+       ↓ referenced by
+semantic.css      purpose-named, theme-aware — surfaces, text, borders, brand
+       ↓ referenced by
+components.css    component-scoped — composes from primitives + semantic
+       ↓ consumed by
+styles.css / admin.css   CSS selectors — reference semantic + component tokens only
 ```
 
-Theme overrides (dark/light) only change Layer 1 colour values.
-Scale tokens (spacing, radius, typography) are identical across themes,
-so Layer 2 doesn't need per-theme duplication.
+Theme overrides (dark/light) live in `semantic.css`. Primitives never
+change per theme. Components never reference primitives directly.
 
-## Design Tokens
-
-### Radius scale (3 steps)
-
-```css
---radius-sharp: 2px;   /* pills, tags, toggles, inputs, badges */
---radius-sm: 4px;      /* cards, buttons, photos, hero images, newsletter */
---radius-md: 8px;      /* modals, dialogs (if ever needed) */
-```
-
-### Spacing scale (4px base + half-steps)
-
-```css
---space-0: 0;
---space-0-5: 2px;    /* tight: pill inner padding, badge gaps */
---space-1: 4px;      /* compact: inner component gaps, small margins */
---space-1-5: 6px;    /* small: label gaps, form field gaps */
---space-2: 8px;      /* default: list spacing, sidebar padding */
---space-2-5: 10px;   /* sidebar internal padding, newsletter padding */
---space-3: 12px;     /* comfortable: card internal gaps, nav menu gap */
---space-3-5: 14px;   /* admin input padding, picker padding */
---space-4: 16px;     /* medium: between sections, card padding alternatives */
---space-5: 20px;     /* large section gaps */
---space-5-5: 22px;   /* writing item padding, card head margin */
---space-6: 24px;     /* large: section separation, card padding */
---space-7: 28px;     /* nav gap, section-head margin */
---space-8: 32px;     /* xl: page section top/bottom, post-head margin */
---space-9: 36px;     /* post body h2/h3/hr margins */
---space-12: 48px;    /* 2xl: page edge padding (nav, hero), major spacing */
---space-16: 64px;    /* 3xl: page bottom margin */
-```
-
-Note: CSS variable names cannot use dots, so `2.5` becomes `2-5`.
-
-### Typography scale
-
-Existing font sizes mapped to tokens:
-
-```css
---text-xs: 10px;     /* pills, badges, meta labels, monogram */
---text-2xs: 11px;    /* admin labels, meta text, small monospace UI */
---text-sm: 12px;     /* secondary text, inputs, sidebar TOC */
---text-base: 14px;   /* body text, nav items */
---text-md: 16px;     /* card titles, section text */
---text-lg: 18px;     /* writing list primary */
---text-xl: 20px;     /* section headings (h2) */
---text-2xl: 28px;    /* page titles (h1) */
---text-3xl: 34px;    /* hero metric, display */
-```
-
-### Border tokens
-
-```css
---border-rule-val: 1px solid var(--rule);           /* standard divider */
---border-accent-val: 2px solid var(--accent);        /* sq-frame */
---border-bar-w: 3px;                                  /* sq-bar, blockquote side width */
-```
-
-### Existing tokens (keep as-is)
-
-Colours (`--bg`, `--ink`, `--accent`, etc.) and shadows (`--shadow`) are
-already tokenised. No changes needed.
-
-## Component Token Map (Layer 2)
-
-Every public-site component has semantic tokens (`--c-*`) that compose
-from scale tokens. Components reference ONLY `--c-*` tokens, never raw
-scale tokens directly.
-
-| Component | Token prefix | radius | key spacing | border |
-|---|---|---|---|---|
-| Nav | `--c-nav-*` | — | `--c-nav-px`, `--c-nav-gap`, `--c-nav-height` | `var(--border-rule-val)` |
-| Monogram square | `--c-mono-*` | — | `--c-mono-size` | bg: accent |
-| Theme toggle | `--c-toggle-*` | `--c-pill-radius` | `--c-toggle-pad`, `--c-toggle-btn-px/py` | `var(--border-rule-val)` |
-| Hero | `--c-hero-*` | — | `--c-hero-gap`, `--c-hero-portrait-max` | `--c-hero-lede-border` |
-| Social | `--c-social-*` | — | `--c-social-size`, `--c-social-icon` | — |
-| Section head | `--c-section-*` | — | `--c-section-head-mb`, `--c-section-bar-w` | — |
-| Card | `--c-card-*` | `--c-card-radius` | `--c-card-pad`, `--c-card-min-h`, `--c-card-head-mb` | `var(--border-rule-val)` |
-| Pill | `--c-pill-*` | `--c-pill-radius` | `--c-pill-pad` | `border: 1px solid (colour)` |
-| Tag pill | `--c-tag-*` | `--c-tag-radius` | `--c-tag-pad` | `border: 1px solid (colour)` |
-| Blockquote | `--c-blockquote-*` | — | `--c-blockquote-pad` | `border-inline-start: var(--border-bar-w)` |
-| Writing item | `--c-writing-*` | — | `--c-writing-py`, `--c-writing-col` | `var(--border-rule-val)` |
-| Newsletter | `--c-newsletter-*` | `--c-newsletter-radius` | `--c-newsletter-pad` | `var(--border-rule-val)` |
-| sq-mark | `--c-sq-mark` | — | width/height: `--c-sq-mark` | bg: accent |
-| sq-mark--sm | `--c-sq-mark-sm` | — | width/height: `--c-sq-mark-sm` | bg: accent |
-| sq-frame | — | — | — | `var(--border-accent-val)` |
-| sq-bar | — | — | — | width: `var(--border-bar-w)` |
-| Post layout | `--c-post-*` | — | `--c-post-margin-hr` | — |
-| Portrait | `--c-portrait-*` | — | `--c-portrait-bottom` | — |
-
-## Styleguide Page — `/admin/styleguide`
-
-A Jaspr route rendering every token and component for live verification.
-
-### Structure
-
-1. **Token display** — colour swatches, spacing bars at actual size, radius
-   examples, typography at each scale level
-2. **Components** — every component rendered at actual size, grouped:
-   - Navigation (nav bar, monogram, theme toggle)
-   - Cards (research card variants)
-   - Text (headings, body, blockquote)
-   - Forms (input, button, newsletter)
-   - Tags & Pills
-   - Square motif elements (mark, frame, bar)
-3. **Theme toggle** — dark/light switch on the page itself
-4. Uses existing admin shell (`admin_shell.dart`)
-
-### Route
-
-Registered in `app.dart` as `/admin/styleguide`. Not deployed to production
-(same as all `/admin/*` routes — passcode is cosmetic).
-
-## Files Changed
-
-| File | Change |
-|---|---|
-| `web/styles.css` | 3-layer tokens in `:root`. Scale + component tokens. Hardcoded values → `var(--token)`. Light theme only overrides colour values. |
-| `web/admin.css` | All hardcoded spacing/radius/typography → token references. Added `.card--spaced` and `.flex-1` utility classes. |
-| `lib/pages/admin/profile.dart` | Removed `Styles(raw:)` inline styles → CSS class `.card--spaced` |
-| `lib/pages/admin/blog.dart` | Removed `Styles(raw:)` inline style → CSS class `.flex-1` |
-| `lib/pages/admin/research.dart` | Removed `Styles(raw:)` inline style → CSS class `.flex-1` |
-
-## Component Minimalism Rule
-
-**Don't create new component variants.** The site has a small set of
-components (card, pill, tag, button, input, blockquote). Differentiate
-them with tokens (radius, spacing, border, accent colour), not new CSS
-classes or new Dart components.
-
-Before creating a new component, ask:
-1. Can an existing component with different token values do the job?
-2. Is the structural difference genuine (different HTML shape) or just
-   cosmetic (different size/colour/gap)?
-3. If cosmetic → use existing component + adjust tokens.
-4. If genuinely new → add it here in the component map first.
-
-**One card. One pill. One tag. One button.** Variants via tokens only.
-
-## What Stays the Same
-
-- Colour values — already tokenised, no changes
-- Component structure (Dart markup) — only CSS values change
-- Routes, SEO, sitemap — no changes
-- Square motif elements — kept, now reference tokens
-
-## Context Updates
-
-Append to `context/identity.md` Visual Identity section:
+Example — a card's padding:
 
 ```
-- **Design system:** Token-based (CSS custom properties). 3-step radius
-  scale (sharp/sm/md), 4px-base spacing with half-steps, typography scale.
-  All components reference tokens — one change ripples everywhere.
-  Live reference at `/admin/styleguide`.
+primitives.css:   --space-6: 24px;
+components.css:   --c-card-pad: var(--space-6);
+styles.css:       .card { padding: var(--c-card-pad); }
 ```
+
+The selector never touches `--space-6`. If card padding changes, one edit
+to `--c-card-pad` in `components.css` ripples everywhere.
+
+## The dependency rule (tokens)
+
+Selectors reference semantic or component tokens. Either is fine —
+semantic when the selector is one of many consumers of that purpose
+(e.g. `--color-text-default` used everywhere), component when the
+selector owns a specific dimension (e.g. `--c-card-pad`). The forbidden
+case is selectors reaching down to primitives like `--space-6` or
+`--gray-100`.
+
+Violation: `.card { padding: var(--space-6); }` — selector reaches past
+the component layer to a primitive. Fix: define `--c-card-pad` in
+`components.css` and reference that.
+
+## Brand vs interactive: the philosophy
+
+The system distinguishes brand-coloured things from interactive-coloured
+things at the **semantic layer**. Today `--color-brand` and
+`--color-interactive-primary` resolve to the same teal. They might
+diverge in the future. Every place that uses an "accent" colour must
+declare which it is.
+
+Rules:
+
+- **Buttons are interactive** — regardless of how decorative they look.
+  Primary buttons, outline buttons, "add new" CTAs: all interactive.
+- **Hover, focus, and active states** of clickable things are interactive.
+  Focus rings, hover colour shifts, active-tab indicators, open-state
+  outlines.
+- **Decorative emphasis on non-interactive content** is brand. Blockquote
+  bars, `em`/`strong` in post bodies, sq-mark backgrounds, section-head
+  bars.
+- **Status indicators** (badges, required-field markers, published pills,
+  status dots) are brand or `--color-status-*`, never interactive.
+- **Typographic accents** (`em`, `a`, `blockquote`, `sup` in post bodies)
+  are brand.
+- **Active state of nav-like clickable elements** (`toc__link.active`,
+  `rail-item.active`, `theme-toggle button.active`, `tabs button.active`)
+  is interactive — these are "you are here" markers on clickable
+  structures.
+
+## Worked examples
+
+Real classifications from the `--accent` migration (Commit 12):
+
+**`.post-pinned-block` border** (`styles.css:622`) → **BRAND**
+Question: is the border a click affordance or decorative emphasis?
+It frames featured content. The block is not focusable. Decorative → brand.
+
+**`.btn-outline` resting + hover** (`styles.css:867–873`) → **INTERACTIVE**
+Question: is it a button? Yes. Buttons are always interactive, even at
+rest. Both border and text colour are interactive-primary.
+
+**`.post-body em`** (`styles.css:514`) → **BRAND**
+Question: is the emphasis on something clickable? No — it's typographic
+emphasis in body text. Decorative emphasis → brand.
+
+**`.theme-toggle button.active`** (`styles.css:96`) → **INTERACTIVE**
+Question: active state of a clickable element? Yes — the active pill
+shows which theme you're on, but it's still a click target. Same
+category as the click affordance itself.
+
+**`.adm .field label .req`** (`admin.css:27`) → **BRAND**
+Question: is the asterisk a click affordance? No — it's a status marker
+indicating a required field. Status indicator → brand.
+
+## Naming conventions
+
+- Primitives: `--teal-500`, `--space-6`, `--radius-sm`, `--text-base`
+- Semantic: `--color-surface-page`, `--color-text-default`,
+  `--color-brand`, `--color-interactive-primary`, `--color-status-warm`,
+  `--color-status-cool`, `--border-rule`
+- Component (public): `--c-card-pad`, `--c-nav-height`
+- Component (admin): `--c-adm-rail-w`, `--c-adm-pin-input-h`
+
+Full naming rules and the "when to add a token" decision tree:
+`/website-jaspr/web/tokens/TOKENS.md`.
+
+## Component architecture
+
+Four roles: **atom** (reusable primitive), **section** (content area),
+**chrome** (persistent UI), **layout** (wrapper). Dependency flows upward:
+atoms are imported by sections and chrome, never the reverse.
+
+Full inventory and the "when to create a component" decision tree:
+`/website-jaspr/lib/components/COMPONENTS.md`.
+
+## Known limitations / tracked debt
+
+- **Color-on-accent semantic mismatch (7 sites):** `--color-surface-page`
+  is used as text colour on accent backgrounds instead of the correct
+  `--color-interactive-primary-text`. Same primitive value today, so not a
+  visual bug, but will silently break if the two tokens diverge. See
+  `website-jaspr/TODO_TOKENS.md` for the full list.
+- **Styleguide hardcoded hex values:** `/admin/styleguide` renders some
+  token values as hardcoded hex for display swatches. These will silently
+  drift if primitives change. See comment at top of `styleguide.dart`.
+
+## The audit script
+
+`tool/audit_css_tokens.dart` enforces that every `var(--*)` reference
+resolves to a defined token. Runs on dev-server start via `tool/dev.dart`.
+Run manually: `dart run tool/audit_css_tokens.dart`.
