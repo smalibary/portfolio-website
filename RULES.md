@@ -119,7 +119,7 @@ the following must be true** before merging. Treat this as a checklist.
 
 - Repo is **public** at `https://github.com/smalibary/portfolio-website`. Anything committed becomes public history, even if force-pushed later.
 - Root `.gitignore` excludes private working materials. **Before adding a new top-level folder with anything sensitive, update `.gitignore` first**, then commit.
-- **Never track:** `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, `website-jaspr/content/blog/` (drafts), `.claude/`, `.zed/`, `.dart_tool/`, `build/`, `.env*`, `*.key`, `*credentials*`
+- **Never track:** `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, `.claude/`, `.zed/`, `.dart_tool/`, `build/`, `.env*`, `*.key`, `*credentials*`
 - Always tracked publicly: `website-jaspr/lib/`, `web/`, `tool/`, `pubspec.yaml`, `content/_data/site.yaml`, `content/_data/papers.yaml`, `tools/`, `AGENTS.md`, `RULES.md`, `WORKFLOWS.md`, `website-jaspr/AGENTS.md`, `website-jaspr/README.md`
 
 ## 8. Build + deploy
@@ -191,7 +191,7 @@ any other work that affects what the user sees on screen.
 - Don't deploy `/admin/*` to production — passcode is cosmetic
 - Don't write public positioning text without reading `context/AGENTS.md` first
 - Don't suggest live-performance content formats before the medium ladder reaches that phase
-- Don't track `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, or blog drafts in git — listed in root `.gitignore` for a reason
+- Don't track `context/`, `inbox/`, `mockups/`, `ROADMAP.md` in git — listed in root `.gitignore` for a reason
 - Don't pass children to Jaspr `script(...)` — use `content:` (inline JS) or `src:` (external URL) only
 - Don't use em dashes (—) in Arabic content
 - Don't add per-section tags (article-level only — see §5.5)

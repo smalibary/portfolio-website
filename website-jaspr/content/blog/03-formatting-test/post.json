@@ -1,0 +1,53 @@
+{
+  "title_ar": "دليل التنسيق الشامل: كيف تقرأ البيئة المبنية",
+  "title_en": "The Complete Formatting Guide: How the Built Environment Shapes Us",
+  "slug": "formatting-test",
+  "excerpt_ar": "مقال تجريبي يعرض تنسيقات المرجع والروابط والاقتباسات والقوائم. يهدف لاختبار عرض المحتوى الغني في الموقع.",
+  "excerpt_en": "A test post showcasing reference lists, links, blockquotes, lists, and rich formatting to verify the site rendering.",
+  "date": "2026-05-07",
+  "category": "architecture",
+  "reading_time": 6,
+  "language": "ar",
+  "meta_title": "Formatting Test — Built Environment Research | Salem Malibary",
+  "meta_description": "A comprehensive test of markdown formatting including references, links, blockquotes, and tables for the site.",
+  "og_image": "",
+  "canonical_url": "",
+  "robots": "index, nofollow",
+  "tags": [
+    "architecture",
+    "environmental-psychology",
+    "research"
+  ],
+  "sections": [
+    {
+      "anchor": "مقدمة-لماذا-يهم-التصميم",
+      "title": "مقدمة: لماذا يهم التصميم؟",
+      "last_modified": "2026-05-07",
+      "pinned": false
+    },
+    {
+      "anchor": "البيئة-والإدراك-كيف-يرى-العقل-المكان",
+      "title": "البيئة والإدراك: كيف يرى العقل المكان",
+      "last_modified": "2026-05-07",
+      "pinned": true
+    },
+    {
+      "anchor": "ضوء-النهار-والإنتاجية-ما-يقوله-البحث",
+      "title": "ضوء النهار والإنتاجية: ما يقوله البحث",
+      "last_modified": "2026-05-07",
+      "pinned": false
+    },
+    {
+      "anchor": "قائمة-المراجع-والمصادر",
+      "title": "قائمة المراجع والمصادر",
+      "last_modified": "2026-05-07",
+      "pinned": false
+    }
+  ],
+  "takeaways": [
+    "البيئة المبنية **تؤثر مباشرة** على الإدراك والإنتاجية والصحة النفسية",
+    "ضوء النهار الطبيعي يحسّن الأداء المعرفي بنسبة تصل إلى **18%** (Heschong, 2003)",
+    "تصميم الفراغ ليس ترفاً جمالياً — هو **أداة صحية** بيد المخطط والمصمم",
+    "الروابط بين البحث المعماري وعلم النفس البيئي تتزايد كل سنة"
+  ]
+}
