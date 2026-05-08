@@ -11,14 +11,11 @@
   --color-surface-page:     var(--black);
   --color-surface-elevated: var(--gray-950);
   --color-surface-card:     var(--gray-900);
-  --color-surface-overlay:  var(--overlay-black-45);
 
   /* Text */
   --color-text-default:  var(--gray-100);
   --color-text-muted:    var(--gray-500);
   --color-text-faint:    var(--gray-700);
-  --color-text-inverse:  var(--black);
-  --color-text-on-image: var(--overlay-white-92);
 
   /* Borders / dividers */
   --color-border-default: var(--gray-800);
@@ -52,7 +49,6 @@
   --color-text-default: var(--cream-900);
   --color-text-muted:   var(--cream-800);
   --color-text-faint:   var(--cream-700);
-  --color-text-inverse: var(--cream-50);
 
   --color-border-default: var(--cream-200);
 
