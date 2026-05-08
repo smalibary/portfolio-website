@@ -48,12 +48,28 @@ class ContactPage extends StatelessComponent {
             ]),
             div(classes: 'contact-form__field', [
               label([text('الموضوع · SUBJECT')]),
-              select(attributes: {'name': 'subject', 'required': ''}, [
-                option(value: '', [text('اختر الموضوع · Choose a topic')]),
-                option(value: 'research', [text('بحث/تعاون · Research / Collaboration')]),
-                option(value: 'consulting', [text('استشارات · Consulting')]),
-                option(value: 'speaking', [text('محاضرة · Speaking')]),
-                option(value: 'general', [text('سؤال عام · General')]),
+              div(classes: 'cf-select', [
+                input(
+                  type: InputType.hidden,
+                  attributes: {'name': 'subject', 'data-cf-value': '', 'required': ''},
+                ),
+                button(
+                  classes: 'cf-select__btn',
+                  attributes: {'type': 'button', 'data-cf-toggle': '', 'aria-haspopup': 'listbox'},
+                  [
+                    span(classes: 'cf-select__label', [text('اختر الموضوع · Choose a topic')]),
+                    span(classes: 'cf-select__arrow', [
+                      span(classes: 'cf-select__arrow-down', [text('▼')]),
+                      span(classes: 'cf-select__arrow-up', [text('▲')]),
+                    ]),
+                  ],
+                ),
+                div(classes: 'cf-select__menu', attributes: {'role': 'listbox'}, [
+                  button(classes: 'cf-select__opt', attributes: {'type': 'button', 'data-cf-opt': 'research'}, [text('بحث/تعاون · Research / Collaboration')]),
+                  button(classes: 'cf-select__opt', attributes: {'type': 'button', 'data-cf-opt': 'consulting'}, [text('استشارات · Consulting')]),
+                  button(classes: 'cf-select__opt', attributes: {'type': 'button', 'data-cf-opt': 'speaking'}, [text('محاضرة · Speaking')]),
+                  button(classes: 'cf-select__opt', attributes: {'type': 'button', 'data-cf-opt': 'general'}, [text('سؤال عام · General')]),
+                ]),
               ]),
             ]),
             div(classes: 'contact-form__field', [
@@ -101,6 +117,34 @@ class ContactPage extends StatelessComponent {
         ]),
       ]),
       SiteFooter(),
+      script(content: _selectScript),
     ]);
   }
+
+  static const _selectScript = r'''
+(function(){
+  document.querySelectorAll('.cf-select').forEach(function(sel){
+    var btn = sel.querySelector('[data-cf-toggle]');
+    var menu = sel.querySelector('.cf-select__menu');
+    var input = sel.querySelector('[data-cf-value]');
+    var label = sel.querySelector('.cf-select__label');
+    if (!btn || !menu || !input) return;
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      sel.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e){
+      if (!sel.contains(e.target)) sel.classList.remove('open');
+    });
+    sel.querySelectorAll('[data-cf-opt]').forEach(function(opt){
+      opt.addEventListener('click', function(){
+        input.value = opt.getAttribute('data-cf-opt');
+        if (label) label.textContent = opt.textContent;
+        sel.classList.add('has-value');
+        sel.classList.remove('open');
+      });
+    });
+  });
+})();
+''';
 }
