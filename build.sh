@@ -12,6 +12,11 @@ fi
 
 echo "Dart version: $(dart --version)"
 
+# Activate jaspr CLI globally
+dart pub global activate jaspr 2>&1
+export PATH="$HOME/.pub-cache/bin:$PATH"
+echo "jaspr at $(which jaspr)"
+
 # Build the site
 cd website-jaspr
 dart pub get
