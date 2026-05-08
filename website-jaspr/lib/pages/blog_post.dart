@@ -129,7 +129,7 @@ class BlogPostPage extends StatelessComponent {
                 div(classes: 'sidebar-divider', [text('')]),
                 div(classes: 'sidebar-tags', [
                   for (final tag in post.tags)
-                    a(href: '/tag/$tag', classes: 'tag-pill', [text('#$tag')]),
+                    a(href: '/writing/?tag=$tag', classes: 'tag-pill', [text('#$tag')]),
                 ]),
               ]),
           ]),

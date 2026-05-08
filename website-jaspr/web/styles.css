@@ -107,7 +107,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .nav__split-arrow:hover .nav__split-arrow-up { opacity: 0; transform: translateY(4px); }
 .nav__split-arrow:hover .nav__split-arrow-down { opacity: 1; transform: translateY(0); }
 .nav__split-menu {
-  display: none; position: absolute; top: calc(100% + var(--space-2)); right: 0;
+  display: none; position: absolute; top: calc(100% + var(--space-2)); left: 0;
   background: var(--color-surface-card); border: var(--border-rule);
   border-radius: var(--c-pill-radius);
   box-shadow: var(--shadow-card);
@@ -248,7 +248,6 @@ main, nav, footer { position: relative; z-index: 1; }
   aspect-ratio: 4/5;
   max-width: var(--c-hero-portrait-max);
   width: 100%;
-  margin: 0 auto;
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
@@ -371,9 +370,9 @@ main, nav, footer { position: relative; z-index: 1; }
 .writing { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); }
 .writing__list { display: flex; flex-direction: column; border-top: var(--border-rule); }
 .writing__item {
-  display: flex; flex-wrap: nowrap;
-  gap: var(--space-3); align-items: baseline;
-  padding: var(--space-2-5) var(--space-1); border-bottom: var(--border-rule);
+  display: flex; flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-1); border-bottom: var(--border-rule);
   text-decoration: none; color: var(--color-text-default);
   transition: background 0.2s, padding 0.2s;
   position: relative;
@@ -394,13 +393,13 @@ main, nav, footer { position: relative; z-index: 1; }
   background: var(--color-surface-elevated);
   padding-inline-start: var(--space-4); padding-inline-end: var(--space-4);
 }
-.writing__date {
-  font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm); color: var(--color-text-faint);
-  direction: ltr; flex-shrink: 0;
+.writing__meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  direction: ltr;
 }
-.writing__sep {
-  color: var(--color-text-faint); font-size: var(--text-sm);
-  flex-shrink: 0;
+.writing__date {
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs); color: var(--color-text-faint);
+  direction: ltr; flex-shrink: 0;
 }
 .writing__lang {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
@@ -408,16 +407,22 @@ main, nav, footer { position: relative; z-index: 1; }
   direction: ltr;
   flex-shrink: 0;
 }
-.bili { display: flex; gap: var(--space-2); align-items: baseline; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
-.bili__primary {
-  font-size: var(--text-sm); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
-  overflow: hidden; text-overflow: ellipsis;
+.writing__titles {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: var(--space-4);
 }
-.bili__secondary {
+.writing__title-ar {
+  font-size: var(--text-sm); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  direction: rtl;
+}
+.writing__title-en {
   font-family: 'Inter', sans-serif;
   font-size: var(--text-sm); color: var(--color-text-faint); line-height: 1.4;
-  direction: ltr;
-  overflow: hidden; text-overflow: ellipsis;
+  direction: ltr; text-align: right;
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
 /* PORTRAIT — light/dark variants. Both images render; CSS hides the wrong
@@ -883,7 +888,9 @@ main, nav, footer { position: relative; z-index: 1; }
 .writing-page__search svg { color: var(--color-text-faint); flex-shrink: 0; }
 .writing-page__search input { flex: 1; background: transparent; border: none; color: var(--color-text-default); font-family: inherit; font-size: var(--text-base); outline: none; }
 .writing-page__search input::placeholder { color: var(--color-text-faint); }
-.writing-page__filters { display: flex; flex-wrap: wrap; gap: var(--space-1-5); }
+.writing-page__filter-row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-start; }
+.writing-page__filter-group { display: flex; flex-wrap: wrap; gap: var(--space-1-5); align-items: center; }
+.writing-page__filter-label { font-family: 'JetBrains Mono', monospace; font-size: var(--text-2xs); color: var(--color-text-faint); letter-spacing: .06em; text-transform: uppercase; margin-left: var(--space-1); }
 .writing-page__filter {
   padding: var(--space-1) var(--space-3);
   border: var(--border-rule); border-radius: var(--radius-sm);
