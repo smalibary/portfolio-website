@@ -14,7 +14,7 @@ void main(List<String> args) async {
   //    that have no definition anywhere (the bug class fixed in Phase 2.5).
   //    Non-blocking — just prints a banner if anything is broken so the
   //    next bad reference shows up the next time dev boots.
-  await _runCssAudit();
+  await _runAudits();
 
   // 1. start save_server in background
   final save = await Process.start(
@@ -67,19 +67,19 @@ void main(List<String> args) async {
   jaspr.kill();
 }
 
-Future<void> _runCssAudit() async {
+Future<void> _runAudits() async {
   final r = await Process.run(
     Platform.executable,
-    ['run', 'tool/audit_css_tokens.dart'],
+    ['run', 'tool/audit_all.dart'],
     workingDirectory: Directory.current.path,
     runInShell: true,
   );
   if (r.exitCode == 0) {
-    stdout.writeln('dev :: css audit ok');
+    stdout.writeln('dev :: audits ok');
     return;
   }
   stdout.writeln('');
-  stdout.writeln('!! CSS TOKEN AUDIT FAILED \u2014 unresolved var(--*) references:');
+  stdout.writeln('!! AUDIT SUITE FAILED:');
   stdout.write(r.stdout);
   stdout.write(r.stderr);
   stdout.writeln('!! (non-blocking; fix before committing)');
