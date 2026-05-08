@@ -32,7 +32,12 @@ Set<String> _dartClasses() {
 /// Collect all class selectors from CSS files.
 Set<String> _cssDefined() {
   final out = <String>{};
-  for (final path in ['web/styles.css', 'web/admin.css']) {
+  final paths = ['web/styles.css', 'web/admin.css'];
+  // Also scan the _css string constant in styleguide.dart — it defines
+  // rules for sg-* classes that live outside the main CSS files.
+  final sg = File('lib/pages/admin/styleguide.dart');
+  if (sg.existsSync()) paths.add(sg.path);
+  for (final path in paths) {
     if (!File(path).existsSync()) continue;
     for (final m in _classSelectorRe.allMatches(File(path).readAsStringSync())) {
       out.add(m.group(1)!);
