@@ -75,12 +75,38 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .nav__monogram span { color: var(--color-text-muted); }
 .nav__right { display: flex; gap: var(--c-nav-gap); align-items: center; }
-.nav__menu { display: flex; gap: var(--c-nav-gap); font-size: var(--text-base); }
-.nav__menu a {
-  color: var(--color-text-muted); text-decoration: none;
-  transition: color 0.2s; font-weight: 500;
+.nav__dropdown { position: relative; }
+.nav__dropdown-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--c-toggle-btn-py) var(--c-toggle-btn-px);
+  background: var(--color-brand); color: var(--color-surface-page);
+  border: none; border-radius: var(--c-pill-radius);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs); letter-spacing: 0.06em; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
 }
-.nav__menu a:hover { color: var(--color-text-default); }
+.nav__dropdown-btn:hover { filter: brightness(1.1); }
+.nav__dropdown-arrow { font-size: 0.8em; }
+.nav__dropdown-menu {
+  display: none; position: absolute; top: calc(100% + var(--space-2)); inset-inline-end: 0;
+  background: var(--color-surface-card); border: var(--border-rule);
+  border-radius: var(--c-pill-radius);
+  box-shadow: var(--shadow-card);
+  min-width: 200px;
+  z-index: 100; overflow: hidden;
+}
+.nav__dropdown:hover .nav__dropdown-menu,
+.nav__dropdown.open .nav__dropdown-menu { display: flex; flex-direction: column; }
+.nav__dropdown-menu a {
+  padding: var(--space-2-5) var(--space-4);
+  color: var(--color-text-muted); text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+}
+.nav__dropdown-menu a:hover {
+  background: var(--color-surface-elevated); color: var(--color-brand);
+}
 .theme-toggle {
   display: flex; background: var(--color-surface-card);
   border: var(--border-rule); border-radius: var(--c-pill-radius); padding: var(--c-toggle-pad);
@@ -273,8 +299,8 @@ main, nav, footer { position: relative; z-index: 1; }
   transform: translateY(-3px); box-shadow: var(--shadow-card); /* intentionally literal: 3px hover-lift on .card (deeper than .social's 2px because cards are larger) */
 }
 .card--published { --card-accent: var(--color-brand); }
-.card--active { --card-accent: var(--color-status-warm); }
-.card--design { --card-accent: var(--color-status-cool); }
+.card--active { --card-accent: var(--color-brand); }
+.card--design { --card-accent: var(--color-brand); }
 .card__head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: var(--c-card-head-mb); direction: ltr;
@@ -361,6 +387,8 @@ main, nav, footer { position: relative; z-index: 1; }
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
   color: var(--color-text-faint); letter-spacing: 0.04em;
   direction: ltr;
+  margin-inline-start: auto;
+  flex-shrink: 0;
 }
 .bili { display: flex; gap: var(--space-2); align-items: baseline; }
 .bili__primary {
@@ -908,11 +936,15 @@ main, nav, footer { position: relative; z-index: 1; }
   border-color: var(--color-interactive-primary);
 }
 
+.placeholder-page { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-16) var(--space-12); min-height: 60vh; display: flex; align-items: center; justify-content: center; }
+.placeholder-page__inner { text-align: center; }
+.placeholder-page__inner h1 { font-size: var(--text-2xl); font-weight: 600; margin-bottom: var(--space-4); color: var(--color-text-default); }
+.placeholder-page__inner p { color: var(--color-text-muted); font-size: var(--text-base); }
+
 /* RESPONSIVE */
 @media (max-width: 980px) { /* intentionally literal: @media query, CSS variables not supported */
   .nav { padding: 0 var(--space-5); height: 56px; flex-wrap: wrap; gap: var(--space-3); } /* intentionally literal: 56px mobile nav height override (default --c-nav-height is 64px) */
-  .nav__menu { gap: var(--space-3-5); font-size: var(--text-sm); }
-  .nav__menu a:nth-child(2), .nav__menu a:nth-child(3) { display: none; }
+  .nav__dropdown-menu { min-width: 160px; }
   .hero {
     grid-template-columns: 1fr;
     gap: var(--space-8);

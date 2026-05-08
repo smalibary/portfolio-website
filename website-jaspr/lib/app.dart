@@ -8,6 +8,8 @@ import 'data/site_data.dart';
 import 'pages/home.dart';
 import 'pages/blog_post.dart';
 import 'pages/writing.dart';
+import 'pages/about.dart';
+import 'pages/contact.dart';
 import 'pages/research_detail.dart';
 import 'pages/tag.dart';
 import 'pages/category.dart';
@@ -84,6 +86,18 @@ class App extends StatelessComponent {
             path: '/writing',
             title: 'الكتابة · Writing · Salem Malibary',
             builder: (context, state) => WritingPage(site: site, posts: posts),
+          ),
+          // About page.
+          Route(
+            path: '/about',
+            title: 'السيرة · About · Salem Malibary',
+            builder: (context, state) => AboutPage(site: site),
+          ),
+          // Contact page.
+          Route(
+            path: '/contact',
+            title: 'تواصل · Contact · Salem Malibary',
+            builder: (context, state) => ContactPage(site: site),
           ),
           // One Route per blog post, generated at build time.
           for (final post in posts)
