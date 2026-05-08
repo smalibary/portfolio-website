@@ -13,9 +13,9 @@ mockups/
 # Private 100-item feature backlog.
 ROADMAP.md
 
-# Blog drafts and content folders — keep unpublished work out of public history.
-# (The deployed site builds locally, so the live build still has these.)
-website-jaspr/content/blog/
+# Blog content is tracked so Cloudflare Pages CI can build it.
+# Unpublished drafts can use a "status: draft" field in post.json.
+# website-jaspr/content/blog/
 
 # =====================================================================
 # Build artifacts and tool caches.
