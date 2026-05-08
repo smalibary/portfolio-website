@@ -241,7 +241,7 @@ main, nav, footer { position: relative; z-index: 1; }
   display: flex; align-items: center; gap: var(--space-3);
 }
 .section-head h2::before {
-  content: ''; width: var(--c-section-bar-w); height: var(--border-bar-w);
+  content: ''; width: 10px; height: 10px;
   background: var(--color-brand); display: inline-block;
 }
 .section-head__count {
@@ -296,29 +296,29 @@ main, nav, footer { position: relative; z-index: 1; }
 .card__metric {
   font-family: 'JetBrains Mono', monospace; font-weight: 400;
   font-size: clamp(26px, 3vw, 34px);
-  color: var(--color-text-default); margin-bottom: var(--space-1-5);
+  color: var(--color-brand); margin-bottom: var(--space-1-5);
   letter-spacing: -0.01em;
   direction: ltr; text-align: left;
 }
 .card__metric-label {
-  font-size: var(--text-sm); color: var(--color-text-muted);
+  font-size: var(--text-sm); color: var(--color-brand);
   margin-bottom: var(--c-card-head-mb); line-height: 1.6;
   font-family: 'JetBrains Mono', monospace;
   direction: ltr; text-align: left;
 }
 .card__title-ar {
   font-size: var(--text-md); font-weight: 500; line-height: 1.55;
-  margin-top: auto; color: var(--color-text-default);
+  margin-top: auto; color: var(--color-brand);
 }
 .card__title-en {
   font-family: 'Inter', sans-serif;
-  font-size: var(--text-sm); color: var(--color-text-faint);
+  font-size: var(--text-sm); color: var(--color-brand);
   direction: ltr; text-align: left;
   margin-top: var(--space-1-5); line-height: 1.5;
 }
 .card__caption {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
-  color: var(--color-text-faint); margin-top: var(--space-2-5);
+  color: var(--color-brand); margin-top: var(--space-2-5);
   direction: ltr; text-align: left;
 }
 
@@ -326,9 +326,9 @@ main, nav, footer { position: relative; z-index: 1; }
 .writing { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); }
 .writing__list { display: flex; flex-direction: column; border-top: var(--border-rule); }
 .writing__item {
-  display: grid; grid-template-columns: var(--c-writing-col) 1fr auto;
-  gap: var(--space-6); align-items: center;
-  padding: var(--c-writing-py) var(--space-1); border-bottom: var(--border-rule);
+  display: flex; flex-wrap: nowrap;
+  gap: var(--space-3); align-items: baseline;
+  padding: var(--space-2-5) var(--space-1); border-bottom: var(--border-rule);
   text-decoration: none; color: var(--color-text-default);
   transition: background 0.2s, padding 0.2s;
   position: relative;
@@ -351,21 +351,25 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .writing__date {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm); color: var(--color-text-faint);
-  direction: ltr;
+  direction: ltr; flex-shrink: 0;
+}
+.writing__sep {
+  color: var(--color-text-faint); font-size: var(--text-sm);
+  flex-shrink: 0;
 }
 .writing__lang {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
   color: var(--color-text-faint); letter-spacing: 0.04em;
   direction: ltr;
 }
-.bili { display: flex; flex-direction: column; gap: var(--space-1); }
+.bili { display: flex; gap: var(--space-2); align-items: baseline; }
 .bili__primary {
-  font-size: var(--text-lg); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
+  font-size: var(--text-sm); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
 }
 .bili__secondary {
   font-family: 'Inter', sans-serif;
   font-size: var(--text-sm); color: var(--color-text-faint); line-height: 1.4;
-  direction: ltr; text-align: left;
+  direction: ltr;
 }
 
 /* PORTRAIT — light/dark variants. Both images render; CSS hides the wrong
