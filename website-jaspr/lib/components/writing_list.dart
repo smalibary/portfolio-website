@@ -42,7 +42,7 @@ class WritingList extends StatelessComponent {
       if (posts.isNotEmpty)
         div(classes: 'writing__more', [
           a(href: '/writing', classes: 'writing__more-link', [
-            text('كل الكتابات · ALL WRITING →'),
+            text('كل الكتابات · ALL WRITING ▼'),
           ]),
         ]),
     ]);

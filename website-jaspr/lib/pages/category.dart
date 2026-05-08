@@ -26,7 +26,7 @@ class CategoryPage extends StatelessComponent {
       Nav(site: site),
       main_(classes: 'index-page', [
         section(classes: 'index', [
-          a(classes: 'post-back', href: '/writing', [text('← كل الكتابات · ALL WRITING')]),
+          a(classes: 'post-back', href: '/writing', [text('▲ كل الكتابات · ALL WRITING')]),
           div(classes: 'section-head', [
             h1([raw('التصنيف · CATEGORY: <span class="tag-pill tag-pill--header">$category</span>')]),
             div(classes: 'section-head__count', [

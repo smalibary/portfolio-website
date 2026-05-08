@@ -21,7 +21,7 @@ class ResearchDetailPage extends StatelessComponent {
       Nav(site: site),
       main_(classes: 'research-detail-page', [
         article(classes: 'research-detail', attributes: const {'dir': 'rtl'}, [
-          a(classes: 'post-back', href: '/', [text('← العودة · BACK TO HOME')]),
+          a(classes: 'post-back', href: '/', [text('▲ العودة · HOME')]),
           header(classes: 'research-detail__head', [
             div(classes: 'research-detail__row', [
               span(classes: 'pill pill--${paper.status}', [text(paper.pillLabel)]),
@@ -48,11 +48,11 @@ class ResearchDetailPage extends StatelessComponent {
                 href: paper.url,
                 attributes: const {'target': '_blank', 'rel': 'noopener'},
                 classes: 'btn-outline',
-                [text('Read the paper · اقرأ البحث →')],
+                [text('Read the paper · اقرأ البحث ▼')],
               ),
             ]),
           footer(classes: 'post-foot', [
-            a(href: '/', classes: 'post-back', [text('← العودة للصفحة الرئيسية · BACK TO HOME')]),
+            a(href: '/', classes: 'post-back', [text('▲ العودة · HOME')]),
           ]),
         ]),
       ]),

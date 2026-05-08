@@ -82,7 +82,7 @@ class BlogPostPage extends StatelessComponent {
             ]),
             _renderBody(post: post, body: body),
             footer(classes: 'post-foot', [
-              a(href: '/', classes: 'post-back', [text('← العودة للصفحة الرئيسية · BACK TO HOME')]),
+              a(href: '/', classes: 'post-back', [text('▲ العودة · HOME')]),
             ]),
           ]),
           // Sticky sidebar: TOC + newsletter
