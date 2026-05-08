@@ -146,7 +146,7 @@ main, nav, footer { position: relative; z-index: 1; }
   max-width: var(--c-content-max); margin: 0 auto;
   padding: var(--space-8) var(--space-12);
   display: grid;
-  grid-template-columns: 1.25fr 0.85fr;
+  grid-template-columns: 1.25fr auto;
   gap: var(--c-hero-gap);
   align-items: center;
 }
