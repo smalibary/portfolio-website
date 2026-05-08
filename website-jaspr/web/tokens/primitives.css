@@ -34,10 +34,6 @@
   --blue-400:   #8ab4f8;  /* dark-theme cool */
   --blue-700:   #2654a0;  /* light-theme cool */
 
-  /* Functional overlays (raw rgba channels) */
-  --overlay-black-45: rgba(0,0,0,0.45);
-  --overlay-white-92: rgba(255,255,255,0.92);
-
   /* ── Spacing scale (4px base + half-steps) ──────────────────────── */
   --space-0-5: 2px;
   --space-1:   4px;

@@ -51,8 +51,6 @@ void main() {
   const intentionalDarkOnly = {
     '--border-accent',
     '--border-rule',
-    '--color-surface-overlay',
-    '--color-text-on-image',
     '--grid-fade',
   };
 
