@@ -11,18 +11,19 @@ final _classSelectorRe = RegExp(r'\.([a-zA-Z][a-zA-Z0-9_-]*)');
 /// Collect all class names passed to `classes:` in Dart files under lib/.
 Set<String> _dartClasses() {
   final out = <String>{};
-  final dir = Directory('lib');
-  if (!dir.existsSync()) return out;
-  for (final f in dir.listSync(recursive: true).whereType<File>()) {
-    if (!f.path.endsWith('.dart')) continue;
-    for (final m in _classesArgRe.allMatches(f.readAsStringSync())) {
-      out.addAll(
-        m.group(1)!.split(RegExp(r'\s+')).where(
-          (s) => s.isNotEmpty &&
-              RegExp(r'^[a-zA-Z]').hasMatch(s) &&
-              !s.contains(r'$'),
-        ),
-      );
+  for (final dir in [Directory('lib/components'), Directory('lib/pages')]) {
+    if (!dir.existsSync()) continue;
+    for (final f in dir.listSync(recursive: true).whereType<File>()) {
+      if (!f.path.endsWith('.dart')) continue;
+      for (final m in _classesArgRe.allMatches(f.readAsStringSync())) {
+        out.addAll(
+          m.group(1)!.split(RegExp(r'\s+')).where(
+            (s) => s.isNotEmpty &&
+                RegExp(r'^[a-zA-Z]').hasMatch(s) &&
+                !s.contains(r'$'),
+          ),
+        );
+      }
     }
   }
   return out;
