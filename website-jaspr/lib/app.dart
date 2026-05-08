@@ -68,7 +68,10 @@ class App extends StatelessComponent {
           content:
               "(function(){var t=localStorage.getItem('salem-theme');"
               "if(t){document.documentElement.setAttribute('data-theme',t);}"
-              "else{document.documentElement.setAttribute('data-theme','dark');}})();",
+              "else{document.documentElement.setAttribute('data-theme','dark');}})();"
+              "(function(){document.addEventListener('mousemove',function(e){"
+              "document.body.style.setProperty('--cursor-x',e.clientX+'px');"
+              "document.body.style.setProperty('--cursor-y',e.clientY+'px');});})();",
         ),
       ],
       body: Router(

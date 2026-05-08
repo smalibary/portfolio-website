@@ -14,4 +14,4 @@
 
 | Commit | Deployed | URL |
 |--------|----------|-----|
-| 2ac00d1 | Active | https://8d2a2570.salem-portfolio.pages.dev |
+| 6bb6421 | Active | https://1b81b51a.salem-portfolio.pages.dev |

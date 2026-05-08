@@ -126,14 +126,57 @@ Full inventory and the "when to create a component" decision tree:
 - **Color-on-accent semantic mismatch (7 sites):** `--color-surface-page`
   is used as text colour on accent backgrounds instead of the correct
   `--color-interactive-primary-text`. Same primitive value today, so not a
-  visual bug, but will silently break if the two tokens diverge. See
-  `website-jaspr/TODO_TOKENS.md` for the full list.
+  visual bug, but will silently break if the two tokens diverge.
+  `--color-interactive-primary-text` is annotated `@future` in
+  `semantic.css` so the orphan checker skips it until the migration lands.
+- **Responsive type clamps (10 values, 5 sites):** `clamp(min, vw, max)`
+  endpoints in hero/card type don't fit the static `--text-*` scale.
+  Decision deferred until fluid typography is needed elsewhere.
+- **`@media` breakpoint values (6 sites):** CSS custom properties cannot
+  be used inside `@media` queries — language limitation, not a system gap.
+  Tokenising would require a build-time preprocessor.
 - **Styleguide hardcoded hex values:** `/admin/styleguide` renders some
   token values as hardcoded hex for display swatches. These will silently
   drift if primitives change. See comment at top of `styleguide.dart`.
 
-## The audit script
+Full lists with line numbers in `website-jaspr/TODO_TOKENS.md`.
 
-`tool/audit_css_tokens.dart` enforces that every `var(--*)` reference
-resolves to a defined token. Runs on dev-server start via `tool/dev.dart`.
-Run manually: `dart run tool/audit_css_tokens.dart`.
+## Phase 3 migration status
+
+The alias migration is complete: every legacy `--accent`, `--ink*`,
+`--bg*`, `--rule`, `--shadow`, `--border-*-val` reference has been
+renamed to a canonical semantic token, and the deprecated-alias block in
+`semantic.css` has been deleted (commit `d4de428`). The
+`audit_deprecated_aliases.dart` checker enforces that no aliases
+reappear.
+
+## The audit suite
+
+Seven checkers under `website-jaspr/tool/`, orchestrated by
+`audit_all.dart`. The aggregator runs at dev-server boot via `tool/dev.dart`
+(fast mode, non-blocking).
+
+**Fast checkers (boot-safe, must stay green):**
+
+- `audit_css_tokens.dart` — every `var(--*)` reference resolves to a
+  defined token.
+- `audit_deprecated_aliases.dart` — no legacy aliases (`--accent`,
+  `--ink`, `--bg`, etc.) reappear.
+- `audit_theme_parity.dart` — every semantic token defined in `:root`
+  has a matching `[data-theme="light"]` override (or is an intentional
+  inheritance).
+- `audit_component_inventory.dart` — every component listed in
+  `COMPONENTS.md` exists in `lib/components/`.
+
+**Full checkers (`--full` flag, run on demand):**
+
+- `audit_orphan_tokens.dart` — flags tokens defined but never
+  referenced. Skips tokens annotated `@future`.
+- `audit_css_classes.dart` — every CSS class used in Dart components
+  resolves to a defined selector.
+- `audit_hardcoded_values.dart` — flags raw `px`/hex values in CSS that
+  should be tokenised. Allowlists `0px`, `1px`, and inline-annotated
+  literals (FX, single-use layout, breakpoints).
+
+Run all: `dart run tool/audit_all.dart` (fast) or
+`dart run tool/audit_all.dart --full`.
