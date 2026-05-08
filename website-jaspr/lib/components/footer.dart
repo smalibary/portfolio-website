@@ -1,8 +1,10 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
+import 'theme_toggle.dart';
+
 /// Role: chrome
-/// Site-wide footer with year, social text-links, and admin-login lock icon.
+/// Site-wide footer with year, social text-links, theme toggle, and admin-lock.
 class SiteFooter extends StatelessComponent {
   const SiteFooter({super.key});
 
@@ -10,10 +12,13 @@ class SiteFooter extends StatelessComponent {
   Component build(BuildContext context) {
     return footer(classes: 'footer', [
       div(classes: 'footer__year', [text('© 2026 — built with jaspr')]),
-      div(classes: 'footer__links', [
-        a(href: '#', [text('scholar')]),
-        a(href: '#', [text('researchgate')]),
-        a(href: '#', [text('linkedin')]),
+      div(classes: 'footer__right', [
+        div(classes: 'footer__links', [
+          a(href: '#', [text('scholar')]),
+          a(href: '#', [text('researchgate')]),
+          a(href: '#', [text('linkedin')]),
+        ]),
+        ThemeToggle(),
         a(
           href: '/admin/login',
           classes: 'footer__lock',
