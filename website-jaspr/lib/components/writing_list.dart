@@ -25,16 +25,18 @@ class WritingList extends StatelessComponent {
       else
         div(classes: 'writing__list', [
           for (final p in posts)
-            a(href: p.href, classes: 'writing__item sq-bar', [
-              div(classes: 'writing__date', [text(p.date)]),
-              div(classes: 'bili', [
-                div(classes: 'bili__primary', [
-                  text(p.titleAr.isNotEmpty ? p.titleAr : p.titleEn),
-                ]),
-                if (p.titleEn.isNotEmpty && p.titleAr.isNotEmpty)
-                  div(classes: 'bili__secondary', [text(p.titleEn)]),
+            a(href: p.href, classes: 'writing__item', [
+              span(classes: 'writing__date', [text(p.date)]),
+              span(classes: 'writing__sep', [text('·')]),
+              span(classes: 'bili__primary', [
+                text(p.titleAr.isNotEmpty ? p.titleAr : p.titleEn),
               ]),
-              div(classes: 'writing__lang', [text(p.langLabel)]),
+              if (p.titleEn.isNotEmpty && p.titleAr.isNotEmpty) ...[
+                span(classes: 'writing__sep', [text('·')]),
+                span(classes: 'bili__secondary', [text(p.titleEn)]),
+              ],
+              span(classes: 'writing__sep', [text('·')]),
+              span(classes: 'writing__lang', [text(p.langLabel)]),
             ]),
         ]),
       if (posts.isNotEmpty)
