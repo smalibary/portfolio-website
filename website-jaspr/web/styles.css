@@ -185,7 +185,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .social {
   display: flex; align-items: center; justify-content: center;
   width: var(--c-social-size); height: var(--c-social-size);
-  border-radius: var(--radius-pill);
+  border-radius: var(--c-social-radius);
   background: var(--color-surface-card);
   border: var(--border-rule);
   color: var(--color-text-muted);

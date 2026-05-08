@@ -36,6 +36,7 @@
   /* ── Social ─────────────────────────────────────────────────────── */
   --c-social-size: 38px;
   --c-social-icon: 16px;
+  --c-social-radius: var(--radius-sm);
 
   /* ── Section head ───────────────────────────────────────────────── */
   --c-section-head-mb: var(--space-7);
