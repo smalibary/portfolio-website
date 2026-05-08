@@ -12,10 +12,17 @@ fi
 
 echo "Dart version: $(dart --version)"
 
-# Activate jaspr CLI globally
+# Ensure HOME is set (Cloudflare may not set it)
+export HOME="${HOME:-/opt/buildhome}"
+
+# Activate jaspr CLI globally and add its bin to PATH
 dart pub global activate jaspr 2>&1
 export PATH="$HOME/.pub-cache/bin:$PATH"
-echo "jaspr at $(which jaspr)"
+
+# Verify jaspr is available
+echo "jaspr at $(which jaspr || echo 'NOT FOUND')"
+ls -la "$HOME/.pub-cache/bin/jaspr" 2>/dev/null || echo "Checking alternative paths..."
+find "$HOME" -name "jaspr" -type f 2>/dev/null | head -3
 
 # Build the site
 cd website-jaspr
