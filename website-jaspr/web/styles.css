@@ -98,7 +98,7 @@ main, nav, footer { position: relative; z-index: 1; }
 /* HERO */
 .hero {
   min-height: calc(100svh - var(--c-nav-height));
-  max-width: 1320px; margin: 0 auto;
+  max-width: var(--c-content-max); margin: 0 auto;
   padding: var(--space-8) var(--space-12);
   display: grid;
   grid-template-columns: 1.25fr 0.85fr;
@@ -112,7 +112,7 @@ main, nav, footer { position: relative; z-index: 1; }
   display: flex; align-items: center; gap: var(--space-2-5);
 }
 .status-dot {
-  width: 8px; height: 8px; border-radius: 50%;
+  width: var(--c-status-dot-size); height: var(--c-status-dot-size); border-radius: 50%;
   background: var(--color-brand); box-shadow: 0 0 12px var(--color-brand);
   animation: pulse 2s ease-in-out infinite;
   flex-shrink: 0;
@@ -249,7 +249,7 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 
 /* RESEARCH */
-.research { max-width: 1320px; margin: 0 auto; padding: var(--space-12) var(--space-12); }
+.research { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-12) var(--space-12); }
 .research__grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4);
 }
@@ -322,7 +322,7 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 
 /* WRITING */
-.writing { max-width: 1320px; margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); }
+.writing { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); }
 .writing__list { display: flex; flex-direction: column; border-top: var(--border-rule); }
 .writing__item {
   display: grid; grid-template-columns: var(--c-writing-col) 1fr auto;
@@ -380,7 +380,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-hero {
   display: block;
   width: 100%;
-  max-width: 960px;
+  max-width: var(--c-post-hero-max);
   height: auto;
   aspect-ratio: 1200/630; object-fit: cover;
   border-radius: var(--radius-md); border: var(--border-rule);
@@ -388,12 +388,12 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 
 /* 2-column: article + sidebar */
-.post-layout { position: relative; max-width: 1320px; margin: 0 auto; padding: 0 var(--space-12); }
-.post { max-width: 600px; margin: 0 auto; }
+.post-layout { position: relative; max-width: var(--c-content-max); margin: 0 auto; padding: 0 var(--space-12); }
+.post { max-width: var(--c-post-body-max); margin: 0 auto; }
 
 /* ── Sticky sidebar — far right ── */
 .post-sidebar {
-  width: 240px;
+  width: var(--c-post-sidebar-w);
   position: fixed;
   right: var(--space-12);
   top: var(--space-16);
@@ -513,7 +513,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-body strong, .post-body b { color: var(--color-text-default); font-weight: 600; }
 .post-body em { color: var(--color-brand); font-style: normal; font-weight: 500; }
 .post-body a { color: var(--color-brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.post-body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--space-1) var(--space-4); margin: var(--space-6) 0; color: var(--color-text-muted); }
+.post-body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--c-blockquote-pad); margin: var(--space-6) 0; color: var(--color-text-muted); }
 .post-body code { font-family: 'JetBrains Mono', monospace; font-size: .92em; background: var(--color-surface-elevated); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
 .post-body pre { background: var(--color-surface-elevated); border: var(--border-rule); border-radius: var(--radius-md); padding: var(--space-4) var(--space-4); overflow-x: auto; margin: var(--space-6) 0; }
 .post-body pre code { background: transparent; padding: 0; }
@@ -594,7 +594,7 @@ main, nav, footer { position: relative; z-index: 1; }
    Rendered when post.json has a `sections` array. Pinned sections appear
    first inside .post-pinned-block with teal border all sides, title-only
    rows with expand/collapse. Dimmed repeats appear in-place. */
-.post-section { margin: 0 0 var(--space-3); padding-block: var(--space-1); scroll-margin-top: 80px; }
+.post-section { margin: 0 0 var(--space-3); padding-block: var(--space-1); scroll-margin-top: var(--c-section-scroll-margin); }
 .post-section__title {
   font-size: var(--text-2xl); font-weight: 600; margin: var(--c-post-margin-hr) 0 var(--space-1);
   letter-spacing: -.01em; line-height: 1.4;
@@ -648,7 +648,7 @@ main, nav, footer { position: relative; z-index: 1; }
   border-bottom: 1px solid color-mix(in srgb, var(--color-brand) 10%, transparent);
   cursor: pointer;
 }
-.post-pinned-section { scroll-margin-top: 80px; }
+.post-pinned-section { scroll-margin-top: var(--c-section-scroll-margin); }
 .post-pinned-section:last-child { border-bottom: none; }
 .post-pinned-section:hover {
   background: color-mix(in srgb, var(--color-brand) 4%, transparent);
@@ -687,7 +687,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-pinned-section__body a { color: var(--color-brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .post-pinned-section__body sup { font-size: var(--text-xs); color: var(--color-brand); font-weight: 500; }
 .post-pinned-section__body sup a { text-decoration: none; font-weight: 600; }
-.post-pinned-section__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--space-1) var(--space-4); margin: var(--space-6) 0; color: var(--color-text-muted); }
+.post-pinned-section__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--c-blockquote-pad); margin: var(--space-6) 0; color: var(--color-text-muted); }
 .post-pinned-section__body p { margin: 0 0 var(--space-4); }
 
 /* ── Dimmed in-place repeat of pinned sections ── */
@@ -697,7 +697,7 @@ main, nav, footer { position: relative; z-index: 1; }
   padding: var(--space-2-5) var(--space-3-5);
   background: color-mix(in srgb, var(--color-brand) 3%, transparent);
   margin: var(--space-4) 0;
-  scroll-margin-top: 80px;
+  scroll-margin-top: var(--c-section-scroll-margin);
 }
 .dimmed-pinned-repeat__header {
   display: flex; align-items: baseline; gap: var(--space-2);
@@ -727,7 +727,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .dimmed-pinned-repeat__body strong,
 .dimmed-pinned-repeat__body b { color: var(--color-brand); font-weight: 600; }
 .dimmed-pinned-repeat__body a { color: var(--color-brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.dimmed-pinned-repeat__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--space-1) var(--space-4); margin: var(--space-4) 0; color: var(--color-text-muted); }
+.dimmed-pinned-repeat__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--c-blockquote-pad); margin: var(--space-4) 0; color: var(--color-text-muted); }
 .dimmed-pinned-repeat__body ul, .dimmed-pinned-repeat__body ol { padding-inline-start: var(--space-6); margin: 0 0 var(--space-4); }
 .dimmed-pinned-repeat__body li { margin: 0 0 var(--space-1-5); }
 .dimmed-pinned-repeat__body sup { font-size: var(--text-xs); color: var(--color-brand); font-weight: 500; }
@@ -774,7 +774,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .post-section__body a { color: var(--color-brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .post-section__body sup { font-size: var(--text-xs); color: var(--color-brand); font-weight: 500; }
 .post-section__body sup a { text-decoration: none; font-weight: 600; }
-.post-section__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--space-1) var(--space-4); margin: var(--space-6) 0; color: var(--color-text-muted); }
+.post-section__body blockquote { border-inline-start-width: var(--border-bar-w); border-inline-start-style: solid; border-inline-start-color: var(--color-brand); padding: var(--c-blockquote-pad); margin: var(--space-6) 0; color: var(--color-text-muted); }
 .post-section__body code { font-family: 'JetBrains Mono', monospace; font-size: .92em; background: var(--color-surface-elevated); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
 .post-section__body ul, .post-section__body ol { padding-inline-start: var(--space-6); margin: 0 0 var(--space-4); }
 .post-section__body li { margin: 0 0 var(--space-2); }
@@ -809,7 +809,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .tag-pill--header { background: color-mix(in srgb, var(--color-brand) 10%, transparent); border-color: var(--color-brand); color: var(--color-brand); margin-inline-start: var(--space-3); vertical-align: middle; }
 
 /* INDEX PAGES — /writing, /tag/<x>, /category/<x> */
-.index-page { max-width: 1320px; margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); position: relative; z-index: 1; }
+.index-page { max-width: var(--c-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); position: relative; z-index: 1; }
 .index .post-back { margin-bottom: var(--space-8); }
 .index h1 { font-size: var(--text-2xl); font-weight: 600; margin: 0; letter-spacing: -.01em; }
 .index__group { margin-bottom: var(--space-12); }
@@ -863,9 +863,9 @@ main, nav, footer { position: relative; z-index: 1; }
   font-family: 'JetBrains Mono', monospace;
   font-size: var(--text-sm);
   letter-spacing: .04em;
-  padding: var(--space-3) var(--space-5);
+  padding: var(--c-btn-pad);
   border: 1px solid var(--color-interactive-primary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--c-btn-radius);
   color: var(--color-interactive-primary);
   text-decoration: none;
   transition: background .15s;
@@ -874,7 +874,7 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* FOOTER */
 .footer {
-  max-width: 1320px; margin: 0 auto;
+  max-width: var(--c-content-max); margin: 0 auto;
   padding: var(--space-8) var(--space-12) var(--space-12);
   border-top: var(--border-rule);
   display: flex; justify-content: space-between; align-items: center;
