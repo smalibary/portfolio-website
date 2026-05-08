@@ -137,6 +137,7 @@ main, nav, footer { position: relative; z-index: 1; }
   font-size: clamp(15px, 1.3vw, 18px);
   color: var(--color-text-muted); font-weight: 400;
   letter-spacing: 0.02em; direction: ltr;
+  text-align: right;
   margin-bottom: var(--space-7);
 }
 
@@ -152,10 +153,8 @@ main, nav, footer { position: relative; z-index: 1; }
   font-family: 'Inter', sans-serif;
   font-size: clamp(13px, 1.05vw, 15px);
   line-height: 1.6; color: var(--color-text-muted);
-  direction: ltr; text-align: left;
+  direction: ltr; text-align: right;
   margin-bottom: var(--space-7);
-  border-inline-start: var(--c-hero-lede-border);
-  padding-inline-start: var(--space-3-5);
 }
 
 .hero__meta {
@@ -176,6 +175,7 @@ main, nav, footer { position: relative; z-index: 1; }
 .socials {
   display: flex; align-items: center; gap: var(--space-2-5);
   direction: ltr; flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .socials__sep {
   width: 1px; height: var(--space-5-5);
@@ -214,7 +214,8 @@ main, nav, footer { position: relative; z-index: 1; }
 .hero__portrait img {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center 22%;
-  transition: transform 0.6s ease;
+  transition: transform 0.6s ease, opacity 0.4s ease;
+  position: absolute; inset: 0;
 }
 .hero__portrait:hover img { transform: scale(1.03); }
 .hero__portrait::after {
@@ -369,9 +370,10 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* PORTRAIT — light/dark variants. Both images render; CSS hides the wrong
    one based on the html[data-theme] attribute set by ThemeToggle. */
-.portrait-img--light { display: none; }
-[data-theme="light"] .portrait-img--dark { display: none; }
-[data-theme="light"] .portrait-img--light { display: block; }
+.portrait-img--light { opacity: 0; }
+[data-theme="light"] .portrait-img--dark { opacity: 0; }
+[data-theme="light"] .portrait-img--light { opacity: 1; }
+.portrait-img { transition: opacity 0.4s ease; }
 
 /* BLOG POST PAGE — /blog/<slug> reading view */
 .post-page { padding: var(--space-8) 0 var(--space-16); position: relative; z-index: 1; direction: ltr; }

@@ -24,7 +24,6 @@ class Hero extends StatelessComponent {
         // Name (Arabic primary, English secondary) — from yaml
         h1(classes: 'hero__name-ar', [
           text(site.nameAr),
-          span(classes: 'arrow', [text('↗')]),
         ]),
         div(classes: 'hero__name-en', [text(site.nameEn)]),
 

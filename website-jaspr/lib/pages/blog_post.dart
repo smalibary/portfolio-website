@@ -60,9 +60,8 @@ class BlogPostPage extends StatelessComponent {
           ),
         div(classes: 'post-layout', [
           article(classes: 'post', attributes: {'dir': isAr ? 'rtl' : 'ltr'}, [
-            header(classes: 'post-head sq-frame', [
+            header(classes: 'post-head', [
               div(classes: 'post-meta', [
-                span(classes: 'sq-mark--sm', []),
                 if (post.date.isNotEmpty) span([text(post.date)]),
                 if (post.category.isNotEmpty) ...[
                   span(classes: 'post-meta__sep', [text('·')]),
