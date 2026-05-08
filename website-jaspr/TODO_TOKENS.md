@@ -35,3 +35,46 @@ these sites.
 **Risk:** If the page background and on-accent text ever diverge (e.g.
 brand changes surface-page to a warm off-white but on-accent needs pure
 white), these 7 sites would silently break. Low probability but nonzero.
+
+---
+
+## Responsive type clamps (10 values, 5 sites)
+
+These `clamp(min, vw, max)` endpoints don't fit the static `--text-*`
+scale. A future fluid-typography token system would tokenise these.
+
+**Decision deferred** until fluid typography is needed elsewhere or a
+redesign forces the question.
+
+| File:Line | Selector | Clamp values |
+|---|---|---|
+| `web/styles.css:126` | `.hero__name-ar` | `clamp(40px, 5vw, 60px)` |
+| `web/styles.css:137` | `.hero__name-en` | `clamp(15px, 1.3vw, 18px)` |
+| `web/styles.css:144` | `.hero__lede-ar` | `clamp(18px, 1.65vw, 22px)` |
+| `web/styles.css:153` | `.hero__lede-en` | `clamp(13px, 1.05vw, 15px)` |
+| `web/styles.css:297` | `.card__metric` | `clamp(26px, 3vw, 34px)` |
+
+These 10 values are the only remaining findings reported by
+`audit_hardcoded_values.dart`. They serve as a visible reminder that
+fluid typography is a someday-list item.
+
+---
+
+## Media query breakpoint values (6 sites)
+
+CSS custom properties cannot be used inside `@media` queries — this is a
+CSS language limitation, not a design system gap. Tokenising these
+would require adopting a build-time preprocessor (PostCSS/Sass), which
+is a larger architectural decision than adding tokens.
+
+Lines are also annotated inline (commit `eea429f`) for in-context
+reference.
+
+| File:Line | Breakpoint | Purpose |
+|---|---|---|
+| `web/styles.css:495` | `1200px` | tablet/laptop |
+| `web/styles.css:498` | `768px` | mobile |
+| `web/styles.css:906` | `980px` | tablet (RESPONSIVE block start) |
+| `web/admin.css:37` | `700px` | admin row collapse |
+| `web/admin.css:126` | `700px` | admin photos collapse |
+| `web/admin.css:142` | `900px` | admin md-split collapse |
