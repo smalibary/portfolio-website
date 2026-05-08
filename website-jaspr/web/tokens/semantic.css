@@ -23,6 +23,9 @@
   /* Brand / interactive */
   --color-brand:                    var(--teal-500);
   --color-interactive-primary:      var(--teal-500);
+  /* @future: target token for 7 color-on-accent sites tracked in
+     /website-jaspr/TODO_TOKENS.md. Migrate when --color-brand and
+     --color-interactive-primary diverge. */
   --color-interactive-primary-text: var(--black);
 
   /* Status accents */

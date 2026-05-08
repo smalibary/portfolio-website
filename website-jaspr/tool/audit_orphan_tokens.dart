@@ -16,6 +16,34 @@ Set<String> _definedIn(String path) {
       .toSet();
 }
 
+/// Token names preceded by a `/* @future: */` annotation.
+/// Scans each line; if a token declaration is preceded (within the same
+/// `/* ... */` comment block within ~5 lines above) by `@future:`, the
+/// token is treated as deliberately-orphan.
+Set<String> _futureAnnotated(List<String> paths) {
+  final out = <String>{};
+  for (final path in paths) {
+    if (!File(path).existsSync()) continue;
+    final lines = File(path).readAsLinesSync();
+    for (var i = 0; i < lines.length; i++) {
+      final m = RegExp(r'^\s*(--[a-zA-Z0-9-]+)\s*:').firstMatch(lines[i]);
+      if (m == null) continue;
+      // Look backwards up to 5 lines for an @future: marker inside a
+      // comment block.
+      for (var j = i - 1; j >= 0 && j >= i - 5; j--) {
+        if (lines[j].contains('@future:')) {
+          out.add(m.group(1)!);
+          break;
+        }
+        // Stop at the start of a new declaration (--name:) — but not
+        // a line that merely mentions a token inside a comment.
+        if (RegExp(r'^\s*--[a-zA-Z0-9-]+\s*:').hasMatch(lines[j])) break;
+      }
+    }
+  }
+  return out;
+}
+
 Set<String> _consumers() {
   final refs = <String>{};
   final files = <String>[];
@@ -54,12 +82,18 @@ void main() {
     'web/tokens/components.css',
   ];
   final defined = tokenFiles.expand(_definedIn).toSet();
+  final futureAnnotated = _futureAnnotated(tokenFiles);
   final consumed = _consumers();
 
-  final orphans = defined.difference(consumed).toList()..sort();
+  final orphans = defined
+      .difference(consumed)
+      .difference(futureAnnotated)
+      .toList()
+    ..sort();
 
   print('Defined tokens: ${defined.length}');
   print('Consumed tokens: ${consumed.length}');
+  print('@future-annotated (skipped): ${futureAnnotated.length}');
   print('Orphan tokens (0 consumers): ${orphans.length}');
 
   if (orphans.isEmpty) {
