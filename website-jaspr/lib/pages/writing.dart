@@ -31,7 +31,7 @@ class WritingPage extends StatelessComponent {
           ]),
         ]),
 
-        // Single-row toolbar: search | tags | length | sort
+        // Single-row toolbar: search | filter btn | length | sort
         div(classes: 'wp-toolbar', [
           div(classes: 'wp-search', [
             raw('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'),
@@ -40,12 +40,15 @@ class WritingPage extends StatelessComponent {
               attributes: const {'data-search': '', 'placeholder': 'بحث... · search...', 'spellcheck': 'false'},
             ),
           ]),
-          div(classes: 'wp-filters', [
-            button(classes: 'wp-tag active', attributes: {'data-tag': 'all', 'type': 'button'}, [text('ALL')]),
-            for (final tag in allTags)
-              button(classes: 'wp-tag', attributes: {'data-tag': tag, 'type': 'button'}, [text('#$tag')]),
-          ]),
-          div(classes: 'wp-divider', []),
+          button(
+            classes: 'wp-toolbar-btn',
+            attributes: {'data-filter-toggle': '', 'type': 'button'},
+            [
+              raw('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>'),
+              text('FILTER'),
+              span(classes: 'count', attributes: {'data-filter-count': '', 'style': 'display:none;'}, [text('0')]),
+            ],
+          ),
           select(attributes: {'data-length': '', 'title': 'Length'}, [
             option(value: 'all', [text('Any length')]),
             option(value: 'short', [text('< 1k words')]),
@@ -59,6 +62,15 @@ class WritingPage extends StatelessComponent {
             option(value: 'shortest', [text('Shortest')]),
           ]),
         ]),
+
+        // Expandable tag panel
+        div(classes: 'wp-tag-panel', attributes: {'data-tag-panel': ''}, [
+          for (final tag in allTags)
+            button(classes: 'wp-tag', attributes: {'data-tag': tag, 'type': 'button'}, [text('#$tag')]),
+        ]),
+
+        // Selected tag chips
+        div(classes: 'wp-chips', attributes: {'data-chips': ''}, []),
 
         // Count
         div(classes: 'wp-count', [
@@ -119,19 +131,17 @@ class WritingPage extends StatelessComponent {
   var search = document.querySelector('[data-search]');
   var count = document.querySelector('.wp-count');
   var empty = document.querySelector('[data-empty]');
+  var filterToggle = document.querySelector('[data-filter-toggle]');
+  var tagPanel = document.querySelector('[data-tag-panel]');
+  var chips = document.querySelector('[data-chips]');
+  var filterCount = document.querySelector('[data-filter-count]');
 
   var activeTags = [];
 
   // Read URL params
   var params = new URLSearchParams(window.location.search);
   var urlTags = params.getAll('tag');
-  if (urlTags.length) {
-    activeTags = urlTags;
-    tagBtns.forEach(function(b){
-      var t = b.getAttribute('data-tag');
-      b.classList.toggle('active', t === 'all' ? false : activeTags.indexOf(t) >= 0);
-    });
-  }
+  if (urlTags.length) activeTags = urlTags;
   var urlLen = params.get('length');
   if (urlLen && lengthSel) lengthSel.value = urlLen;
   var urlSort = params.get('sort');
@@ -146,6 +156,35 @@ class WritingPage extends StatelessComponent {
     if (lengthSel && lengthSel.value !== 'all') url.searchParams.set('length', lengthSel.value);
     if (sortSel && sortSel.value !== 'newest') url.searchParams.set('sort', sortSel.value);
     history.replaceState(null, '', url);
+  }
+
+  function renderChips(){
+    if (!chips) return;
+    chips.innerHTML = '';
+    activeTags.forEach(function(t){
+      var c = document.createElement('span');
+      c.className = 'wp-chip';
+      c.innerHTML = '#' + t + '<button class="wp-chip-x" type="button" aria-label="Remove">×</button>';
+      c.querySelector('.wp-chip-x').addEventListener('click', function(){
+        activeTags = activeTags.filter(function(x){ return x !== t; });
+        syncTagButtons();
+        renderChips();
+        apply();
+      });
+      chips.appendChild(c);
+    });
+    if (filterCount) {
+      filterCount.textContent = activeTags.length;
+      filterCount.style.display = activeTags.length ? '' : 'none';
+    }
+    if (filterToggle) filterToggle.classList.toggle('has-selection', activeTags.length > 0);
+  }
+
+  function syncTagButtons(){
+    tagBtns.forEach(function(b){
+      var t = b.getAttribute('data-tag');
+      b.classList.toggle('active', activeTags.indexOf(t) >= 0);
+    });
   }
 
   function apply(){
@@ -187,21 +226,18 @@ class WritingPage extends StatelessComponent {
     updateURL();
   }
 
+  if (filterToggle) filterToggle.addEventListener('click', function(){
+    tagPanel.classList.toggle('open');
+  });
+
   tagBtns.forEach(function(b){
     b.addEventListener('click', function(){
       var t = b.getAttribute('data-tag');
-      if (t === 'all') {
-        activeTags = [];
-        tagBtns.forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-tag') === 'all'); });
-      } else {
-        var idx = activeTags.indexOf(t);
-        if (idx >= 0) activeTags.splice(idx, 1);
-        else activeTags.push(t);
-        tagBtns.forEach(function(x){
-          var xt = x.getAttribute('data-tag');
-          x.classList.toggle('active', xt === 'all' ? !activeTags.length : activeTags.indexOf(xt) >= 0);
-        });
-      }
+      var idx = activeTags.indexOf(t);
+      if (idx >= 0) activeTags.splice(idx, 1);
+      else activeTags.push(t);
+      syncTagButtons();
+      renderChips();
       apply();
     });
   });
@@ -209,6 +245,9 @@ class WritingPage extends StatelessComponent {
   if (lengthSel) lengthSel.addEventListener('change', apply);
   if (sortSel) sortSel.addEventListener('change', apply);
   if (search) search.addEventListener('input', apply);
+
+  syncTagButtons();
+  renderChips();
   apply();
 })();
 ''';
