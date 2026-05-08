@@ -116,6 +116,17 @@ website-jaspr/
 - Admin styles all namespaced under `.adm` (e.g. `.adm .btn`) so they
   never collide with the public site's `.btn`/`.card`/`.nav`/etc.
 
+## Design system rules (scoped enforcement)
+
+- `web/tokens/TOKENS.md` — loads when editing tokens or CSS files.
+  Decision tree for adding tokens.
+- `lib/components/COMPONENTS.md` — loads when editing components.
+  Decision tree for adding/modifying components, plus the component inventory.
+- `/DESIGN.md` (root) — the design philosophy and brand vs interactive rule.
+
+Search the existing system before adding anything new. The scoped files
+contain mandatory decision trees.
+
 ## Bilingual rules
 
 - `<html lang="ar" dir="rtl">` set via `Document(lang: 'ar')` and CSS

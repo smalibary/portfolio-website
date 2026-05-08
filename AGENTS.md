@@ -8,7 +8,7 @@ that matches your task.
 | File | When to read | What it has |
 |---|---|---|
 | **`RULES.md`** | Before any decision, code, or copy change | Always-on rules: writing style, bilingual, SEO/AEO, public copy, git, "Don'ts" |
-| **`DESIGN.md`** | Before any CSS change, new component, or visual tweak | Design tokens (radius, spacing, typography, borders), component map, minimal-component rule |
+| **`DESIGN.md`** | Before understanding the system architecture or token philosophy | 3-tier architecture, brand-vs-interactive rule, dependency rules, worked examples |
 | **`WORKFLOWS.md`** | Before any visual change, new route, or admin feature | Track 1/2 mockup loops, Flutter embed pattern, route + admin checklists |
 
 If a rule needs to change, update RULES.md as part of the same commit.
@@ -42,7 +42,9 @@ cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 | Task | Read |
 |---|---|
 | any decision, rule, or constraint | `RULES.md` |
-| any CSS, spacing, radius, or component change | `DESIGN.md` first — use existing tokens and components |
+| token / CSS / spacing / radius change | `website-jaspr/web/tokens/TOKENS.md` (loads in scope) |
+| new component or component modification | `website-jaspr/lib/components/COMPONENTS.md` (loads in scope) |
+| understanding the design system architecture | `DESIGN.md` |
 | visual / layout / new route changes | `WORKFLOWS.md` then `mockups/AGENTS.md` |
 | what to build next on the site | `ROADMAP.md` (100+ items, gitignored — local only) |
 | Jaspr component code (live site) | `website-jaspr/AGENTS.md` |
@@ -55,6 +57,21 @@ cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 | brand strategy / positioning / content scope | `context/AGENTS.md` |
 | writing a public-facing post / article / script / bio | RULES.md §3 first; then `context/voice.md`, `topical-scope.md`, `guardrails.md` |
 | thesis chapters / pipeline | `thesis-structure/rules/` |
+
+## Design system
+
+This project has a documented 3-tier design system. The philosophy lives
+in `DESIGN.md`. Procedural rules are scoped:
+- When working with tokens (`web/tokens/`, `web/styles.css`, `web/admin.css`):
+  `website-jaspr/web/tokens/TOKENS.md` codifies the "when to add a token"
+  decision tree.
+- When working with components (`lib/components/`):
+  `website-jaspr/lib/components/COMPONENTS.md` codifies component
+  classification and the "when to create a component" decision tree.
+
+Default behaviour: **REUSE before EXTENDING before CREATING.** Both scoped
+files contain mandatory decision trees — work through them in order before
+any addition.
 
 ## Prompt templates (`.pi/prompts/`)
 
@@ -77,7 +94,7 @@ To add a new prompt, create `.pi/prompts/<name>.md` with a YAML frontmatter
 
 - **Public copy** lives in yaml/markdown under `website-jaspr/content/`, never hardcoded in Dart
 - **Public-facing positioning** flows from `context/`, never written from scratch
-- **All visual decisions** flow from `DESIGN.md` — use existing tokens, never hardcode values
+- **All visual decisions** follow the scoped rules — `website-jaspr/web/tokens/TOKENS.md` for tokens, `website-jaspr/lib/components/COMPONENTS.md` for components. `DESIGN.md` covers the architecture and brand-vs-interactive philosophy
 - **Two design tracks** (brand vs layout) — see WORKFLOWS.md before mockups
 - **Minimal components** — don't create a new component variant unless something genuinely needs different structure. Use tokens (radius, spacing, border) to differentiate, not new CSS classes
 - **Public repo** at `github.com/smalibary/portfolio-website` — strict gitignore at root keeps `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, blog drafts private
