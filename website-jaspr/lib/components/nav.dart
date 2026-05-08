@@ -42,6 +42,22 @@ class Nav extends StatelessComponent {
           ]),
         ]),
       ]),
+      script(content: _navScript),
     ]);
   }
+
+  static const _navScript = r'''
+(function(){
+  var arrow = document.querySelector('.nav__split-arrow');
+  var menu = document.querySelector('.nav__split-menu');
+  if (!arrow || !menu) return;
+  var timer;
+  function show(){ clearTimeout(timer); menu.classList.add('show'); }
+  function hide(){ timer = setTimeout(function(){ menu.classList.remove('show'); }, 300); }
+  arrow.addEventListener('mouseenter', show);
+  arrow.addEventListener('mouseleave', hide);
+  menu.addEventListener('mouseenter', show);
+  menu.addEventListener('mouseleave', hide);
+})();
+''';
 }
