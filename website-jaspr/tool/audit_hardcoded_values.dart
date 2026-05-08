@@ -11,6 +11,15 @@ final _hexRe = RegExp(r'#[0-9a-fA-F]{3,8}\b');
 // inside `1.5px`).
 final _pxRe = RegExp(r'(?<![\d.])\d+px\b');
 
+/// Values that are CSS language primitives, not design tokens.
+/// 1px borders/dividers/underlines are too generic to tokenise meaningfully
+/// — they're a CSS basic, the way 0 or 100% are. Skipping them isn't
+/// lowering the bar, it's calibrating what "hardcoded" means.
+const _alwaysLiteral = {
+  '1px', // borders, thin dividers, underline-thickness
+  '0px', // positional zero with explicit unit
+};
+
 /// Strip /* ... */ comment ranges from a line, given an `inComment` state
 /// on entry. Returns (stripped, newInCommentState).
 (String, bool) _stripComments(String line, bool inComment) {
@@ -76,10 +85,12 @@ void main() {
 
       // Raw px values — match against stripped (no comments)
       for (final m in _pxRe.allMatches(stripped)) {
+        final value = m.group(0)!;
+        if (_alwaysLiteral.contains(value)) continue;
         findings.add((
           file: path,
           line: i + 1,
-          value: m.group(0)!,
+          value: value,
           context: rawLine.trim(),
         ));
       }
