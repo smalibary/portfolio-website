@@ -406,7 +406,6 @@ main, nav, footer { position: relative; z-index: 1; }
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
   color: var(--color-text-faint); letter-spacing: 0.04em;
   direction: ltr;
-  margin-left: auto;
   flex-shrink: 0;
 }
 .bili { display: flex; gap: var(--space-2); align-items: baseline; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
