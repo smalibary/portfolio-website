@@ -23,7 +23,7 @@ class ResearchGrid extends StatelessComponent {
         ]),
       ]),
       if (visible.isEmpty)
-        div(classes: 'research__empty', [
+        div(classes: 'research__empty', [ // intentionally unstyled empty state
           text('لا يوجد أبحاث ظاهرة · No visible papers'),
         ])
       else

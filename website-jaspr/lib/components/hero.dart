@@ -13,7 +13,7 @@ class Hero extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return section(classes: 'hero', [
-      div(classes: 'hero__left sq-frame', [
+      div(classes: 'hero__left sq-frame', [ // sq-frame provides all styling
         // Status line (from yaml; renders only if non-empty)
         if (site.statusLine.isNotEmpty)
           div(classes: 'status-line', [
@@ -53,13 +53,13 @@ class Hero extends StatelessComponent {
       div(classes: 'hero__portrait', [
         img(
           src: '/images/${site.photoDark}',
-          classes: 'portrait-img portrait-img--dark',
+          classes: 'portrait-img portrait-img--dark', // portrait-img--* provides styling
           alt: site.nameEn,
         ),
         if (site.photoLight.isNotEmpty && site.photoLight != site.photoDark)
           img(
             src: '/images/${site.photoLight}',
-            classes: 'portrait-img portrait-img--light',
+            classes: 'portrait-img portrait-img--light', // portrait-img--* provides styling
             alt: site.nameEn,
           ),
         div(classes: 'portrait-meta', [

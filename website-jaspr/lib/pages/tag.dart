@@ -34,7 +34,7 @@ class TagPage extends StatelessComponent {
             ]),
           ]),
           if (posts.isEmpty)
-            div(classes: 'writing__empty', [
+            div(classes: 'writing__empty', [ // intentionally unstyled empty state
               text('لا يوجد مقالات بهذا الوسم · No posts with this tag'),
             ])
           else

@@ -215,7 +215,7 @@ class StyleguidePage extends StatelessComponent {
                   [text('sq-frame')],
                 ),
               ]),
-              div(classes: 'sg-motif-item sg-motif-bar', [
+              div(classes: 'sg-motif-item sg-motif-bar', [ // sg-motif-item provides styling
                 div(
                   classes: 'sg-bar-demo sq-bar',
                   attributes: {
@@ -251,7 +251,7 @@ class StyleguidePage extends StatelessComponent {
         h2([text(titleAr)]),
         span(classes: 'sg-section-en', [text(titleEn)]),
       ]),
-      div(classes: 'sg-section-body', children),
+      div(children),
     ]);
   }
 
