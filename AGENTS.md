@@ -41,6 +41,7 @@ cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 
 | Task | Read |
 |---|---|
+| deployment / CI / Cloudflare Pages | `DEPLOY.md` |
 | any decision, rule, or constraint | `RULES.md` |
 | token / CSS / spacing / radius change | `website-jaspr/web/tokens/TOKENS.md` (loads in scope) |
 | new component or component modification | `website-jaspr/lib/components/COMPONENTS.md` (loads in scope) |
@@ -99,4 +100,5 @@ To add a new prompt, create `.pi/prompts/<name>.md` with a YAML frontmatter
 - **Minimal components** — don't create a new component variant unless something genuinely needs different structure. Use tokens (radius, spacing, border) to differentiate, not new CSS classes
 - **Public repo** at `github.com/smalibary/portfolio-website` — strict gitignore at root keeps `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, blog drafts private
 - **Production builds:** `dart run tool/build.dart` (NOT `jaspr build` directly — see RULES.md §8)
+- **Deployed on Cloudflare Pages** — auto-deploys on push to `main`. See `DEPLOY.md` for full details
 - **Don't deploy `/admin/*`** to production — passcode is cosmetic, save server is local-only
