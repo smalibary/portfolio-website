@@ -112,8 +112,8 @@ main, nav, footer { position: relative; z-index: 1; }
   display: flex; align-items: center; gap: var(--space-2-5);
 }
 .status-dot {
-  width: var(--c-status-dot-size); height: var(--c-status-dot-size); border-radius: 50%;
-  background: var(--color-brand); box-shadow: 0 0 12px var(--color-brand); /* intentionally literal: 12px glow radius for animated status-dot pulse */
+  width: var(--c-status-dot-size); height: var(--c-status-dot-size); border-radius: var(--radius-sharp);
+  background: var(--color-brand); box-shadow: 0 0 8px var(--color-brand);
   animation: pulse 2s ease-in-out infinite;
   flex-shrink: 0;
 }
