@@ -69,38 +69,4 @@
      already theme-aware via --color-brand and --color-border-default. */
 }
 
-/* ─────────────────────────────────────────────────────────────────────
-   DEPRECATED ALIASES — soft cutover.
-   These keep older selectors compiling until Phase 3 migrates them
-   to the semantic names above. Do not introduce new uses.
-   ───────────────────────────────────────────────────────────────────── */
-:root,
-[data-theme="dark"],
-[data-theme="light"] {
-  /* @deprecated — use --color-surface-page */
-  --bg:           var(--color-surface-page);
-  /* @deprecated — use --color-surface-elevated */
-  --bg-elev:      var(--color-surface-elevated);
-  /* @deprecated — use --color-surface-card */
-  --bg-card:      var(--color-surface-card);
-  /* @deprecated — use --color-text-default */
-  --ink:          var(--color-text-default);
-  /* @deprecated — use --color-text-muted */
-  --ink-muted:    var(--color-text-muted);
-  /* @deprecated — use --color-text-faint */
-  --ink-faint:    var(--color-text-faint);
-  /* @deprecated — use --color-border-default */
-  --rule:         var(--color-border-default);
-  /* @deprecated — use --color-brand or --color-interactive-primary */
-  --accent:       var(--color-brand);
-  /* @deprecated — use --color-status-warm */
-  --accent-warm:  var(--color-status-warm);
-  /* @deprecated — use --color-status-cool */
-  --accent-cool:  var(--color-status-cool);
-  /* @deprecated — use --shadow-card */
-  --shadow:       var(--shadow-card);
-  /* @deprecated — use --border-rule */
-  --border-rule-val:   var(--border-rule);
-  /* @deprecated — use --border-accent */
-  --border-accent-val: var(--border-accent);
-}
+/* All deprecated aliases removed — Phase 3 migration complete. */
