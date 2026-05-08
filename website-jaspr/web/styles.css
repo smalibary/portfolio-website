@@ -286,39 +286,39 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .pill--published { color: var(--color-brand); border-color: var(--color-brand);
   background: color-mix(in srgb, var(--color-brand) 8%, transparent); }
-.pill--active { color: var(--color-status-warm); border-color: var(--color-status-warm);
-  background: color-mix(in srgb, var(--color-status-warm) 8%, transparent); }
-.pill--design { color: var(--color-status-cool); border-color: var(--color-status-cool);
-  background: color-mix(in srgb, var(--color-status-cool) 8%, transparent); }
+.pill--active { color: var(--color-brand); border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 8%, transparent); }
+.pill--design { color: var(--color-brand); border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 8%, transparent); }
 .card__index {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs); color: var(--color-text-faint);
 }
 .card__metric {
   font-family: 'JetBrains Mono', monospace; font-weight: 400;
   font-size: clamp(26px, 3vw, 34px);
-  color: var(--color-brand); margin-bottom: var(--space-1-5);
+  color: var(--color-text-default); margin-bottom: var(--space-1-5);
   letter-spacing: -0.01em;
   direction: ltr; text-align: left;
 }
 .card__metric-label {
-  font-size: var(--text-sm); color: var(--color-brand);
+  font-size: var(--text-sm); color: var(--color-text-muted);
   margin-bottom: var(--c-card-head-mb); line-height: 1.6;
   font-family: 'JetBrains Mono', monospace;
   direction: ltr; text-align: left;
 }
 .card__title-ar {
   font-size: var(--text-md); font-weight: 500; line-height: 1.55;
-  margin-top: auto; color: var(--color-brand);
+  margin-top: auto; color: var(--color-text-default);
 }
 .card__title-en {
   font-family: 'Inter', sans-serif;
-  font-size: var(--text-sm); color: var(--color-brand);
+  font-size: var(--text-sm); color: var(--color-text-faint);
   direction: ltr; text-align: left;
   margin-top: var(--space-1-5); line-height: 1.5;
 }
 .card__caption {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
-  color: var(--color-brand); margin-top: var(--space-2-5);
+  color: var(--color-text-faint); margin-top: var(--space-2-5);
   direction: ltr; text-align: left;
 }
 
@@ -887,23 +887,23 @@ main, nav, footer { position: relative; z-index: 1; }
   font-size: var(--text-sm); color: var(--color-text-faint);
 }
 .footer__year { font-family: 'JetBrains Mono', monospace; direction: ltr; }
-.footer__links { display: flex; gap: var(--space-6); direction: ltr; }
+.footer__right { display: flex; align-items: center; gap: var(--space-4); direction: ltr; }
+.footer__links { display: flex; gap: var(--space-4); }
 .footer__links a {
   font-family: 'JetBrains Mono', monospace;
   color: var(--color-text-muted); text-decoration: none;
 }
 .footer__links a:hover { color: var(--color-text-default); }
-.footer__links a.footer__lock {
-  margin-inline-start: var(--space-2);
-  padding: var(--space-1) var(--space-1-5);
+.footer__lock {
+  padding: var(--c-toggle-btn-py) var(--c-toggle-btn-px);
   border: var(--border-rule);
-  border-radius: var(--radius-sm);
+  border-radius: var(--c-pill-radius);
   display: inline-flex; align-items: center;
-  opacity: 0.55;
+  color: var(--color-text-muted);
+  text-decoration: none;
   transition: opacity .15s, color .15s, border-color .15s;
 }
-.footer__links a.footer__lock:hover {
-  opacity: 1;
+.footer__lock:hover {
   color: var(--color-interactive-primary);
   border-color: var(--color-interactive-primary);
 }
@@ -925,4 +925,5 @@ main, nav, footer { position: relative; z-index: 1; }
   .writing__item { grid-template-columns: 90px 1fr; } /* intentionally literal: mobile date column width, narrower than --c-writing-col (110px) to fit smaller screens */
   .writing__lang { display: none; }
   .footer { flex-direction: column; gap: var(--space-4); padding: var(--space-6) var(--space-5); }
+  .footer__right { flex-wrap: wrap; justify-content: center; }
 }

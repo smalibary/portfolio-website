@@ -82,12 +82,12 @@
   --c-portrait-bottom: var(--space-5);
 
   /* ── Admin (--c-adm-*) ──────────────────────────────────────────── */
-  --c-adm-card-radius:       var(--radius-lg);
+  --c-adm-card-radius:       var(--radius-sm);
   --c-adm-card-pad:          var(--space-8);
   --c-adm-card-shadow:       0 24px 60px -30px rgba(var(--color-shadow-rgb), 0.4);
   --c-adm-rail-w:            72px;
   --c-adm-rail-item-size:    48px;
-  --c-adm-rail-item-radius:  10px;
+  --c-adm-rail-item-radius:  var(--radius-sm);
   --c-adm-rail-brand-size:   40px;
   --c-adm-pin-input-w:       56px;
   --c-adm-pin-input-h:       64px;

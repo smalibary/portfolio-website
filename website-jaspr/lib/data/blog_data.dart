@@ -81,9 +81,9 @@ class BlogPost {
     final lang = language.toUpperCase();
     if (wordCount >= 1000) {
       final k = (wordCount / 1000).toStringAsFixed(1);
-      return '$lang · ${k}k';
+      return '$lang · ${k}k words';
     }
-    if (wordCount > 0) return '$lang · ${wordCount}w';
+    if (wordCount > 0) return '$lang · ${wordCount}w words';
     return lang;
   }
 

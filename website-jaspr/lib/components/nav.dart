@@ -2,10 +2,9 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
 import '../data/site_data.dart';
-import 'theme_toggle.dart';
 
 /// Role: chrome
-/// Top navigation bar with split-monogram brand mark and theme toggle.
+/// Top navigation bar with split-monogram brand mark.
 class Nav extends StatelessComponent {
   const Nav({required this.site, super.key});
   final SiteData site;
@@ -31,7 +30,6 @@ class Nav extends StatelessComponent {
           a(href: '#', [text('السيرة')]),
           a(href: '#', [text('تواصل')]),
         ]),
-        ThemeToggle(),
       ]),
     ]);
   }
