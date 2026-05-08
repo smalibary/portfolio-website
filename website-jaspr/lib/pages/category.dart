@@ -34,7 +34,7 @@ class CategoryPage extends StatelessComponent {
             ]),
           ]),
           if (posts.isEmpty)
-            div(classes: 'writing__empty', [
+            div(classes: 'writing__empty', [ // intentionally unstyled empty state
               text('لا يوجد مقالات في هذا التصنيف · No posts in this category'),
             ])
           else

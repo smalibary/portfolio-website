@@ -5,6 +5,22 @@
 
 import 'dart:io';
 
+/// Classes used as DOM hooks without their own CSS rule.
+/// Styled by a co-class on the same element — not a bug.
+const _styledByCoclass = {
+  'hero__left', // styled by sibling sq-frame
+  'portrait-img', // styled by portrait-img--dark/light variants
+  'sg-motif-bar', // styled by sibling sg-motif-item
+};
+
+/// Classes that are semantic wrappers or empty-state markers, deliberately
+/// unstyled. Children get their own classes; the parent is just a label.
+const _intentionallyPlain = {
+  'research__empty', // empty-state text, deliberately unstyled
+  'writing__empty', // empty-state text, deliberately unstyled
+  'toc', // semantic wrapper, see .toc__link for styling
+};
+
 final _classesArgRe = RegExp(r"classes:\s*'([^']+)'");
 final _classSelectorRe = RegExp(r'\.([a-zA-Z][a-zA-Z0-9_-]*)');
 
@@ -50,7 +66,12 @@ void main() {
   final dartClasses = _dartClasses();
   final cssClasses = _cssDefined();
 
-  final undefined = dartClasses.difference(cssClasses).toList()..sort();
+  final undefined = dartClasses
+      .difference(cssClasses)
+      .difference(_styledByCoclass)
+      .difference(_intentionallyPlain)
+      .toList()
+    ..sort();
   final orphan = cssClasses.difference(dartClasses).toList()..sort();
 
   print('Dart class references: ${dartClasses.length}');

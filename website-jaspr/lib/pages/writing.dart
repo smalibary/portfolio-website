@@ -38,7 +38,7 @@ class WritingPage extends StatelessComponent {
             ]),
           ]),
           if (posts.isEmpty)
-            div(classes: 'writing__empty', [
+            div(classes: 'writing__empty', [ // intentionally unstyled empty state
               text('لا يوجد مقالات بعد · No posts yet'),
             ])
           else

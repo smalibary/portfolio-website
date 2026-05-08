@@ -89,7 +89,7 @@ class BlogPostPage extends StatelessComponent {
           // Sticky sidebar: TOC + newsletter
           aside(classes: 'post-sidebar', attributes: {'data-post-sidebar': ''}, [
             if (headings.isNotEmpty) ...[
-              nav(classes: 'toc', [
+              nav(classes: 'toc', [ // semantic wrapper, see .toc__link for styling
                 div(classes: 'toc__title', [
                   span(classes: 'sq-mark--sm', []),
                   text(' المحتويات · Contents'),
@@ -126,7 +126,7 @@ class BlogPostPage extends StatelessComponent {
               div(classes: 'newsletter__msg', attributes: {'data-newsletter-msg': ''}, [text('')]),
             ]),
             if (post.tags.isNotEmpty)
-              div(classes: 'sidebar-tags-block', attributes: {'data-sidebar-tags-block': ''}, [
+              div(attributes: {'data-sidebar-tags-block': ''}, [
                 div(classes: 'sidebar-divider', [text('')]),
                 div(classes: 'sidebar-tags', [
                   for (final tag in post.tags)
