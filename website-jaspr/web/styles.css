@@ -81,7 +81,7 @@ main, nav, footer { position: relative; z-index: 1; }
   transition: color 0.2s; font-weight: 500;
 }
 .nav__links a:hover { color: var(--color-text-default); }
-.nav__split-btn { position: relative; display: flex; }
+.nav__split-btn { position: relative; display: flex; direction: ltr; }
 .nav__split-main {
   padding: var(--c-toggle-btn-py) var(--space-3) var(--c-toggle-btn-py) var(--c-toggle-btn-px);
   background: var(--color-brand); color: var(--color-surface-page);
@@ -92,24 +92,30 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 .nav__split-main:hover { filter: brightness(1.1); }
 .nav__split-arrow {
-  padding: var(--c-toggle-btn-py) var(--space-2-5);
+  padding: var(--c-toggle-btn-py) var(--space-3);
   background: var(--color-brand); color: var(--color-surface-page);
   border: none; border-radius: 0 var(--c-pill-radius) var(--c-pill-radius) 0;
-  border-inline-start: 1px solid color-mix(in srgb, var(--color-surface-page) 30%, var(--color-brand));
-  font-size: var(--text-xs); cursor: pointer;
+  border-left: 1px solid color-mix(in srgb, var(--color-surface-page) 30%, var(--color-brand));
+  font-size: 14px; cursor: pointer;
   transition: background 0.2s;
-  display: flex; align-items: center;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; width: 36px;
 }
 .nav__split-arrow:hover { background: color-mix(in srgb, var(--color-brand) 85%, white); }
+.nav__split-arrow-up { transition: opacity .2s, transform .2s; }
+.nav__split-arrow-down { position: absolute; opacity: 0; transform: translateY(-4px); transition: opacity .2s, transform .2s; }
+.nav__split-arrow:hover .nav__split-arrow-up { opacity: 0; transform: translateY(4px); }
+.nav__split-arrow:hover .nav__split-arrow-down { opacity: 1; transform: translateY(0); }
 .nav__split-menu {
-  display: none; position: absolute; top: calc(100% + var(--space-2)); inset-inline-end: 0;
+  display: none; position: absolute; top: calc(100% + var(--space-2)); right: 0;
   background: var(--color-surface-card); border: var(--border-rule);
   border-radius: var(--c-pill-radius);
   box-shadow: var(--shadow-card);
   min-width: 200px;
   z-index: 100; overflow: hidden;
 }
-.nav__split-btn:hover .nav__split-menu { display: flex; flex-direction: column; }
+.nav__split-arrow:hover + .nav__split-menu { display: flex; flex-direction: column; }
+.nav__split-menu:hover { display: flex; flex-direction: column; }
 .nav__split-menu a {
   padding: var(--space-2-5) var(--space-4);
   color: var(--color-text-muted); text-decoration: none;
@@ -1010,26 +1016,64 @@ main, nav, footer { position: relative; z-index: 1; }
 
 /* CONTACT PAGE */
 .contact-page { max-width: 720px; margin: 0 auto; padding: var(--space-8) var(--space-12) var(--space-16); position: relative; z-index: 1; }
-.contact-header { margin-bottom: var(--space-10); }
+.contact-header { margin-bottom: var(--space-8); }
 .contact-header h1 { font-size: var(--text-2xl); font-weight: 600; margin: 0 0 var(--space-4); letter-spacing: -.01em; }
 .contact-lede { font-size: var(--text-md); line-height: 1.75; color: var(--color-text-default); margin-bottom: var(--space-2); }
-.contact-lede-en { font-family: 'Inter', sans-serif; font-size: var(--text-sm); line-height: 1.6; color: var(--color-text-muted); direction: ltr; text-align: left; margin-bottom: var(--space-8); }
-.contact-section { margin-bottom: var(--space-8); }
-.contact-section h2 { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-faint); letter-spacing: .08em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
-.contact-section h2::before { content: ''; width: 10px; height: 10px; background: var(--color-brand); display: inline-block; flex-shrink: 0; }
-.contact-email { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: var(--text-md); color: var(--color-brand); text-decoration: none; padding: var(--space-2-5) var(--space-5); border: 1px solid var(--color-brand); border-radius: var(--radius-sm); transition: background .15s, color .15s; }
-.contact-email:hover { background: var(--color-brand); color: var(--color-surface-page); }
-.contact-links { display: flex; flex-direction: column; gap: var(--space-1); }
-.contact-link { display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-3) var(--space-1); border-bottom: var(--border-rule); text-decoration: none; transition: background .15s; }
-.contact-link:last-child { border-bottom: none; }
-.contact-link:hover { background: var(--color-surface-elevated); padding-inline: var(--space-3); }
-.contact-link__label { font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm); color: var(--color-brand); letter-spacing: .04em; }
-.contact-link__desc { font-size: var(--text-sm); color: var(--color-text-muted); }
-.contact-affils { display: flex; flex-direction: column; gap: var(--space-4); }
-.contact-affil { padding: var(--space-4); background: var(--color-surface-card); border: var(--border-rule); border-radius: var(--radius-sm); display: flex; flex-direction: column; gap: var(--space-1); }
-.contact-affil__role { font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm); color: var(--color-brand); letter-spacing: .06em; text-transform: uppercase; }
-.contact-affil__org { font-size: var(--text-base); font-weight: 500; color: var(--color-text-default); }
-.contact-affil__dept { font-size: var(--text-sm); color: var(--color-text-muted); }
+.contact-lede-en { font-family: 'Inter', sans-serif; font-size: var(--text-sm); line-height: 1.6; color: var(--color-text-muted); direction: ltr; text-align: left; margin-bottom: 0; }
+
+/* form */
+.contact-form {
+  background: var(--color-surface-card); border: var(--border-rule);
+  border-radius: var(--radius-sm); padding: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+.contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.contact-form__field { margin-bottom: var(--space-4); }
+.contact-form__field label {
+  display: block; font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-xs); color: var(--color-text-muted);
+  letter-spacing: .06em; text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+.contact-form__field input,
+.contact-form__field select,
+.contact-form__field textarea {
+  width: 100%; padding: var(--space-2-5) var(--space-3-5);
+  background: var(--color-surface-elevated); border: var(--border-rule);
+  border-radius: var(--radius-sm); color: var(--color-text-default);
+  font-family: inherit; font-size: var(--text-base);
+  transition: border-color .15s;
+}
+.contact-form__field input:focus,
+.contact-form__field select:focus,
+.contact-form__field textarea:focus {
+  outline: none; border-color: var(--color-brand);
+}
+.contact-form__field textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+.contact-form__submit {
+  width: 100%; padding: var(--space-3) var(--space-5);
+  background: var(--color-brand); color: var(--color-surface-page);
+  border: none; border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm);
+  letter-spacing: .06em; font-weight: 500;
+  cursor: pointer; transition: filter .15s;
+}
+.contact-form__submit:hover { filter: brightness(1.1); }
+
+/* alt contact */
+.contact-alt h2 { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-faint); letter-spacing: .08em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
+.contact-alt h2::before { content: ''; width: 10px; height: 10px; background: var(--color-brand); display: inline-block; flex-shrink: 0; }
+.contact-alt__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); }
+.contact-alt__card {
+  display: flex; flex-direction: column; gap: var(--space-1-5);
+  padding: var(--space-4); background: var(--color-surface-card);
+  border: var(--border-rule); border-radius: var(--radius-sm);
+  text-decoration: none; transition: border-color .15s;
+}
+.contact-alt__card:hover { border-color: var(--color-brand); }
+.contact-alt__card svg { color: var(--color-brand); }
+.contact-alt__label { font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs); color: var(--color-brand); letter-spacing: .06em; text-transform: uppercase; }
+.contact-alt__value { font-size: var(--text-sm); color: var(--color-text-muted); }
 
 /* RESPONSIVE */
 @media (max-width: 980px) { /* intentionally literal: @media query, CSS variables not supported */
