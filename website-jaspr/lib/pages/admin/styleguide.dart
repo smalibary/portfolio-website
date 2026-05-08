@@ -100,7 +100,7 @@ class StyleguidePage extends StatelessComponent {
               _borderBox('var(--border-rule)', 'border-rule'),
               _borderBox('var(--border-accent)', 'border-accent'),
               _borderBox(
-                'none; border-inline-start: var(--border-bar-w) solid var(--accent)',
+                'none; border-inline-start: var(--border-bar-w) solid var(--color-brand)',
                 'border-bar',
               ),
             ]),
@@ -435,7 +435,7 @@ const _css = r'''
 }
 .adm .sg-spacing-bar {
   height: 10px;
-  background: var(--accent);
+  background: var(--color-brand);
   border-radius: var(--radius-sharp);
   flex-shrink: 0;
   opacity: 0.7;
@@ -467,8 +467,8 @@ const _css = r'''
 .adm .sg-radius-box {
   width: 80px;
   height: 80px;
-  border: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 2px solid var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 8%, transparent);
 }
 .adm .sg-radius-token {
   font-family: 'JetBrains Mono', monospace;
@@ -626,14 +626,14 @@ const _css = r'''
   transition: all 0.2s;
 }
 .adm .sg-main .theme-toggle button.active {
-  background: var(--accent);
+  background: var(--color-interactive-primary);
   color: var(--color-surface-page); /* TODO(token-semantics): should be --color-interactive-primary-text — see TODO_TOKENS.md */
   font-weight: 500;
 }
 
 /* Blockquote — public-site version */
 .adm .sg-main blockquote {
-  border-inline-start: 3px solid var(--accent);
+  border-inline-start: 3px solid var(--color-brand);
   padding: 4px 18px;
   margin: 0 0 12px;
   color: var(--color-text-muted);
