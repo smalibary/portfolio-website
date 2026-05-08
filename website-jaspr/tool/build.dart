@@ -28,12 +28,12 @@ Future<void> main(List<String> args) async {
   }
 
   // Step 2 — jaspr build.
-  final jasprCmd = _resolveJasprCmd();
-  stdout.writeln('build :: jaspr cmd = $jasprCmd');
-  stdout.writeln('build :: running `$jasprCmd build`');
+  final (cmd, cmdArgs) = _resolveJasprCmd();
+  stdout.writeln('build :: jaspr cmd = $cmd ${cmdArgs.join(' ')}');
+  stdout.writeln('build :: running `$cmd ${[...cmdArgs, 'build', ...args].join(' ')}`');
   final proc = await Process.start(
-    jasprCmd,
-    ['build', ...args],
+    cmd,
+    [...cmdArgs, 'build', ...args],
     workingDirectory: Directory.current.path,
     runInShell: true,
     mode: ProcessStartMode.inheritStdio,
@@ -47,16 +47,36 @@ Future<void> main(List<String> args) async {
   stdout.writeln('build :: done. Static output is in build/jaspr/.');
 }
 
-/// Resolves the path to the jaspr CLI. Pub global binaries on Windows
-/// live under `%LOCALAPPDATA%\Pub\Cache\bin`, which isn't on PATH by
-/// default; on POSIX it's `~/.pub-cache/bin`. Mirrors `tool/dev.dart`.
-String _resolveJasprCmd() {
+/// Resolves the path to the jaspr CLI.
+///
+/// Tries, in order:
+/// 1. Known pub-cache locations (Windows, macOS/Linux, PUB_CACHE override).
+/// 2. Falls back to `dart run jaspr_cli:jaspr` which works from dev
+///    dependencies without needing `dart pub global activate`.
+///
+/// Returns a record of (executable, [args...]) so callers can handle
+/// multi-word commands like `dart run jaspr_cli:jaspr`.
+(String, List<String>) _resolveJasprCmd() {
+  // Candidate paths to check.
+  final candidates = <String>[];
+
   if (Platform.isWindows) {
     final localAppData = Platform.environment['LOCALAPPDATA'] ?? '';
-    final candidate = '$localAppData\\Pub\\Cache\\bin\\jaspr.bat';
-    return File(candidate).existsSync() ? candidate : 'jaspr.bat';
+    candidates.add('$localAppData\\Pub\\Cache\\bin\\jaspr.bat');
+  } else {
+    final home = Platform.environment['HOME'] ?? '';
+    final pubCache = Platform.environment['PUB_CACHE'] ?? '';
+    if (pubCache.isNotEmpty) candidates.add('$pubCache/bin/jaspr');
+    candidates.add('$home/.pub-cache/bin/jaspr');
   }
-  final home = Platform.environment['HOME'] ?? '';
-  final candidate = '$home/.pub-cache/bin/jaspr';
-  return File(candidate).existsSync() ? candidate : 'jaspr';
+
+  for (final c in candidates) {
+    if (File(c).existsSync()) return (c, []);
+  }
+
+  // Last resort: run jaspr_cli from the project's pub cache via dart run.
+  // This avoids needing `dart pub global activate` entirely.
+  stdout.writeln('build :: jaspr binary not found at $candidates');
+  stdout.writeln('build :: falling back to dart run jaspr_cli:jaspr');
+  return ('dart', ['run', 'jaspr_cli:jaspr']);
 }
