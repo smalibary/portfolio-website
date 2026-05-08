@@ -492,10 +492,10 @@ main, nav, footer { position: relative; z-index: 1; }
 .newsletter__msg.success { min-height: 1em; }
 
 /* Hide sidebar on small screens */
-@media (max-width: 1200px) {
+@media (max-width: 1200px) { /* intentionally literal: @media query, CSS variables not supported */
   .post-sidebar { display: none; }
 }
-@media (max-width: 768px) {
+@media (max-width: 768px) { /* intentionally literal: @media query, CSS variables not supported */
   .post { padding: 0 var(--space-4); }
   .post-hero { border-radius: 0; }
 }
@@ -903,7 +903,7 @@ main, nav, footer { position: relative; z-index: 1; }
 }
 
 /* RESPONSIVE */
-@media (max-width: 980px) {
+@media (max-width: 980px) { /* intentionally literal: @media query, CSS variables not supported */
   .nav { padding: 0 var(--space-5); height: 56px; flex-wrap: wrap; gap: var(--space-3); } /* intentionally literal: 56px mobile nav height override (default --c-nav-height is 64px) */
   .nav__menu { gap: var(--space-3-5); font-size: var(--text-sm); }
   .nav__menu a:nth-child(2), .nav__menu a:nth-child(3) { display: none; }
