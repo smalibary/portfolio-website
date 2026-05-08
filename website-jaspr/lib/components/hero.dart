@@ -13,11 +13,10 @@ class Hero extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return section(classes: 'hero', [
-      div(classes: 'hero__left sq-frame', [ // sq-frame provides all styling
+      div(classes: 'hero__left', [
         // Status line (from yaml; renders only if non-empty)
         if (site.statusLine.isNotEmpty)
           div(classes: 'status-line', [
-            span(classes: 'sq-mark--sm', []),
             span(classes: 'status-dot', []),
             span([text(site.statusLine)]),
           ]),
