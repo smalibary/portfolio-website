@@ -33,12 +33,14 @@ main, nav, footer { position: relative; z-index: 1; }
 ::selection { background: color-mix(in srgb, var(--color-brand) 35%, transparent); color: var(--color-text-default); }
 body::after {
   content: ''; position: fixed; width: 300px; height: 300px;
-  border-radius: 50%; pointer-events: none; z-index: 0;
+  border-radius: 50%; pointer-events: none; z-index: -1;
   background: radial-gradient(circle, color-mix(in srgb, var(--color-brand) 6%, transparent) 0%, transparent 70%);
   transform: translate(-50%, -50%);
   transition: left .1s ease-out, top .1s ease-out;
   left: var(--cursor-x, -200px); top: var(--cursor-y, -200px);
 }
+html { background: var(--color-surface-page); }
+body { background: transparent; }
 
 /* ── Square motif ── */
 .sq-mark {
@@ -1127,13 +1129,29 @@ body::after {
   margin-bottom: var(--space-1-5);
 }
 .contact-form__field input,
-.contact-form__field select,
 .contact-form__field textarea {
   width: 100%; padding: var(--space-2) var(--space-3);
   background: var(--color-surface-elevated); border: var(--border-rule);
   border-radius: var(--radius-sm); color: var(--color-text-default);
   font-family: inherit; font-size: var(--text-sm);
   transition: border-color .15s;
+}
+.contact-form__field select {
+  width: 100%; padding: var(--space-2) var(--space-3);
+  padding-inline-start: var(--space-7);
+  background: var(--color-surface-elevated); border: var(--border-rule);
+  border-radius: var(--radius-sm); color: var(--color-text-default);
+  font-family: inherit; font-size: var(--text-sm);
+  transition: border-color .15s;
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234dd4ac' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left var(--space-3) center;
+  cursor: pointer;
+}
+.contact-form__field select option {
+  background: var(--color-surface-elevated); color: var(--color-text-default);
+  padding: var(--space-2);
 }
 .contact-form__field input:focus,
 .contact-form__field select:focus,
