@@ -133,24 +133,58 @@ the following must be true** before merging. Treat this as a checklist.
 - The save server (`:9090`) is local-only. Never expose it.
 - If admin ever needs to leave localhost, `#98` (real auth) must ship first.
 
-## 10. Visual work — verify before showing
+## 10. Visual work — browser-verify loop (mandatory)
 
 Any visual task (CSS changes, layout tweaks, new components, design fixes)
 must go through this loop before being shown to Salem:
 
 1. Make the change
-2. Use `agent-browser` to take a screenshot
-3. Evaluate: does it look right? Check alignment, spacing, consistency with `DESIGN.md` tokens
+2. Use `agent-browser` to take a screenshot — **save screenshots to
+   `inbox/`**, not the system temp directory
+3. Evaluate: does it look right? Check alignment, spacing, consistency
+   with `DESIGN.md` tokens
 4. If something is off — fix it and re-screenshot. Repeat until it looks good
-5. Only then tell Salem to check
+5. Test **both themes** (dark + light) — switch with the admin rail toggle
+   or `agent-browser eval "document.documentElement.setAttribute('data-theme', 'light')"`
+6. Only then tell Salem to check
 
 **Don't show broken work.** Iterate silently with screenshots until it passes
-your own eye, then hand it over. This applies to every visual change — no
-exceptions.
+your own eye, then hand it over. This applies to **every** visual change —
+no exceptions. This includes: new pages, component changes, CSS refactors,
+token migrations, layout tweaks, responsive fixes, colour changes, and
+any other work that affects what the user sees on screen.
 
-## 11. Don'ts (consolidated)
+**No visual change ships without a passing screenshot.**
+
+## 11. Design — follow the system, minimal components
+
+- **Every visual change must reference `DESIGN.md`** — use existing tokens
+  (radius, spacing, typography, borders, colours), never hardcode pixel values
+- **Don't create new component variants.** The site has a small set of
+  components (card, pill, tag, button, input, blockquote). Differentiate with
+  tokens (radius, spacing, border, accent colour), not new CSS classes or
+  new Dart components.
+- Before creating a new component, ask:
+  1. Can an existing component with different token values do the job?
+  2. Is the structural difference genuine (different HTML shape) or just
+     cosmetic (different size/colour/gap)?
+  3. If cosmetic → use existing component + adjust tokens.
+  4. If genuinely new → add it to the component map in `DESIGN.md` first.
+- **One card. One pill. One tag. One button.** Variants via tokens only.
+- Live reference for every token and component: `/admin/styleguide`
+
+## 12. Temp files — use `inbox/`
+
+- All temporary files (screenshots, exports, scratch data, intermediate
+  outputs) go in `inbox/`, not the system temp directory (`/tmp`,
+  `%TEMP%`, etc.)
+- This keeps working materials visible and within the project tree
+- `inbox/` is gitignored — nothing there gets committed
+
+## 13. Don'ts (consolidated)
 
 - Don't hardcode site copy in Dart components — yaml first, loader second
+- Don't hardcode visual values (pixels, colours, radii) — use `DESIGN.md` tokens
 - Don't reference files in `inbox/` from production code; move them first
 - Don't change the visual design without a mockup pass (Track 1 or Track 2 — see WORKFLOWS.md)
 - Don't add a third locale until ar is fully wired alongside en

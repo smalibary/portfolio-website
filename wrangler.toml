@@ -1,5 +1,3 @@
 name = "salem-portfolio"
 compatibility_date = "2025-04-01"
-
-[assets]
-directory = "website-jaspr/build/jaspr"
+pages_build_output_dir = "website-jaspr/build/jaspr"
