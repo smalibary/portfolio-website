@@ -7,7 +7,32 @@
 import 'dart:io';
 
 final _hexRe = RegExp(r'#[0-9a-fA-F]{3,8}\b');
-final _pxRe = RegExp(r'\b\d+px\b');
+// Negative lookbehind: don't match digit-after-dot (e.g. don't match `5px`
+// inside `1.5px`).
+final _pxRe = RegExp(r'(?<![\d.])\d+px\b');
+
+/// Strip /* ... */ comment ranges from a line, given an `inComment` state
+/// on entry. Returns (stripped, newInCommentState).
+(String, bool) _stripComments(String line, bool inComment) {
+  final buf = StringBuffer();
+  var i = 0;
+  var depth = inComment ? 1 : 0;
+  while (i < line.length) {
+    if (depth == 0 && i + 1 < line.length && line[i] == '/' && line[i + 1] == '*') {
+      depth = 1;
+      i += 2;
+      continue;
+    }
+    if (depth > 0 && i + 1 < line.length && line[i] == '*' && line[i + 1] == '/') {
+      depth = 0;
+      i += 2;
+      continue;
+    }
+    if (depth == 0) buf.write(line[i]);
+    i++;
+  }
+  return (buf.toString(), depth > 0);
+}
 
 void main() {
   final files = ['web/styles.css', 'web/admin.css'];
@@ -17,41 +42,45 @@ void main() {
     if (!File(path).existsSync()) continue;
     final lines = File(path).readAsLinesSync();
     var inKeyframes = false;
+    var inComment = false;
 
     for (var i = 0; i < lines.length; i++) {
-      final line = lines[i];
+      final rawLine = lines[i];
+      final (stripped, nextInComment) = _stripComments(rawLine, inComment);
+      inComment = nextInComment;
 
-      // Track @keyframes blocks
-      if (line.contains('@keyframes')) inKeyframes = true;
-      if (inKeyframes && line.trim() == '}') {
+      // Track @keyframes blocks (use stripped line so commented-out
+      // @keyframes don't trip the tracker).
+      if (stripped.contains('@keyframes')) inKeyframes = true;
+      if (inKeyframes && stripped.trim() == '}') {
         inKeyframes = false;
         continue;
       }
       if (inKeyframes) continue;
 
-      // Skip intentionally-literal lines
-      if (line.contains('intentionally literal')) continue;
+      // Skip intentionally-literal lines (check raw line; comment is the marker)
+      if (rawLine.contains('intentionally literal')) continue;
 
       // Skip token definitions (lines with --name: outside rule bodies)
-      if (line.trimLeft().startsWith('--')) continue;
+      if (stripped.trimLeft().startsWith('--')) continue;
 
-      // Hex colours
-      for (final m in _hexRe.allMatches(line)) {
+      // Hex colours — match against stripped (no comments)
+      for (final m in _hexRe.allMatches(stripped)) {
         findings.add((
           file: path,
           line: i + 1,
           value: m.group(0)!,
-          context: line.trim(),
+          context: rawLine.trim(),
         ));
       }
 
-      // Raw px values
-      for (final m in _pxRe.allMatches(line)) {
+      // Raw px values — match against stripped (no comments)
+      for (final m in _pxRe.allMatches(stripped)) {
         findings.add((
           file: path,
           line: i + 1,
           value: m.group(0)!,
-          context: line.trim(),
+          context: rawLine.trim(),
         ));
       }
     }
