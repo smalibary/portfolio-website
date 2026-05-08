@@ -417,7 +417,11 @@ class AdminBlogPage extends StatelessComponent {
   }
 
   if (saveBtn)    saveBtn.addEventListener('click', save);
-  if (publishBtn) publishBtn.addEventListener('click', save);
+  if (publishBtn) publishBtn.addEventListener('click', function(){
+    var statusEl = document.querySelector('[data-field="status"]');
+    if (statusEl) statusEl.value = 'published';
+    save();
+  });
 
   // delete: 2-click pattern. First click arms, second confirms (within 4s).
   if (deleteBtn) deleteBtn.addEventListener('click', function(){
@@ -525,15 +529,10 @@ class AdminBlogPage extends StatelessComponent {
                   '<polyline points="15 3 21 3 21 9"/>'
                   '<line x1="10" y1="14" x2="21" y2="3"/></svg>',
                 ),
-                span([text('VIEW SITE')]),
+                span([text('VIEW')]),
               ],
             ),
             div(classes: 'chip on', [span(classes: 'dot', []), text('SAVED')]),
-            button(
-              classes: 'btn',
-              attributes: const {'data-publish': '', 'type': 'button'},
-              [text('حفظ و نشر · PUBLISH')],
-            ),
           ]),
         ]),
 
@@ -651,9 +650,14 @@ class AdminBlogPage extends StatelessComponent {
               [text('معاينة · PREVIEW')],
             ),
             button(
-              classes: 'btn',
+              classes: 'btn ghost',
               attributes: const {'data-save': '', 'type': 'button'},
               [text('حفظ · SAVE')],
+            ),
+            button(
+              classes: 'btn',
+              attributes: const {'data-publish': '', 'type': 'button'},
+              [text('نشر · PUBLISH')],
             ),
           ]),
         ]),
