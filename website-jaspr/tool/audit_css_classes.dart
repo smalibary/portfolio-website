@@ -18,7 +18,9 @@ Set<String> _dartClasses() {
     for (final m in _classesArgRe.allMatches(f.readAsStringSync())) {
       out.addAll(
         m.group(1)!.split(RegExp(r'\s+')).where(
-          (s) => s.isNotEmpty && RegExp(r'^[a-zA-Z]').hasMatch(s),
+          (s) => s.isNotEmpty &&
+              RegExp(r'^[a-zA-Z]').hasMatch(s) &&
+              !s.contains(r'$'),
         ),
       );
     }
