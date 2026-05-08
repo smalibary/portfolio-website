@@ -187,7 +187,7 @@ main, nav, footer { position: relative; z-index: 1; }
   width: var(--c-social-size); height: var(--c-social-size);
   border-radius: var(--c-social-radius);
   background: var(--color-surface-card);
-  border: var(--border-rule);
+  border: none;
   color: var(--color-text-muted);
   text-decoration: none;
   transition: all 0.2s;
