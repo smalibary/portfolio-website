@@ -76,6 +76,7 @@ class ContactPage extends StatelessComponent {
                     span(classes: 'contact-alt__label', [text('LINKEDIN')]),
                     span(classes: 'contact-alt__value', [text('Salem Malibary')]),
                   ]),
+                  span(classes: 'contact-alt__card-arrow', [text('◀')]),
                 ]),
               if (socials.containsKey('scholar'))
                 a(href: socials['scholar']!, classes: 'contact-alt__card', attributes: {'target': '_blank', 'rel': 'noopener'}, [
@@ -84,6 +85,7 @@ class ContactPage extends StatelessComponent {
                     span(classes: 'contact-alt__label', [text('SCHOLAR')]),
                     span(classes: 'contact-alt__value', [text('Research')]),
                   ]),
+                  span(classes: 'contact-alt__card-arrow', [text('◀')]),
                 ]),
               if (socials.containsKey('github'))
                 a(href: socials['github']!, classes: 'contact-alt__card', attributes: {'target': '_blank', 'rel': 'noopener'}, [
@@ -92,6 +94,7 @@ class ContactPage extends StatelessComponent {
                     span(classes: 'contact-alt__label', [text('GITHUB')]),
                     span(classes: 'contact-alt__value', [text('smalibary')]),
                   ]),
+                  span(classes: 'contact-alt__card-arrow', [text('◀')]),
                 ]),
             ]),
           ]),
