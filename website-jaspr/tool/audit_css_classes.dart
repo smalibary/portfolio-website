@@ -16,7 +16,11 @@ Set<String> _dartClasses() {
   for (final f in dir.listSync(recursive: true).whereType<File>()) {
     if (!f.path.endsWith('.dart')) continue;
     for (final m in _classesArgRe.allMatches(f.readAsStringSync())) {
-      out.addAll(m.group(1)!.split(RegExp(r'\s+')));
+      out.addAll(
+        m.group(1)!.split(RegExp(r'\s+')).where(
+          (s) => s.isNotEmpty && RegExp(r'^[a-zA-Z]').hasMatch(s),
+        ),
+      );
     }
   }
   return out;
