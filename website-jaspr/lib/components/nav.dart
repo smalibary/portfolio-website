@@ -4,7 +4,7 @@ import 'package:jaspr/dom.dart';
 import '../data/site_data.dart';
 
 /// Role: chrome
-/// Top navigation bar with split-monogram brand mark and nav dropdown.
+/// Top navigation bar with split-monogram brand mark and nav links.
 class Nav extends StatelessComponent {
   const Nav({required this.site, super.key});
   final SiteData site;
@@ -22,19 +22,21 @@ class Nav extends StatelessComponent {
         span(classes: 'nav__monogram-square', [text('س')]),
       ]),
       div(classes: 'nav__right', [
-        div(classes: 'nav__dropdown', [
-          button(classes: 'nav__dropdown-btn', attributes: {
-            'type': 'button',
-            'aria-haspopup': 'true',
-            'aria-expanded': 'false',
-          }, [
-            text('استكشف · EXPLORE'),
-            span(classes: 'nav__dropdown-arrow', [text('▾')]),
+        div(classes: 'nav__links', [
+          a(href: '/#research', [text('الأبحاث')]),
+          a(href: '/writing', [text('الكتابة')]),
+          a(href: '/about', [text('السيرة')]),
+          a(href: '/contact', [text('تواصل')]),
+        ]),
+        div(classes: 'nav__split-btn', [
+          a(href: '/writing', classes: 'nav__split-main', [text('اقرأ المزيد · READ MORE')]),
+          div(classes: 'nav__split-arrow', attributes: {'aria-label': 'More actions'}, [
+            text('▾'),
           ]),
-          div(classes: 'nav__dropdown-menu', [
+          div(classes: 'nav__split-menu', [
+            a(href: '/writing', [text('المقالات · BLOG')]),
             a(href: '/#research', [text('الأبحاث · RESEARCH')]),
-            a(href: '/writing', [text('الكتابة · WRITING')]),
-            a(href: '/about', [text('السيرة · ABOUT')]),
+            a(href: '/about', [text('عن الموقع · ABOUT')]),
             a(href: '/contact', [text('تواصل · CONTACT')]),
           ]),
         ]),

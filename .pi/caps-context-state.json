@@ -1,4 +1,6 @@
 {
+	"DEPLOY.md": false,
+	"DESIGN.md": true,
 	"ROADMAP.md": false,
 	"RULES.md": true,
 	"WORKFLOWS.md": true
