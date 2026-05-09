@@ -45,6 +45,11 @@ __pycache__/
 *.iws
 migrate_working_dir/
 
+# Local pi assistant state and prompt templates (may reference
+# account-specific identifiers; keep local only).
+.pi/
+.wrangler/
+
 # =====================================================================
 # OS / shell debug junk.
 # =====================================================================
