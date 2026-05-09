@@ -1048,7 +1048,7 @@ body { background: transparent; }
 .research-detail__title-ar { font-size: var(--text-2xl); font-weight: 600; line-height: 1.4; margin: 0 0 var(--space-2); letter-spacing: -.01em; }
 .research-detail__title-en { font-family: 'JetBrains Mono', monospace; font-size: var(--text-base); color: var(--color-text-muted); margin: 0 0 var(--space-3); letter-spacing: .02em; }
 .research-detail__caption { font-size: var(--text-sm); color: var(--color-text-faint); font-style: italic; margin: 0; }
-.research-detail__body { font-size: var(--text-md); line-height: 1.85; color: var(--color-text-default); }
+.research-detail__body { font-size: var(--text-md); line-height: 1.85; color: var(--color-text-default); direction: ltr; unicode-bidi: isolate; }
 .research-detail__body h2 { font-size: var(--text-lg); font-weight: 600; margin: var(--space-6) 0 var(--space-3); }
 .research-detail__body p { margin: 0 0 var(--space-4); }
 .research-detail__link { margin: var(--space-8) 0; }
@@ -1256,17 +1256,20 @@ body { background: transparent; }
   .writing-page { padding: var(--space-6) var(--space-5) var(--space-16); }
 
   /* BLOG POST */
+  .post-page { padding: var(--space-6) 0 var(--space-16); }
   .post-layout { padding: 0 var(--space-4); }
-  .post-hero { border-radius: 0; margin-inline: calc(-1 * var(--space-4)); }
+  .post-hero { display: none; } /* hide og:image banner on mobile — title block serves instead */
 
   /* RESEARCH DETAIL */
   .research-detail-page { padding: var(--space-6) var(--space-5) var(--space-16); }
+  .research-detail__metric-label { direction: ltr; unicode-bidi: isolate; } /* fix BIDI scramble in metric label */
 
   /* CONTACT PAGE */
   .contact-page { padding: var(--space-6) var(--space-5); }
 
   /* PLACEHOLDER PAGE (about) */
-  .placeholder-page { padding: var(--space-8) var(--space-5) var(--space-16); }
+  .placeholder-page { padding: var(--space-8) var(--space-5) var(--space-16); max-width: 100%; overflow-x: hidden; }
+  .placeholder-page__inner { max-width: 100%; }
 }
 
 /* ── Small mobile (≤640px) ── */
