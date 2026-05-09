@@ -63,15 +63,16 @@ class WritingPage extends StatelessComponent {
           ]),
         ]),
 
-        // Expandable tag panel
-        div(classes: 'wp-tag-panel', attributes: {'data-tag-panel': ''}, [
-          div(classes: 'wp-tag-search', [
+        // Tag filter row — hidden by default, toggled by FILTER button
+        div(classes: 'wp-tag-row', attributes: {'data-tag-row': ''}, [
+          button(classes: 'wp-tag-search-btn', attributes: {'data-tag-search-toggle': '', 'type': 'button', 'title': 'Search tags'}, [
             raw('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'),
-            input(
-              type: InputType.text,
-              attributes: const {'data-tag-search': '', 'placeholder': 'Search tags...', 'spellcheck': 'false'},
-            ),
           ]),
+          input(
+            type: InputType.text,
+            classes: 'wp-tag-search-input',
+            attributes: const {'data-tag-search': '', 'placeholder': 'Search tags...', 'spellcheck': 'false'},
+          ),
           div(classes: 'wp-tag-list', [
             for (final tag in allTags)
               button(classes: 'wp-tag', attributes: {'data-tag': tag, 'type': 'button'}, [text('#$tag')]),
@@ -141,7 +142,9 @@ class WritingPage extends StatelessComponent {
   var count = document.querySelector('.wp-count');
   var empty = document.querySelector('[data-empty]');
   var filterToggle = document.querySelector('[data-filter-toggle]');
-  var tagPanel = document.querySelector('[data-tag-panel]');
+  var tagRow = document.querySelector('[data-tag-row]');
+  var tagSearchToggle = document.querySelector('[data-tag-search-toggle]');
+  var tagSearchInput = document.querySelector('[data-tag-search]');
   var chips = document.querySelector('[data-chips]');
   var filterCount = document.querySelector('[data-filter-count]');
 
@@ -236,17 +239,24 @@ class WritingPage extends StatelessComponent {
   }
 
   if (filterToggle) filterToggle.addEventListener('click', function(){
-    tagPanel.classList.toggle('open');
-    if(tagPanel.classList.contains('open')) {
-      var tagSearch = document.querySelector('[data-tag-search]');
-      if(tagSearch) tagSearch.focus();
+    tagRow.classList.toggle('open');
+  });
+
+  // Tag search icon — click to show input, click again to hide
+  if (tagSearchToggle) tagSearchToggle.addEventListener('click', function(){
+    var isOpen = tagSearchInput.classList.toggle('open');
+    tagSearchToggle.classList.toggle('active', isOpen);
+    if(isOpen) {
+      tagSearchInput.focus();
+    } else {
+      tagSearchInput.value = '';
+      tagBtns.forEach(function(b){ b.style.display = ''; });
     }
   });
 
-  // Tag search — filter the tag list as you type
-  var tagSearch = document.querySelector('[data-tag-search]');
-  if (tagSearch) tagSearch.addEventListener('input', function(){
-    var q = tagSearch.value.toLowerCase().trim();
+  // Filter tags as you type
+  if (tagSearchInput) tagSearchInput.addEventListener('input', function(){
+    var q = tagSearchInput.value.toLowerCase().trim();
     tagBtns.forEach(function(b){
       var t = (b.getAttribute('data-tag') || '').toLowerCase();
       b.style.display = (!q || t.indexOf(q) >= 0) ? '' : 'none';

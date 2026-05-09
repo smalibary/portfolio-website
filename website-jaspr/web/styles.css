@@ -953,29 +953,37 @@ body { background: transparent; }
 .wp-toolbar select:focus, .wp-toolbar select:hover { color: var(--color-text-default); border-color: var(--color-brand); }
 
 /* expandable tag panel */
-.wp-tag-panel {
-  display: none; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-3); background: var(--color-surface-card);
-  border: var(--border-rule); border-radius: var(--radius-sm);
-  margin-bottom: var(--space-2);
+.wp-tag-row {
+  display: none; align-items: center; gap: var(--space-2);
+  padding: var(--space-1-5) var(--space-2);
+  background: var(--color-surface-card); border: var(--border-rule);
+  border-radius: var(--radius-sm); margin-bottom: var(--space-2);
   animation: slideDown .2s ease;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.wp-tag-panel.open { display: flex; }
-.wp-tag-search {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
-  border-bottom: var(--border-rule);
-  padding-bottom: var(--space-2);
+.wp-tag-row::-webkit-scrollbar { display: none; }
+.wp-tag-row.open { display: flex; }
+.wp-tag-search-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-text-muted); padding: var(--space-1);
+  border-radius: var(--radius-sm); flex-shrink: 0;
+  transition: color .15s;
 }
-.wp-tag-search svg { color: var(--color-text-faint); flex-shrink: 0; }
-.wp-tag-search input {
-  flex: 1; min-width: 0; background: transparent; border: none;
+.wp-tag-search-btn:hover { color: var(--color-text-default); }
+.wp-tag-search-btn.active { color: var(--color-brand); }
+.wp-tag-search-input {
+  display: none; width: 120px; background: transparent;
+  border: none; border-bottom: 1px solid var(--color-border-default);
   color: var(--color-text-default); font-family: inherit;
-  font-size: var(--text-sm); outline: none;
+  font-size: var(--text-sm); outline: none; flex-shrink: 0;
+  padding: var(--space-0-5) 0;
 }
-.wp-tag-search input::placeholder { color: var(--color-text-faint); }
+.wp-tag-search-input.open { display: block; }
+.wp-tag-search-input::placeholder { color: var(--color-text-faint); }
 .wp-tag-list {
-  display: flex; flex-wrap: wrap; gap: var(--space-1-5);
+  display: flex; flex-wrap: nowrap; gap: var(--space-1-5);
+  flex: 1; min-width: 0;
 }
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
