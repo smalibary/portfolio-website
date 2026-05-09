@@ -65,8 +65,17 @@ class WritingPage extends StatelessComponent {
 
         // Expandable tag panel
         div(classes: 'wp-tag-panel', attributes: {'data-tag-panel': ''}, [
-          for (final tag in allTags)
-            button(classes: 'wp-tag', attributes: {'data-tag': tag, 'type': 'button'}, [text('#$tag')]),
+          div(classes: 'wp-tag-search', [
+            raw('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'),
+            input(
+              type: InputType.text,
+              attributes: const {'data-tag-search': '', 'placeholder': 'Search tags...', 'spellcheck': 'false'},
+            ),
+          ]),
+          div(classes: 'wp-tag-list', [
+            for (final tag in allTags)
+              button(classes: 'wp-tag', attributes: {'data-tag': tag, 'type': 'button'}, [text('#$tag')]),
+          ]),
         ]),
 
         // Selected tag chips
@@ -228,6 +237,20 @@ class WritingPage extends StatelessComponent {
 
   if (filterToggle) filterToggle.addEventListener('click', function(){
     tagPanel.classList.toggle('open');
+    if(tagPanel.classList.contains('open')) {
+      var tagSearch = document.querySelector('[data-tag-search]');
+      if(tagSearch) tagSearch.focus();
+    }
+  });
+
+  // Tag search — filter the tag list as you type
+  var tagSearch = document.querySelector('[data-tag-search]');
+  if (tagSearch) tagSearch.addEventListener('input', function(){
+    var q = tagSearch.value.toLowerCase().trim();
+    tagBtns.forEach(function(b){
+      var t = (b.getAttribute('data-tag') || '').toLowerCase();
+      b.style.display = (!q || t.indexOf(q) >= 0) ? '' : 'none';
+    });
   });
 
   tagBtns.forEach(function(b){

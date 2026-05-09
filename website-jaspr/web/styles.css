@@ -954,13 +954,29 @@ body { background: transparent; }
 
 /* expandable tag panel */
 .wp-tag-panel {
-  display: none; flex-wrap: wrap; gap: var(--space-1-5);
+  display: none; flex-direction: column; gap: var(--space-2);
   padding: var(--space-3); background: var(--color-surface-card);
   border: var(--border-rule); border-radius: var(--radius-sm);
   margin-bottom: var(--space-2);
   animation: slideDown .2s ease;
 }
 .wp-tag-panel.open { display: flex; }
+.wp-tag-search {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: var(--border-rule);
+  padding-bottom: var(--space-2);
+}
+.wp-tag-search svg { color: var(--color-text-faint); flex-shrink: 0; }
+.wp-tag-search input {
+  flex: 1; min-width: 0; background: transparent; border: none;
+  color: var(--color-text-default); font-family: inherit;
+  font-size: var(--text-sm); outline: none;
+}
+.wp-tag-search input::placeholder { color: var(--color-text-faint); }
+.wp-tag-list {
+  display: flex; flex-wrap: wrap; gap: var(--space-1-5);
+}
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
