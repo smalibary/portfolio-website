@@ -602,10 +602,6 @@ body { background: transparent; }
 @media (max-width: 1200px) { /* intentionally literal: @media query, CSS variables not supported */
   .post-sidebar { display: none; }
 }
-@media (max-width: 768px) { /* intentionally literal: @media query, CSS variables not supported */
-  .post { padding: 0 var(--space-4); }
-  .post-hero { border-radius: 0; }
-}
 .post-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm); color: var(--color-text-muted); text-decoration: none; margin-bottom: var(--space-6); padding: var(--space-1-5) var(--space-3); border: var(--border-rule); border-radius: var(--radius-sm); letter-spacing: .04em; }
 .post-back:hover { color: var(--color-interactive-primary); border-color: var(--color-interactive-primary); }
 .post-head { padding-bottom: var(--space-6); margin-bottom: var(--space-8); border-bottom: var(--border-rule); }
@@ -1221,22 +1217,109 @@ body { background: transparent; }
 .contact-alt__card-arrow { color: var(--color-text-faint); font-size: 12px; transition: transform .15s, color .15s; }
 .contact-alt__card:hover .contact-alt__card-arrow { color: var(--color-brand); transform: translateX(-3px); }
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ── */
+
+/* ── Tablet (≤980px) ── */
 @media (max-width: 980px) { /* intentionally literal: @media query, CSS variables not supported */
+  /* NAV */
   .nav { padding: 0 var(--space-5); height: 56px; flex-wrap: wrap; gap: var(--space-3); } /* intentionally literal: 56px mobile nav height override (default --c-nav-height is 64px) */
   .nav__links { display: none; }
   .nav__split-menu { min-width: 160px; }
+
+  /* HERO */
   .hero {
     grid-template-columns: 1fr;
     gap: var(--space-8);
     padding: var(--space-8) var(--space-5);
     min-height: auto;
   }
-  .hero__portrait { max-width: 240px; order: -1; } /* intentionally literal: mobile portrait cap, coincidentally matches --c-post-sidebar-w (240px) but is unrelated — do not consolidate */
-  .research, .writing, .footer { padding-inline-start: var(--space-5); padding-inline-end: var(--space-5); }
+  .hero__portrait { max-width: 240px; order: -1; margin-inline: auto; } /* intentionally literal: mobile portrait cap */
+  .hero__name-en, .hero__lede-en { text-align: center; }
+  .socials { justify-content: center; }
+  .hero__meta-item .label { min-width: 70px; } /* intentionally literal: narrower label column on mobile */
+
+  /* RESEARCH */
+  .research { padding-inline: var(--space-5); }
   .research__grid { grid-template-columns: 1fr; }
-  .writing__item { grid-template-columns: 90px 1fr; } /* intentionally literal: mobile date column width, narrower than --c-writing-col (110px) to fit smaller screens */
+
+  /* WRITING (homepage) */
+  .writing { padding-inline: var(--space-5); }
+  .writing__item { grid-template-columns: 90px 1fr; } /* intentionally literal: mobile date column width */
   .writing__lang { display: none; }
+
+  /* FOOTER */
   .footer { flex-direction: column; gap: var(--space-4); padding: var(--space-6) var(--space-5); }
   .footer__right { flex-wrap: wrap; justify-content: center; }
+
+  /* WRITING PAGE (/writing) */
+  .writing-page { padding: var(--space-6) var(--space-5) var(--space-16); }
+
+  /* BLOG POST */
+  .post-layout { padding: 0 var(--space-4); }
+  .post-hero { border-radius: 0; margin-inline: -var(--space-4); } /* intentionally literal: full-bleed hero on mobile */
+
+  /* RESEARCH DETAIL */
+  .research-detail-page { padding: var(--space-6) var(--space-5) var(--space-16); }
+
+  /* CONTACT PAGE */
+  .contact-page { padding: var(--space-6) var(--space-5); }
+
+  /* PLACEHOLDER PAGE (about) */
+  .placeholder-page { padding: var(--space-8) var(--space-5) var(--space-16); }
+}
+
+/* ── Small mobile (≤640px) ── */
+@media (max-width: 640px) { /* intentionally literal: @media query, CSS variables not supported */
+  /* HERO — tighter on small screens */
+  .hero { padding: var(--space-6) var(--space-4); gap: var(--space-6); }
+  .hero__name-ar { font-size: 32px; } /* intentionally literal: mobile clamp override */
+  .hero__lede-ar { font-size: 16px; } /* intentionally literal: mobile clamp override */
+  .hero__portrait { max-width: 180px; } /* intentionally literal: small mobile portrait cap */
+  .hero__meta-item .label { min-width: 60px; }
+  .status-line { font-size: var(--text-xs); }
+
+  /* NAV — split button smaller */
+  .nav__split-menu { min-width: 140px; }
+  .nav__split-main { padding: 6px 10px; font-size: var(--text-sm); } /* intentionally literal: mobile split button shrink */
+  .nav__split-arrow { width: 30px; } /* intentionally literal: mobile arrow shrink */
+
+  /* RESEARCH CARDS — stack metric and title */
+  .card__metric { font-size: 24px; } /* intentionally literal: mobile metric shrink */
+
+  /* WRITING (homepage) — title rows stack */
+  .writing__titles { flex-direction: column; gap: var(--space-1); }
+  .writing__title-ar, .writing__title-en { white-space: normal; overflow: visible; text-overflow: unset; }
+
+  /* WRITING PAGE (/writing) */
+  .writing-page__head h1 { font-size: var(--text-md); }
+  .wp-toolbar { flex-wrap: wrap; gap: var(--space-1-5); }
+  .wp-search { min-width: 100%; order: -1; } /* intentionally literal: search takes full row on mobile */
+  .wp-card__titles { flex-direction: column; gap: var(--space-1); }
+  .wp-card__title-ar, .wp-card__title-en { white-space: normal; overflow: visible; text-overflow: unset; }
+
+  /* BLOG POST */
+  .post { padding: 0; }
+  .post-head { padding-bottom: var(--space-4); margin-bottom: var(--space-6); }
+  .post-title-ar { font-size: var(--text-xl); }
+  .post-meta { font-size: var(--text-xs); }
+  .post-body { font-size: var(--text-base); }
+  .post-body h2 { font-size: var(--text-xl); }
+  .post-body h3 { font-size: var(--text-lg); }
+
+  /* CONTACT PAGE */
+  .contact-form__row { grid-template-columns: 1fr; }
+  .contact-header { flex-direction: column; align-items: flex-start; }
+  .contact-lede { min-width: 0; }
+
+  /* RESEARCH DETAIL */
+  .research-detail__title-ar { font-size: var(--text-xl); }
+  .research-detail__metric { font-size: var(--text-2xl); }
+
+  /* SECTION HEAD */
+  .section-head h2 { font-size: var(--text-sm); }
+  .section-head h2::before { width: 8px; height: 8px; } /* intentionally literal: smaller square on mobile */
+
+  /* FOOTER */
+  .footer { font-size: var(--text-xs); }
+  .footer__links { gap: var(--space-2-5); }
 }
