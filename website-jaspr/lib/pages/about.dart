@@ -12,7 +12,7 @@ class AboutPage extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    return div([
+    return Component.fragment([
       Nav(site: site),
       main_(classes: 'placeholder-page', [
         div(classes: 'placeholder-page__inner', [
