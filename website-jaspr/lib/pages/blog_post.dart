@@ -578,16 +578,21 @@ const _sidebarScript = r'''
     sections.forEach(function(s){ observer.observe(s.el); });
   }
 
-  // Hero image offset — push sidebar below hero when present
+  // Sidebar offset — push sidebar below hero image or post header
   var hero = document.querySelector('.post-hero');
   var sidebar = document.querySelector('.post-sidebar');
-  if(hero && sidebar){
+  var postHead = document.querySelector('.post-head');
+  if(sidebar){
     function adjustSidebarTop(){
-      var heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
       var scrollY = window.scrollY;
       var navH = 96;
-      var top = scrollY > heroBottom - navH ? navH : (heroBottom - scrollY + 24);
-      sidebar.style.top = Math.max(navH, top) + 'px';
+      // Use hero image bottom if present, otherwise use post header bottom
+      var anchorEl = hero || postHead;
+      if(anchorEl){
+        var anchorBottom = anchorEl.getBoundingClientRect().bottom + scrollY;
+        var top = scrollY > anchorBottom - navH ? navH : (anchorBottom - scrollY + 24);
+        sidebar.style.top = Math.max(navH, top) + 'px';
+      }
     }
     adjustSidebarTop();
     window.addEventListener('scroll', adjustSidebarTop, {passive: true});
