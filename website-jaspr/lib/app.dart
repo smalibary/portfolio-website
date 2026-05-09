@@ -11,8 +11,7 @@ import 'pages/writing.dart';
 import 'pages/about.dart';
 import 'pages/contact.dart';
 import 'pages/research_detail.dart';
-import 'pages/tag.dart';
-import 'pages/category.dart';
+
 import 'pages/admin/login.dart';
 import 'pages/admin/profile.dart';
 import 'pages/admin/blog.dart';
@@ -30,8 +29,7 @@ class App extends StatelessComponent {
     final site = SiteData.load();
     final posts = BlogPost.loadAll();
     final papers = Paper.loadAll();
-    final tags = BlogPost.uniqueTags(posts);
-    final categories = BlogPost.uniqueCategories(posts);
+
 
     // jaspr Document uses a conditional export — the unnamed constructor
     // is only on the server variant. Analyzer resolves to the client variant
@@ -120,28 +118,7 @@ class App extends StatelessComponent {
               title: '${paper.titleAr.isNotEmpty ? paper.titleAr : paper.titleEn} · Research · Salem Malibary',
               builder: (context, state) => ResearchDetailPage(site: site, paper: paper),
             ),
-          // One Route per tag, listing every post that carries it.
-          for (final tag in tags)
-            Route(
-              path: '/tag/$tag',
-              title: '#$tag · Salem Malibary',
-              builder: (context, state) => TagPage(
-                site: site,
-                tag: tag,
-                posts: posts.where((p) => p.tags.contains(tag)).toList(),
-              ),
-            ),
-          // One Route per category.
-          for (final cat in categories)
-            Route(
-              path: '/category/$cat',
-              title: '$cat · Salem Malibary',
-              builder: (context, state) => CategoryPage(
-                site: site,
-                category: cat,
-                posts: posts.where((p) => p.category == cat).toList(),
-              ),
-            ),
+
           Route(
             path: '/admin/login',
             title: 'الدخول · Admin',

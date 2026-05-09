@@ -65,7 +65,7 @@ class BlogPostPage extends StatelessComponent {
                 if (post.date.isNotEmpty) span([text(post.date)]),
                 if (post.category.isNotEmpty) ...[
                   span(classes: 'post-meta__sep', [text('·')]),
-                  a(href: '/category/${post.category}', classes: 'post-meta__link', [
+                  a(href: '/writing?category=${post.category}', classes: 'post-meta__link', [
                     text(post.category),
                   ]),
                 ],
