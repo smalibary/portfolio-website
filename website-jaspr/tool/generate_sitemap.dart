@@ -55,10 +55,6 @@ Future<int> writeSitemap() async {
     _UrlEntry(loc: '$baseUrl/writing', lastmod: today, changefreq: 'weekly', priority: '0.9'),
   ];
 
-  // Collect tags/categories so we can emit /tag and /category routes too.
-  final tagSet = <String>{};
-  final categorySet = <String>{};
-
   final blogDir = Directory('content/blog');
   if (blogDir.existsSync()) {
     final dirs = blogDir.listSync().whereType<Directory>().toList()
@@ -77,11 +73,6 @@ Future<int> writeSitemap() async {
           changefreq: 'monthly',
           priority: '0.8',
         ));
-        for (final t in (meta['tags'] as List? ?? const [])) {
-          if (t is String && t.trim().isNotEmpty) tagSet.add(t.trim());
-        }
-        final cat = (meta['category'] as String?)?.trim() ?? '';
-        if (cat.isNotEmpty) categorySet.add(cat);
       } catch (e) {
         stderr.writeln('generate_sitemap: skipping ${dir.path} ($e)');
       }
@@ -109,24 +100,6 @@ Future<int> writeSitemap() async {
     } catch (e) {
       stderr.writeln('generate_sitemap: papers.yaml parse failed ($e)');
     }
-  }
-
-  // Tag and category index pages.
-  for (final tag in tagSet.toList()..sort()) {
-    entries.add(_UrlEntry(
-      loc: '$baseUrl/tag/${Uri.encodeComponent(tag)}',
-      lastmod: today,
-      changefreq: 'weekly',
-      priority: '0.5',
-    ));
-  }
-  for (final cat in categorySet.toList()..sort()) {
-    entries.add(_UrlEntry(
-      loc: '$baseUrl/category/${Uri.encodeComponent(cat)}',
-      lastmod: today,
-      changefreq: 'weekly',
-      priority: '0.5',
-    ));
   }
 
   final buf = StringBuffer()
