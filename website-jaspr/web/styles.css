@@ -94,7 +94,7 @@ body { background: transparent; }
   backdrop-filter: blur(8px); /* intentionally literal: 8px backdrop blur — visual-effect value, not a size dimension */
   background: color-mix(in srgb, var(--color-surface-page) 72%, transparent);
   position: sticky; top: 0; z-index: 50;
-  width: 100%; max-width: 100%; overflow-x: hidden;
+  width: 100%; max-width: 100%;
 }
 .nav__monogram {
   font-family: 'JetBrains Mono', monospace;
