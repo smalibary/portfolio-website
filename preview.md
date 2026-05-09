@@ -5,8 +5,8 @@
 | Field | Value |
 |---|---|
 | Branch | `preview` |
-| Commit | `4a971f2` |
-| URL | https://edfabce6.salem-portfolio.pages.dev |
+| Commit | `3916d2c` |
+| URL | https://374ad963.salem-portfolio.pages.dev |
 | Status | Active |
 | Date | 2026-05-09 |
 
@@ -20,4 +20,5 @@
 - Nav dropdown menu fix (removed overflow-x: hidden from nav)
 - Sidebar offset fix (works with or without hero image)
 - Removed /tag/* and /category/* routes (redundant with /writing?tag=X)
-- Blog post category link now goes to /writing?category=X
+- Removed category field entirely — tags are the only taxonomy now
+- Added quick links section to DEPLOY.md
