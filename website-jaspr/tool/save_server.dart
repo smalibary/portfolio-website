@@ -384,7 +384,6 @@ Future<Response> _newPost(Request req) async {
       'excerpt_ar': '',
       'excerpt_en': '',
       'date': DateTime.now().toIso8601String().substring(0, 10),
-      'category': '',
       'tags': <String>[],
       'file': 'final.md',
       'language': 'ar',
