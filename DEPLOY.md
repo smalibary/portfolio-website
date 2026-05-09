@@ -69,6 +69,14 @@ for line in json.load(sys.stdin)['result']['data']:
 3. In Cloudflare dashboard: Workers & Pages → salem-portfolio → Custom domains → update
 4. Old domain redirects are not automatic — set up a Cloudflare Page Rule if needed
 
+## Quick links
+
+| What | URL |
+|---|---|
+| **Production** | https://salem.australia-gpa.com |
+| **Latest preview** | See `preview.md` in the repo root (updated by `/preview` prompt) |
+| **Dashboard** | https://dash.cloudflare.com/00b7e159c67efe0662f8f90f7ec0db04/pages/view/salem-portfolio |
+
 ## Key files
 
 | File | Purpose |
