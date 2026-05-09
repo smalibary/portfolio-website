@@ -598,7 +598,6 @@ class AdminBlogPage extends StatelessComponent {
           div(classes: 'tab-panel', attributes: const {'data-tab': 'metadata'}, [
             div(classes: 'row', [
               _field('التاريخ · DATE', '', 'date', type: InputType.date, required: true),
-              _field('التصنيف · CATEGORY', '', 'category'),
             ]),
             div(classes: 'field', [
               label([text('الوسوم · TAGS')]),

@@ -20,7 +20,6 @@ class BlogPost {
     required this.language,
     required this.wordCount,
     required this.tags,
-    this.category = '',
     this.sections = const [],
     this.takeaways = const [],
     this.meta = const {},
@@ -38,10 +37,6 @@ class BlogPost {
   final String language;
   final int wordCount;
   final List<String> tags;
-
-  /// Single category from `post.json`. Used by `/category/<slug>` routes.
-  /// Empty string means uncategorised.
-  final String category;
 
   /// Section metadata from `post.json` (`sections: [...]`). Powers the
   /// live-document feature (#101): per-section last_modified dates and
@@ -112,7 +107,6 @@ class BlogPost {
           language: (json['language'] as String?) ?? 'ar',
           wordCount: words,
           tags: ((json['tags'] as List?) ?? const []).cast<String>(),
-          category: ((json['category'] as String?) ?? '').trim(),
           sections: [
             for (final s in (json['sections'] as List? ?? const []))
               if (s is Map) Section.fromJson(Map<String, dynamic>.from(s)),
@@ -149,13 +143,4 @@ class BlogPost {
     return list;
   }
 
-  /// Sorted unique categories across the given posts.
-  static List<String> uniqueCategories(List<BlogPost> posts) {
-    final set = <String>{};
-    for (final p in posts) {
-      if (p.category.isNotEmpty) set.add(p.category);
-    }
-    final list = set.toList()..sort();
-    return list;
-  }
 }
