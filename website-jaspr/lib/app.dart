@@ -43,6 +43,7 @@ class App extends StatelessComponent {
         'description':
             'Salem Malibary — PhD candidate at the University of Sydney researching nature, remote work, and cognition. Lecturer at King Abdulaziz University.',
         'theme-color': '#0a0c0e',
+        'google-site-verification': 'JzrxDcI_hLF_XBSE_KwJ_0ihYeZ9ipf3NKJrdOHodzA',
       },
       head: [
         link(rel: 'preconnect', href: 'https://fonts.googleapis.com'),
