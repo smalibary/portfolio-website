@@ -12,7 +12,6 @@ fi
 echo "Dart version: $(dart --version)"
 
 # Install deps + build (jaspr_cli is a dev dependency, no global activate needed)
-cd website-jaspr
 dart pub get
 dart run tool/build.dart
 

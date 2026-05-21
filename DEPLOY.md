@@ -11,10 +11,11 @@ Pushes to `preview` get preview URLs (`*.salem-portfolio.pages.dev`).
 GitHub push → Cloudflare Pages builds → live site
 ```
 
+- **Root directory:** `website-jaspr`
 - **Build command:** `bash build.sh` (installs Dart SDK, runs `dart run tool/build.dart`)
-- **Build output:** `website-jaspr/build/jaspr`
-- **Config:** `wrangler.toml` (root)
-- **Build script:** `build.sh` (root)
+- **Build output:** `build/jaspr`
+- **Config:** `website-jaspr/wrangler.toml`
+- **Build script:** `website-jaspr/build.sh`
 
 ## The jaspr CLI problem (and how it was solved)
 
@@ -36,8 +37,7 @@ If CI is broken or you need to deploy from your machine:
 ```bash
 cd website-jaspr
 dart run tool/build.dart
-cd ..
-wrangler pages deploy website-jaspr/build/jaspr --project-name salem-portfolio
+wrangler pages deploy build/jaspr --project-name salem-portfolio
 ```
 
 ## Cloudflare CLI (Wrangler)
@@ -74,21 +74,21 @@ for line in json.load(sys.stdin)['result']['data']:
 | What | URL |
 |---|---|
 | **Production** | https://salem.australia-gpa.com |
-| **Latest preview** | See `preview.md` in the repo root (updated by `/preview` prompt) |
+| **Latest preview** | See `website-jaspr/preview.md` (updated by `/preview` prompt) |
 | **Dashboard** | https://dash.cloudflare.com/00b7e159c67efe0662f8f90f7ec0db04/pages/view/salem-portfolio |
 
 ## Key files
 
 | File | Purpose |
 |---|---|
-| `wrangler.toml` | Cloudflare Pages config (project name, output dir) |
-| `build.sh` | CI build script (installs Dart, runs build) |
+| `website-jaspr/wrangler.toml` | Cloudflare Pages config (project name, output dir) |
+| `website-jaspr/build.sh` | CI build script (installs Dart, runs build) |
 | `website-jaspr/tool/build.dart` | Build orchestrator (sitemap + jaspr build) |
 | `website-jaspr/pubspec.yaml` | Includes `jaspr_cli` as dev dependency for CI |
 
 ## Dart SDK version on CI
 
-The build script pins Dart 3.11.5. When upgrading Dart locally, update the URL in `build.sh`:
+The build script pins Dart 3.11.5. When upgrading Dart locally, update the URL in `website-jaspr/build.sh`:
 
 ```
 https://storage.googleapis.com/dart-archive/channels/stable/release/<VERSION>/sdk/dartsdk-linux-x64-release.zip
