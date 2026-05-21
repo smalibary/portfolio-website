@@ -19,7 +19,7 @@ customer-facing where the brand itself is being designed.
 2. **User picks one** (A / B / C).
 3. **Three refinements** of the picked direction.
 4. **Iterate** the chosen variant until happy.
-5. **Port to Jaspr** in `website-jaspr/`. Move assets out of `inbox/` or `mockups/` into `website-jaspr/web/` (static) or `web/images/` (assets).
+5. **Port to Jaspr** in `website-personal/`. Move assets out of `inbox/` or `mockups/` into `website-personal/web/` (static) or `web/images/` (assets).
 6. **Delete throwaway mockups** once shipped.
 
 ### Track 2 — Layout exploration (admin, internal, derivative)
@@ -61,9 +61,9 @@ as an escape hatch.
 
 ### Pattern
 
-1. Build the Flutter app as a separate package (e.g. `apps/<name>/`, sibling to `website-jaspr/`).
+1. Build the Flutter app as a separate package (e.g. `apps/<name>/`, sibling to `website-personal/`).
 2. `flutter build web --release` → static output.
-3. Copy/symlink the build output into `website-jaspr/web/app/<name>/` so it ships with the static bundle.
+3. Copy/symlink the build output into `website-personal/web/app/<name>/` so it ships with the static bundle.
 4. Mount it from a Jaspr page either via `iframe` (simplest, isolates runtime) or by injecting `flutter_bootstrap.js` into a `div` (heavier integration, shared origin).
 
 ### Trade-offs to flag before going down this road

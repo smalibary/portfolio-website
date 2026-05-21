@@ -1,7 +1,7 @@
 /// Dev orchestrator. Runs `jaspr serve` and `tool/save_server.dart` together,
 /// streaming both outputs to the same terminal. Ctrl+C kills both.
 ///
-/// Run from website-jaspr/ root: `dart run tool/dev.dart`
+/// Run from website-personal/ root: `dart run tool/dev.dart`
 library;
 
 import 'dart:async';

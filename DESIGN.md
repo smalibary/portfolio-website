@@ -2,8 +2,8 @@
 
 The design system for this project. Philosophy and architecture live here;
 procedural rules are in scoped files loaded when working in those areas:
-- `/website-jaspr/web/tokens/TOKENS.md` — token decision tree
-- `/website-jaspr/lib/components/COMPONENTS.md` — component decision tree
+- `/website-personal/web/tokens/TOKENS.md` — token decision tree
+- `/website-personal/lib/components/COMPONENTS.md` — component decision tree
 
 ---
 
@@ -110,7 +110,7 @@ indicating a required field. Status indicator → brand.
 - Component (admin): `--c-adm-rail-w`, `--c-adm-pin-input-h`
 
 Full naming rules and the "when to add a token" decision tree:
-`/website-jaspr/web/tokens/TOKENS.md`.
+`/website-personal/web/tokens/TOKENS.md`.
 
 ## Component architecture
 
@@ -119,7 +119,7 @@ Four roles: **atom** (reusable primitive), **section** (content area),
 atoms are imported by sections and chrome, never the reverse.
 
 Full inventory and the "when to create a component" decision tree:
-`/website-jaspr/lib/components/COMPONENTS.md`.
+`/website-personal/lib/components/COMPONENTS.md`.
 
 ## Known limitations / tracked debt
 
@@ -139,7 +139,7 @@ Full inventory and the "when to create a component" decision tree:
   token values as hardcoded hex for display swatches. These will silently
   drift if primitives change. See comment at top of `styleguide.dart`.
 
-Full lists with line numbers in `website-jaspr/TODO_TOKENS.md`.
+Full lists with line numbers in `website-personal/TODO_TOKENS.md`.
 
 ## Phase 3 migration status
 
@@ -152,7 +152,7 @@ reappear.
 
 ## The audit suite
 
-Seven checkers under `website-jaspr/tool/`, orchestrated by
+Seven checkers under `website-personal/tool/`, orchestrated by
 `audit_all.dart`. The aggregator runs at dev-server boot via `tool/dev.dart`
 (fast mode, non-blocking).
 

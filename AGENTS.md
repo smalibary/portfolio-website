@@ -22,15 +22,15 @@ light theme, IBM Plex Sans Arabic + JetBrains Mono pairing, teal accent.
 
 Built with **Jaspr** (Dart web framework, Flutter-like component model,
 renders real HTML for SEO/AEO). Content is markdown/yaml-driven — public
-site reads from `website-jaspr/content/` at build time, with a local-only
+site reads from `website-personal/content/` at build time, with a local-only
 admin panel at `/admin/*` for editing those files via a UI (passcode 1379,
-cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
+cosmetic). See `website-personal/AGENTS.md` for the full architecture.
 
 ## Subdirectories
 
 | Folder | Purpose | Read first |
 |---|---|---|
-| `website-jaspr/` | The live site — Jaspr, source of truth | `website-jaspr/AGENTS.md` |
+| `website-personal/` | The live site — Jaspr, source of truth | `website-personal/AGENTS.md` |
 | `mockups/` | HTML design exploration before applying to Jaspr | `mockups/AGENTS.md` |
 | `inbox/` | Drop zone for unsorted materials (move them out, don't reference) | `inbox/AGENTS.md` |
 | `thesis-structure/` | Quarto+Typst PhD thesis build (separate concern) | `thesis-structure/rules/` |
@@ -43,15 +43,15 @@ cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 |---|---|
 | deployment / CI / Cloudflare Pages | `DEPLOY.md` |
 | any decision, rule, or constraint | `RULES.md` |
-| token / CSS / spacing / radius change | `website-jaspr/web/tokens/TOKENS.md` (loads in scope) |
-| new component or component modification | `website-jaspr/lib/components/COMPONENTS.md` (loads in scope) |
+| token / CSS / spacing / radius change | `website-personal/web/tokens/TOKENS.md` (loads in scope) |
+| new component or component modification | `website-personal/lib/components/COMPONENTS.md` (loads in scope) |
 | understanding the design system architecture | `DESIGN.md` |
 | visual / layout / new route changes | `WORKFLOWS.md` then `mockups/AGENTS.md` |
 | what to build next on the site | `ROADMAP.md` (100+ items, gitignored — local only) |
-| Jaspr component code (live site) | `website-jaspr/AGENTS.md` |
-| admin panel changes (`/admin/*`) | `website-jaspr/AGENTS.md` "Admin panel" section |
-| save server / API endpoints | `website-jaspr/tool/save_server.dart` |
-| sitemap / SEO scaffolding | `website-jaspr/tool/generate_sitemap.dart`; RULES.md §5 |
+| Jaspr component code (live site) | `website-personal/AGENTS.md` |
+| admin panel changes (`/admin/*`) | `website-personal/AGENTS.md` "Admin panel" section |
+| save server / API endpoints | `website-personal/tool/save_server.dart` |
+| sitemap / SEO scaffolding | `website-personal/tool/generate_sitemap.dart`; RULES.md §5 |
 | OG card generation | `tools/generate_og.py`; RULES.md §5.4 |
 | sorting dropped files | `inbox/AGENTS.md` |
 | brand voice / Arabic writing | `context/voice.md` |
@@ -64,10 +64,10 @@ cosmetic). See `website-jaspr/AGENTS.md` for the full architecture.
 This project has a documented 3-tier design system. The philosophy lives
 in `DESIGN.md`. Procedural rules are scoped:
 - When working with tokens (`web/tokens/`, `web/styles.css`, `web/admin.css`):
-  `website-jaspr/web/tokens/TOKENS.md` codifies the "when to add a token"
+  `website-personal/web/tokens/TOKENS.md` codifies the "when to add a token"
   decision tree.
 - When working with components (`lib/components/`):
-  `website-jaspr/lib/components/COMPONENTS.md` codifies component
+  `website-personal/lib/components/COMPONENTS.md` codifies component
   classification and the "when to create a component" decision tree.
 
 Default behaviour: **REUSE before EXTENDING before CREATING.** Both scoped
@@ -93,9 +93,9 @@ To add a new prompt, create `.pi/prompts/<name>.md` with a YAML frontmatter
 
 ## Quick orientation — the 30-second version
 
-- **Public copy** lives in yaml/markdown under `website-jaspr/content/`, never hardcoded in Dart
+- **Public copy** lives in yaml/markdown under `website-personal/content/`, never hardcoded in Dart
 - **Public-facing positioning** flows from `context/`, never written from scratch
-- **All visual decisions** follow the scoped rules — `website-jaspr/web/tokens/TOKENS.md` for tokens, `website-jaspr/lib/components/COMPONENTS.md` for components. `DESIGN.md` covers the architecture and brand-vs-interactive philosophy
+- **All visual decisions** follow the scoped rules — `website-personal/web/tokens/TOKENS.md` for tokens, `website-personal/lib/components/COMPONENTS.md` for components. `DESIGN.md` covers the architecture and brand-vs-interactive philosophy
 - **Two design tracks** (brand vs layout) — see WORKFLOWS.md before mockups
 - **Minimal components** — don't create a new component variant unless something genuinely needs different structure. Use tokens (radius, spacing, border) to differentiate, not new CSS classes
 - **Public repo** at `github.com/smalibary/portfolio-website` — strict gitignore at root keeps `context/`, `inbox/`, `mockups/`, `ROADMAP.md`, blog drafts private

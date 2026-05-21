@@ -7,7 +7,7 @@
 /// `jaspr build` alone leaves a stale `sitemap.xml` whenever a post has
 /// been added or had its date changed since the last sitemap run.
 ///
-/// Run from website-jaspr/ root: `dart run tool/build.dart`
+/// Run from website-personal/ root: `dart run tool/build.dart`
 library;
 
 import 'dart:async';

@@ -5,7 +5,7 @@
 /// Idempotent — running again on a post that already has sections leaves
 /// it alone.
 ///
-/// Run from website-jaspr/ root: `dart run tool/migrate_sections.dart`
+/// Run from website-personal/ root: `dart run tool/migrate_sections.dart`
 library;
 
 import 'dart:convert';
@@ -18,7 +18,7 @@ void main() {
   if (!blogDir.existsSync()) {
     stderr.writeln('migrate_sections: content/blog not found.');
     stderr.writeln('  cwd: ${Directory.current.path}');
-    stderr.writeln('  run from website-jaspr/ root.');
+    stderr.writeln('  run from website-personal/ root.');
     exit(1);
   }
 

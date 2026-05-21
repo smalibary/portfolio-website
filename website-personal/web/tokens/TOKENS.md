@@ -73,7 +73,7 @@ unresolved references.
 
 ## Known tracked debt
 
-See `website-jaspr/TODO_TOKENS.md` for 7 sites where `--color-surface-page`
+See `website-personal/TODO_TOKENS.md` for 7 sites where `--color-surface-page`
 is used as text-on-accent instead of the correct `--color-interactive-primary-text`.
 These are not bugs (same primitive value) but a semantic mismatch to fix
 when the two tokens diverge.
