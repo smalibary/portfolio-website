@@ -5,7 +5,7 @@ name: "Should This File Move"
 created: "2026-05-21"
 last_used: "2026-05-21"
 last_reviewed: "2026-05-21"
-use_count: "0"
+use_count: "2"
 graduation_threshold: "5"
 tags:
   - project-structure
