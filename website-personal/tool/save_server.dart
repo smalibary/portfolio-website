@@ -32,7 +32,7 @@ void main(List<String> args) async {
   if (!_siteYaml.existsSync()) {
     stderr.writeln('save_server: ${_siteYaml.path} not found');
     stderr.writeln('  cwd: ${Directory.current.path}');
-    stderr.writeln('  run from website-jaspr/ root, not tool/');
+    stderr.writeln('  run from website-personal/ root, not tool/');
     exit(1);
   }
 

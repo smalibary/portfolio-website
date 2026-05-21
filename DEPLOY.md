@@ -11,11 +11,11 @@ Pushes to `preview` get preview URLs (`*.salem-portfolio.pages.dev`).
 GitHub push → Cloudflare Pages builds → live site
 ```
 
-- **Root directory:** `website-jaspr`
+- **Root directory:** `website-personal`
 - **Build command:** `bash build.sh` (installs Dart SDK, runs `dart run tool/build.dart`)
 - **Build output:** `build/jaspr`
-- **Config:** `website-jaspr/wrangler.toml`
-- **Build script:** `website-jaspr/build.sh`
+- **Config:** `website-personal/wrangler.toml`
+- **Build script:** `website-personal/build.sh`
 
 ## The jaspr CLI problem (and how it was solved)
 
@@ -24,7 +24,7 @@ GitHub push → Cloudflare Pages builds → live site
 1. `dart pub global activate jaspr` activates the **framework** package (not the CLI) — no binary created.
 2. `dart pub global activate jaspr_cli` does create the binary, but it's slow (needs to compile a snapshot) and the binary ends up in a location that varies by environment and isn't on PATH.
 
-**Solution:** `jaspr_cli` is listed as a dev dependency in `website-jaspr/pubspec.yaml`. The build tool (`tool/build.dart`) tries the local pub cache paths first, then falls back to `dart run jaspr_cli:jaspr` which works from the project's own dependencies without any global activation.
+**Solution:** `jaspr_cli` is listed as a dev dependency in `website-personal/pubspec.yaml`. The build tool (`tool/build.dart`) tries the local pub cache paths first, then falls back to `dart run jaspr_cli:jaspr` which works from the project's own dependencies without any global activation.
 
 The resolver (`_resolveJasprCmd` in `tool/build.dart`) returns `(executable, [args])`:
 - Local dev: `(jaspr.bat, [])` or `($HOME/.pub-cache/bin/jaspr, [])`
@@ -35,7 +35,7 @@ The resolver (`_resolveJasprCmd` in `tool/build.dart`) returns `(executable, [ar
 If CI is broken or you need to deploy from your machine:
 
 ```bash
-cd website-jaspr
+cd website-personal
 dart run tool/build.dart
 wrangler pages deploy build/jaspr --project-name salem-portfolio
 ```
@@ -64,7 +64,7 @@ for line in json.load(sys.stdin)['result']['data']:
 
 ## Changing the domain
 
-1. Update `base_url` in `website-jaspr/content/_data/site.yaml`
+1. Update `base_url` in `website-personal/content/_data/site.yaml`
 2. Push to `main` (triggers rebuild)
 3. In Cloudflare dashboard: Workers & Pages → salem-portfolio → Custom domains → update
 4. Old domain redirects are not automatic — set up a Cloudflare Page Rule if needed
@@ -74,21 +74,21 @@ for line in json.load(sys.stdin)['result']['data']:
 | What | URL |
 |---|---|
 | **Production** | https://salem.australia-gpa.com |
-| **Latest preview** | See `website-jaspr/preview.md` (updated by `/preview` prompt) |
+| **Latest preview** | See `website-personal/preview.md` (updated by `/preview` prompt) |
 | **Dashboard** | https://dash.cloudflare.com/00b7e159c67efe0662f8f90f7ec0db04/pages/view/salem-portfolio |
 
 ## Key files
 
 | File | Purpose |
 |---|---|
-| `website-jaspr/wrangler.toml` | Cloudflare Pages config (project name, output dir) |
-| `website-jaspr/build.sh` | CI build script (installs Dart, runs build) |
-| `website-jaspr/tool/build.dart` | Build orchestrator (sitemap + jaspr build) |
-| `website-jaspr/pubspec.yaml` | Includes `jaspr_cli` as dev dependency for CI |
+| `website-personal/wrangler.toml` | Cloudflare Pages config (project name, output dir) |
+| `website-personal/build.sh` | CI build script (installs Dart, runs build) |
+| `website-personal/tool/build.dart` | Build orchestrator (sitemap + jaspr build) |
+| `website-personal/pubspec.yaml` | Includes `jaspr_cli` as dev dependency for CI |
 
 ## Dart SDK version on CI
 
-The build script pins Dart 3.11.5. When upgrading Dart locally, update the URL in `website-jaspr/build.sh`:
+The build script pins Dart 3.11.5. When upgrading Dart locally, update the URL in `website-personal/build.sh`:
 
 ```
 https://storage.googleapis.com/dart-archive/channels/stable/release/<VERSION>/sdk/dartsdk-linux-x64-release.zip

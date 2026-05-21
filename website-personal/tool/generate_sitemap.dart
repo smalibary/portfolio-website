@@ -1,7 +1,7 @@
 /// Generates `web/sitemap.xml` from site.yaml + content/blog/*/post.json.
 ///
 /// Two ways to invoke:
-///   1. CLI:   `dart run tool/generate_sitemap.dart` (from website-jaspr/)
+///   1. CLI:   `dart run tool/generate_sitemap.dart` (from website-personal/)
 ///   2. Lib:   `import 'tool/generate_sitemap.dart'; await writeSitemap();`
 ///
 /// The save server (tool/save_server.dart) calls writeSitemap() on every
@@ -38,7 +38,7 @@ Future<int> writeSitemap() async {
   final siteFile = File('content/_data/site.yaml');
   if (!siteFile.existsSync()) {
     throw _SitemapException(
-      'content/_data/site.yaml not found (run from website-jaspr/ root).',
+      'content/_data/site.yaml not found (run from website-personal/ root).',
     );
   }
 

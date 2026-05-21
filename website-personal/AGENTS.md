@@ -1,4 +1,4 @@
-# website-jaspr — Salem Malibary's site (Jaspr)
+# website-personal — Salem Malibary's site (Jaspr)
 
 The live site. Built with Jaspr (Dart web framework with SSG output) and
 content-driven via YAML / markdown files under `content/`. Includes a
@@ -47,7 +47,7 @@ save → jaspr rebuilds → homepage reflects the change.
 ## Structure
 
 ```
-website-jaspr/
+website-personal/
 ├── content/                       ← source of truth for site copy
 │   ├── _data/
 │   │   ├── site.yaml              ← name, tagline, bio, hero copy, photos, socials
@@ -172,7 +172,7 @@ the source-of-truth for the visual decisions; the implementation lives in
 ## Build / run
 
 ```sh
-cd website-jaspr
+cd website-personal
 dart run tool/dev.dart       # starts BOTH jaspr serve (:8080) and save_server (:9090)
 ```
 
