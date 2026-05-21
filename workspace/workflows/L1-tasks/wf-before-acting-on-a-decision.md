@@ -24,3 +24,4 @@ linked_signals:
 2. Is one clearly better? → Highlight it, still show the others
 3. Does it touch deployment or third-party services? → Must ask first
 4. Is there genuinely only one path? → Go ahead, explain why
+5. Decision made? → Log it: `python .pi/skills/business-meta-workflow/scripts/log_decision.py --description "..." --action "decide"`
