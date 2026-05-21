@@ -5,9 +5,9 @@
 
 # Canonical site origin. Used by tool/generate_sitemap.dart, by JSON-LD
 # emitted on blog posts, and by per-page Open Graph URLs. No trailing slash.
-base_url: https://salemmalibary.com
+base_url: https://salem.australia-gpa.com
 
-name_ar: سالم بن محمد ماليباري
+name_ar: سالم مليباري
 name_en: Salem Malibary
 
 tagline_ar: باحث دكتوراه · جامعة سيدني

@@ -1,4 +1,4 @@
-# salemmalibary.com — crawler directives.
+# salem.australia-gpa.com — crawler directives.
 # Generated alongside sitemap.xml; keep these in sync if the host changes.
 
 User-agent: *
@@ -9,4 +9,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://salemmalibary.com/sitemap.xml
+Sitemap: https://salem.australia-gpa.com/sitemap.xml
