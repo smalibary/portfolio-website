@@ -1218,6 +1218,35 @@ body { background: transparent; }
   cursor: pointer; transition: filter .15s;
 }
 .contact-form__submit:hover { filter: brightness(1.1); }
+.contact-form__submit:disabled { opacity: .6; cursor: wait; }
+
+/* Phone (country code + number) */
+.contact-form__phone { display: flex; gap: var(--space-2); }
+.contact-form__phone-cc {
+  flex-shrink: 0; padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-elevated); border: var(--border-rule);
+  border-radius: var(--radius-sm); color: var(--color-text-default);
+  font-family: inherit; font-size: var(--text-sm); cursor: pointer;
+  max-width: 160px;
+}
+.contact-form__phone input[type="tel"] { flex: 1; }
+
+/* Submit row + status text */
+.contact-form__actions {
+  display: flex; align-items: center; gap: var(--space-3);
+  flex-wrap: wrap; margin-top: var(--space-3);
+}
+.contact-form__status {
+  font-size: var(--text-sm); flex: 1;
+}
+.contact-form__status--err  { color: #ef4444; }
+.contact-form__status--ok   { color: #22c55e; }
+.contact-form__status--info { color: var(--color-text-muted); }
+
+/* Honeypot — off-screen */
+.contact-form__honeypot {
+  position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;
+}
 
 /* alt contact — vertical card list */
 .contact-alt h2 {

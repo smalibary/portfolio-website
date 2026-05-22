@@ -105,6 +105,10 @@ export async function onRequestPost({ request, env }) {
   const reason  = clean(payload.reason, 30);
   const reasonOther = clean(payload.reason_other, 120);
   const page    = clean(payload.page, 200);
+  // Source — distinguishes chat-bubble vs the /contact form. Surfaced in
+  // the email subject so Gmail filters can route or label them.
+  const sourceRaw = clean(payload.source, 16).toLowerCase();
+  const source = (sourceRaw === 'chat' || sourceRaw === 'form') ? sourceRaw : 'unknown';
 
   if (!name)    return jsonResponse(400, { ok: false, error: 'Name is required.' });
   if (!email || !EMAIL_RE.test(email)) {
@@ -122,10 +126,14 @@ export async function onRequestPost({ request, env }) {
   const country = request.headers.get('cf-ipcountry') || '';
   const fromEmail = env.FROM_EMAIL || 'Salem Portfolio <onboarding@resend.dev>';
 
-  const subject = `[${reasonLabel}] ${name}`;
+  // Subject is prefixed with [CHAT] or [FORM] so Gmail filters can route
+  // them. Example: "[CHAT] [Hire / collaborate] John Doe"
+  const sourceTag = source === 'chat' ? '[CHAT]' : source === 'form' ? '[FORM]' : '[WEB]';
+  const subject = `${sourceTag} [${reasonLabel}] ${name}`;
 
   const lines = [
-    `Reason: ${reasonLabel}`,
+    `Source:  ${source}`,
+    `Reason:  ${reasonLabel}`,
     `Name:    ${name}`,
     `Email:   ${email}`,
     phone ? `Phone:   ${phone}` : null,
@@ -143,6 +151,9 @@ export async function onRequestPost({ request, env }) {
 
   const htmlBody = `
     <div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;color:#111;">
+      <div style="font-size:11px;color:#888;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">
+        via ${escapeHtml(source)}
+      </div>
       <h2 style="margin:0 0 12px;font-size:16px;">${escapeHtml(reasonLabel)}</h2>
       <table style="font-size:14px;border-collapse:collapse;">
         <tr><td style="padding:2px 12px 2px 0;color:#666;">Name</td><td>${escapeHtml(name)}</td></tr>

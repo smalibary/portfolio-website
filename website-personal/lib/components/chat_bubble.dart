@@ -561,6 +561,7 @@ class ChatBubble extends StatelessComponent {
       phone: data.phone,
       message: data.message,
       website: hp.value || '',
+      source: 'chat',
       page: location.pathname
     };
 
