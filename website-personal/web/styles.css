@@ -1381,6 +1381,7 @@ body { background: transparent; }
 /* Panel — desktop floating card; mobile takes a fuller surface so the
    input bar stays usable when the keyboard opens. */
 .chat-panel {
+  direction: rtl; /* force layout direction so user/bot bubble sides are stable */
   position: fixed; bottom: 92px; right: 20px; z-index: 199;
   width: min(380px, calc(100vw - 32px));
   height: min(640px, calc(100vh - 120px));
@@ -1395,37 +1396,50 @@ body { background: transparent; }
 
 /* Header */
 .chat-header {
-  display: flex; align-items: center; gap: var(--space-2-5);
-  padding: var(--space-2-5) var(--space-3);
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
   background: var(--color-surface-elevated);
   border-bottom: var(--border-rule);
   flex: 0 0 auto;
 }
+.chat-header__avatar-wrap { position: relative; flex-shrink: 0; }
 .chat-header__avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  object-fit: cover; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%;
+  object-fit: cover; display: block;
   border: 2px solid var(--color-brand);
 }
-.chat-header__meta { flex: 1; min-width: 0; }
-.chat-header__name { display: flex; flex-direction: column; line-height: 1.15; }
-.chat-header__name-ar { font-size: var(--text-sm); font-weight: 600; color: var(--color-text-default); }
+/* Green online dot pinned to the avatar (visible corner depends on text direction).
+   In an LTR layout it sits bottom-right; in RTL the document flips it. */
+.chat-header__avatar-dot {
+  position: absolute; bottom: 0; inset-inline-end: 0;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid var(--color-surface-elevated);
+  box-sizing: border-box;
+}
+.chat-header__meta { flex: 1; min-width: 0; text-align: end; }
+.chat-header__name {
+  display: flex; flex-direction: column; gap: 3px;
+  line-height: 1.2;
+}
+.chat-header__name-ar {
+  font-size: 15px; font-weight: 600; color: var(--color-text-default);
+}
 .chat-header__name-en {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: .04em; color: var(--color-text-muted);
+  font-size: 10.5px; letter-spacing: .05em; color: var(--color-text-muted);
   text-transform: uppercase;
 }
 .chat-header__status {
-  display: flex; align-items: center; gap: 6px; margin-top: 3px;
-  font-size: 10px; color: var(--color-text-faint);
+  display: flex; flex-direction: column; gap: 2px; margin-top: 6px;
+  font-size: 10.5px; color: var(--color-text-faint);
   font-family: 'JetBrains Mono', monospace; letter-spacing: .03em;
 }
-.chat-header__dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #22c55e; box-shadow: 0 0 0 3px color-mix(in srgb, #22c55e 25%, transparent);
-}
+.chat-header__status-ar { font-family: inherit; }
+.chat-header__status-en { font-family: 'JetBrains Mono', monospace; }
 .chat-header__close {
   background: transparent; border: none; color: var(--color-text-muted);
-  cursor: pointer; padding: 6px; border-radius: 6px; flex-shrink: 0;
+  cursor: pointer; padding: 8px; border-radius: 8px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   transition: background .15s, color .15s;
 }
@@ -1480,31 +1494,34 @@ body { background: transparent; }
   30%           { opacity: 1;   transform: translateY(-3px); }
 }
 
-/* Choice chips — appear inline in feed as a wrapped group */
+/* Choice chips — align to the user's side (same edge as user bubbles).
+   .chat-msg--user uses flex-end, so chips do too. */
 .chat-chips {
-  align-self: flex-start; max-width: 100%;
+  align-self: flex-end; max-width: 100%;
   display: flex; flex-wrap: wrap; gap: 6px;
-  padding: 2px 0;
+  padding: 2px 0; justify-content: flex-end;
 }
 .chat-chip {
-  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
-  padding: 8px 12px;
-  background: var(--color-surface-elevated);
-  border: 1px solid var(--color-brand);
+  display: inline-flex; flex-direction: column; gap: 1px;
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--color-brand) 22%, var(--color-surface-card));
+  border: 1px solid color-mix(in srgb, var(--color-brand) 45%, transparent);
   border-radius: 999px;
   color: var(--color-text-default);
   font-family: inherit; cursor: pointer;
-  transition: background .15s, transform .1s;
+  transition: background .15s, transform .1s, border-color .15s;
+  align-items: flex-end;
 }
 .chat-chip:hover {
-  background: color-mix(in srgb, var(--color-brand) 12%, var(--color-surface-elevated));
+  background: color-mix(in srgb, var(--color-brand) 40%, var(--color-surface-card));
+  border-color: var(--color-brand);
 }
 .chat-chip:active { transform: scale(.97); }
 .chat-chip:disabled { opacity: .5; cursor: default; }
-.chat-chip__ar { font-size: 13px; font-weight: 500; line-height: 1.2; }
+.chat-chip__ar { font-size: 13.5px; font-weight: 500; line-height: 1.25; }
 .chat-chip__en {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px; letter-spacing: .04em; color: var(--color-text-faint);
+  font-size: 9.5px; letter-spacing: .04em; color: var(--color-text-muted);
   text-transform: uppercase; line-height: 1.2;
 }
 
@@ -1590,19 +1607,27 @@ body { background: transparent; }
 [dir="rtl"] .chat-bubble,
 [dir="rtl"] .chat-panel { right: auto; left: 20px; }
 
-/* Mobile — take the bottom 80% of the screen so the keyboard doesn't
-   wreck the layout. */
+/* Mobile — full-screen panel; the floating bubble disappears while open. */
 @media (max-width: 640px) {
-  .chat-bubble {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
-    right: 16px; width: 52px; height: 52px;
-  }
+  /* Plain bottom value (no env() calc) — iOS Safari's URL-bar collapse
+     made the env-based calc jitter on scroll. Static gap is rock-stable. */
+  .chat-bubble { bottom: 22px; right: 16px; width: 54px; height: 54px; }
+  .chat-bubble.open { opacity: 0; pointer-events: none; transform: scale(.6); }
+
   .chat-panel {
-    bottom: 0; right: 0; left: 0; width: auto;
-    height: 88dvh; max-height: none;
-    border-radius: 18px 18px 0 0;
-    border-left: none; border-right: none; border-bottom: none;
+    /* Full-screen sheet on mobile */
+    inset: 0;
+    width: auto; height: 100dvh; max-height: none;
+    border-radius: 0; border: none;
+    /* When keyboard opens, 100dvh shrinks and the input bar floats up
+       naturally because the feed flex-shrinks. */
   }
   .chat-msg { max-width: 88%; font-size: 15px; }
   .chat-chip__ar { font-size: 14px; }
+
+  /* Slightly bigger header on full-screen */
+  .chat-header { padding: 14px 16px; }
+  .chat-header__avatar { width: 48px; height: 48px; }
+  .chat-header__avatar-dot { width: 13px; height: 13px; }
+  .chat-header__name-ar { font-size: 16px; }
 }
