@@ -1,0 +1,23 @@
+# Cloudflare Pages headers — tells the CDN + browser how to cache files.
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+# HTML pages: never cache. The browser must hit Cloudflare every load,
+# Cloudflare itself rebuilds on every push. This fixes the "I still see
+# the old version after deploying" problem.
+/
+  Cache-Control: no-store, must-revalidate
+/*
+  Cache-Control: no-store, must-revalidate
+
+# CSS / JS are content-versioned (?v=<build-timestamp>), but the file
+# paths themselves stay the same, so still safer to no-store on preview.
+/*.css
+  Cache-Control: no-store, must-revalidate
+/*.js
+  Cache-Control: no-store, must-revalidate
+
+# Images / fonts can cache normally — they don't change between deploys.
+/images/*
+  Cache-Control: public, max-age=86400
+/tokens/*
+  Cache-Control: no-store, must-revalidate
