@@ -1509,6 +1509,11 @@ body { background: transparent; }
   border: var(--border-rule);
   border-bottom-left-radius: 4px;
 }
+/* Both AR and EN lines in bot bubbles right-aligned (panel is RTL, so
+   "right" = the visual side the bubble sits on). dir="ltr" on the EN
+   span keeps grammar correct, while text-align: right pins the visual
+   alignment. */
+.chat-msg--bot p { text-align: right; }
 .chat-msg--user {
   align-self: flex-end;
   background: var(--color-brand); color: var(--color-interactive-primary-text);
