@@ -39,6 +39,35 @@ const escapeHtml = (s) =>
 
 const clean = (s, max) => String(s || '').trim().slice(0, max);
 
+// Best-effort per-IP rate limit using the Cloudflare Cache API. Free,
+// no KV/Durable Object setup. Caveat: Cache is per-data-center, so a
+// determined attacker rotating regions could exceed it — but for a
+// portfolio contact form, this stops 99% of real-world spam.
+const MAX_PER_DAY = 3;
+async function checkAndIncrementRateLimit(ip) {
+  if (!ip || ip === 'unknown') return { allowed: true, count: 0 };
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
+  const key = `https://ratelimit.local/contact/${ip}/${today}`;
+  const cache = caches.default;
+  let count = 0;
+  try {
+    const cached = await cache.match(key);
+    if (cached) count = parseInt(await cached.text(), 10) || 0;
+  } catch { /* cache miss */ }
+  if (count >= MAX_PER_DAY) return { allowed: false, count };
+  const next = count + 1;
+  // Cache until end of UTC day.
+  const now = new Date();
+  const eod = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1) / 1000;
+  const ttl = Math.max(60, eod - Math.floor(Date.now() / 1000));
+  try {
+    await cache.put(key, new Response(String(next), {
+      headers: { 'Cache-Control': `public, max-age=${ttl}` },
+    }));
+  } catch { /* best effort */ }
+  return { allowed: true, count: next };
+}
+
 export async function onRequestPost({ request, env }) {
   if (!env.RESEND_API_KEY || !env.CONTACT_EMAIL) {
     return jsonResponse(500, {
@@ -57,6 +86,16 @@ export async function onRequestPost({ request, env }) {
   // Honeypot — silent success so bots think it worked.
   if (payload.website) {
     return jsonResponse(200, { ok: true });
+  }
+
+  // Rate-limit by IP — max 3 messages per day per IP.
+  const ipForLimit = request.headers.get('cf-connecting-ip') || 'unknown';
+  const rl = await checkAndIncrementRateLimit(ipForLimit);
+  if (!rl.allowed) {
+    return jsonResponse(429, {
+      ok: false,
+      error: 'لقد أرسلت رسائل كثيرة اليوم. حاول غداً. · You have sent the maximum messages for today — please try again tomorrow.',
+    });
   }
 
   const name    = clean(payload.name, 80);

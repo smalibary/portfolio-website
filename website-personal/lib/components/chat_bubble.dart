@@ -137,6 +137,33 @@ class ChatBubble extends StatelessComponent {
             classes: 'chat-hp',
             attributes: const {'name': 'website', 'tabindex': '-1', 'autocomplete': 'off', 'aria-hidden': 'true'},
           ),
+
+          // Success overlay — shown after a successful send. Covers feed +
+          // input so the conversation "closes out" cleanly. Centered.
+          div(
+            id: 'chat-success',
+            classes: 'chat-success',
+            attributes: const {'hidden': '', 'aria-live': 'polite'},
+            [
+              div(classes: 'chat-success__check', [
+                raw('<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2.5" stroke-dasharray="138" stroke-dashoffset="138" class="chat-success__circle"/><path d="M14 24l7 7 14-14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="36" stroke-dashoffset="36" class="chat-success__tick"/></svg>'),
+              ]),
+              div(classes: 'chat-success__title', [
+                span(classes: 'chat-success__title-ar', [text('وصلتني رسالتك')]),
+                span(classes: 'chat-success__title-en', attributes: const {'dir': 'ltr'}, [text('Got it')]),
+              ]),
+              p(classes: 'chat-success__sub', [
+                span(classes: 'chat-success__sub-ar', [text('سأتواصل معك قريباً')]),
+                span(classes: 'chat-success__sub-en', attributes: const {'dir': 'ltr'}, [text("I'll get back to you soon")]),
+              ]),
+              button(
+                id: 'chat-restart',
+                classes: 'chat-success__restart',
+                attributes: const {'type': 'button'},
+                [text('محادثة جديدة · New chat')],
+              ),
+            ],
+          ),
         ],
       ),
 
@@ -194,18 +221,20 @@ class ChatBubble extends StatelessComponent {
     return;
   }
 
-  var feed     = document.getElementById('chat-feed');
-  var inputBar = document.getElementById('chat-input');
-  var inputEl  = document.getElementById('chat-input-el');
-  var sendBtn  = document.getElementById('chat-send');
-  var skipBtn  = document.getElementById('chat-skip');
-  var closeBtn = document.getElementById('chat-close');
-  var cc       = document.getElementById('chat-cc');
-  var ccBtn    = document.getElementById('chat-cc-btn');
-  var ccMenu   = document.getElementById('chat-cc-menu');
-  var ccFlag   = document.getElementById('chat-cc-flag');
-  var ccCode   = document.getElementById('chat-cc-code');
-  var hp       = document.getElementById('chat-hp');
+  var feed       = document.getElementById('chat-feed');
+  var inputBar   = document.getElementById('chat-input');
+  var inputEl    = document.getElementById('chat-input-el');
+  var sendBtn    = document.getElementById('chat-send');
+  var skipBtn    = document.getElementById('chat-skip');
+  var closeBtn   = document.getElementById('chat-close');
+  var cc         = document.getElementById('chat-cc');
+  var ccBtn      = document.getElementById('chat-cc-btn');
+  var ccMenu     = document.getElementById('chat-cc-menu');
+  var ccFlag     = document.getElementById('chat-cc-flag');
+  var ccCode     = document.getElementById('chat-cc-code');
+  var hp         = document.getElementById('chat-hp');
+  var success    = document.getElementById('chat-success');
+  var restartBtn = document.getElementById('chat-restart');
 
   var REASONS = {
     project:  ['بدء مشروع',          'Start a project'],
@@ -558,7 +587,16 @@ class ChatBubble extends StatelessComponent {
   function finished(ok, errMsg){
     if (ok) {
       step = 'sent';
-      addBot('وصلتني رسالتك ✓ سأرد عليك قريباً.','Got it ✓ I will get back to you soon.', false);
+      success.removeAttribute('hidden');
+      setInputKind('hidden');
+      // Restart the SVG checkmark animation on every show.
+      success.querySelectorAll('.chat-success__circle, .chat-success__tick').forEach(function(n){
+        n.style.animation = 'none';
+        // force reflow
+        void n.offsetWidth;
+        n.style.animation = '';
+      });
+      fireConfetti();
     } else {
       step = 'message';
       addBot('حدث خطأ. ' + (errMsg||'حاول مرة أخرى.'), 'Something went wrong. ' + (errMsg ? '' : 'Please try again.'), false);
@@ -566,6 +604,34 @@ class ChatBubble extends StatelessComponent {
       inputEl.value = data.message;
     }
   }
+
+  // Confetti — vanilla, no library. ~60 colorful pieces fall through the
+  // panel for ~2.5s on success, then clean themselves up.
+  function fireConfetti(){
+    var colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+    for (var i = 0; i < 70; i++) {
+      var d = document.createElement('div');
+      d.className = 'chat-confetti';
+      d.style.left = (Math.random() * 100) + '%';
+      d.style.background = colors[i % colors.length];
+      d.style.animationDelay = (Math.random() * 0.4) + 's';
+      d.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      d.style.setProperty('--drift', ((Math.random() - 0.5) * 200) + 'px');
+      panel.appendChild(d);
+      (function(el){ setTimeout(function(){ el.remove(); }, 3200); })(d);
+    }
+  }
+
+  // Reset everything for "New chat" — clear feed, reset state, restart.
+  restartBtn.addEventListener('click', function(){
+    success.setAttribute('hidden','');
+    feed.innerHTML = '';
+    data = { reason:'', reason_other:'', name:'', email:'', phone:'', phone_cc:data.phone_cc, message:'' };
+    step = null;
+    inputEl.value = '';
+    setInputKind('hidden');
+    start();
+  });
 })();
 ''';
 }
