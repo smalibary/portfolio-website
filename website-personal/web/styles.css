@@ -1438,6 +1438,9 @@ body { background: transparent; }
   flex: 0 0 auto;
   /* sit above the success overlay so the X stays clickable */
   position: relative; z-index: 10;
+  /* Stops touch-drag on the header from bleeding into page scroll on
+     iOS/Chrome (which would animate the URL bar and resize the panel). */
+  touch-action: none;
 }
 .chat-header__avatar-wrap { position: relative; flex-shrink: 0; }
 .chat-header__avatar {
@@ -1446,17 +1449,8 @@ body { background: transparent; }
   object-fit: cover; display: block;
   border: var(--border-accent);
 }
-/* Online indicator — squarish to match the site's .status-dot / .sq-mark
-   language (small 2px-radius square, brand-colour). Pinned to avatar's
-   trailing-bottom corner. */
-.chat-header__avatar-dot {
-  position: absolute; bottom: 0; inset-inline-end: 0;
-  width: var(--c-chat-online-size); height: var(--c-chat-online-size);
-  border-radius: var(--c-chat-online-radius);
-  background: var(--color-brand);
-  border: 2px solid var(--color-surface-elevated);
-  box-sizing: border-box;
-}
+/* Online indicator removed — the brand-coloured ring around the avatar
+   already signals presence. Less ink, same message. */
 .chat-header__meta {
   flex: 1; min-width: 0;
   /* Right-align both AR and EN consistently. text-align: end was flipping
@@ -1504,6 +1498,10 @@ body { background: transparent; }
    scroll chaining (no rubber-band onto the body, no URL-bar animation
    on iOS/Chrome). */
 .chat-feed {
+  /* LTR direction puts the scrollbar on the right (standard convention)
+     even though the surrounding panel is RTL. Bubble sides are kept
+     visually correct by flipping the align-self below. */
+  direction: ltr;
   flex: 1 1 auto; min-height: 0; overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -1528,21 +1526,20 @@ body { background: transparent; }
 .chat-msg p { margin: 0; }
 .chat-msg p + p { margin-top: 4px; }
 .chat-msg__en { font-size: var(--text-2xs); color: var(--color-text-muted); }
+/* Feed is LTR (so scrollbar sits on the right), so bot/user align-self
+   values are flipped vs. an RTL container — flex-end = right, flex-start
+   = left. Bubble "tail" corner also flips to match the new visual side. */
 .chat-msg--bot {
-  align-self: flex-start;
+  align-self: flex-end;
   background: var(--color-surface-elevated); color: var(--color-text-default);
   border: var(--border-rule);
-  border-bottom-left-radius: var(--c-chat-msg-radius-tail);
+  border-bottom-right-radius: var(--c-chat-msg-radius-tail);
 }
-/* Both AR and EN lines in bot bubbles right-aligned (panel is RTL, so
-   "right" = the visual side the bubble sits on). dir="ltr" on the EN
-   span keeps grammar correct, while text-align: right pins the visual
-   alignment. */
 .chat-msg--bot p { text-align: right; }
 .chat-msg--user {
-  align-self: flex-end;
+  align-self: flex-start;
   background: var(--color-brand); color: var(--color-interactive-primary-text);
-  border-bottom-right-radius: var(--c-chat-msg-radius-tail);
+  border-bottom-left-radius: var(--c-chat-msg-radius-tail);
 }
 .chat-msg--user .chat-msg__en { color: color-mix(in srgb, var(--color-interactive-primary-text) 75%, transparent); }
 
@@ -1561,11 +1558,11 @@ body { background: transparent; }
 }
 
 /* Choice chips — align to the user's side (same edge as user bubbles).
-   .chat-msg--user uses flex-end, so chips do too. */
+   With the feed in LTR, that's flex-start = left. */
 .chat-chips {
-  align-self: flex-end; max-width: 100%;
+  align-self: flex-start; max-width: 100%;
   display: flex; flex-wrap: wrap; gap: 6px;
-  padding: 2px 0; justify-content: flex-end;
+  padding: 2px 0; justify-content: flex-start;
 }
 .chat-chip {
   display: inline-flex; flex-direction: column; gap: 1px;
@@ -1576,7 +1573,8 @@ body { background: transparent; }
   color: var(--color-text-default);
   font-family: inherit; cursor: pointer;
   transition: background .15s, transform .1s, border-color .15s;
-  align-items: flex-end;
+  align-items: flex-start;
+  text-align: start;
 }
 .chat-chip:hover {
   background: color-mix(in srgb, var(--color-brand) 40%, var(--color-surface-card));
@@ -1604,7 +1602,12 @@ body { background: transparent; }
   border-radius: var(--c-chat-input-radius);
   box-shadow: var(--c-chat-input-shadow);
   position: relative;
+  /* Reject scroll gestures on the input chrome itself; the textarea
+     inside re-opts in to touch via touch-action: auto. */
+  touch-action: none;
 }
+.chat-input__field { touch-action: auto; }
+.chat-input__field textarea#chat-input-el { touch-action: auto; }
 .chat-input__field { flex: 1; min-width: 0; align-self: center; }
 .chat-input__field textarea#chat-input-el {
   width: 100%; resize: none; overflow-y: auto;

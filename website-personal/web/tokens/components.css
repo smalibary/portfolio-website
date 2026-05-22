@@ -127,8 +127,8 @@
   --c-chat-header-gap:       var(--space-3);
   --c-chat-avatar-size:      44px;
   --c-chat-avatar-size-sm:   48px;
-  --c-chat-online-size:      10px;
-  --c-chat-online-radius:    var(--radius-sharp); /* squarish, like .status-dot */
+  /* Note: avatar online indicator dot removed in favour of the teal
+     ring around the avatar — see --border-accent on .chat-header__avatar. */
 
   /* Feed */
   --c-chat-feed-pad:         var(--space-3);
@@ -142,8 +142,9 @@
   --c-chat-msg-max-w:        85%;
   --c-chat-msg-font:         var(--text-base);
 
-  /* Choice chips */
-  --c-chat-chip-radius:      var(--radius-pill);
+  /* Choice chips — share the button radius so they read as part of the
+     same clickable family as the FAB, send, and submit buttons. */
+  --c-chat-chip-radius:      var(--radius-sm);
   --c-chat-chip-pad-y:       var(--space-2);
   --c-chat-chip-pad-x:       var(--space-3-5);
 
