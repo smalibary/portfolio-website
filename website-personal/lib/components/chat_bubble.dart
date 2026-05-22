@@ -248,7 +248,8 @@ class ChatBubble extends StatelessComponent {
   // Conversation state
   var data = {
     reason: '', reason_other: '',
-    name: '', email: '', phone: '', phone_cc: '+966', message: '',
+    first_name: '', family_name: '',
+    email: '', phone: '', phone_cc: '+966', message: '',
   };
   var step = null;
   var started = false;
@@ -385,13 +386,12 @@ class ChatBubble extends StatelessComponent {
   }
 
   // Input bar config
-  function setInputKind(kind){
+  function setInputKind(kind, customPlaceholder){
     // kind: 'text' | 'email' | 'tel' | 'textarea' | 'hidden'
     if (kind === 'hidden') { inputBar.setAttribute('hidden',''); return; }
     inputBar.removeAttribute('hidden');
     inputEl.value = '';
-    // Reset attributes
-    inputEl.removeAttribute('type'); // textarea ignores type
+    inputEl.removeAttribute('type');
     inputEl.rows = (kind === 'textarea') ? 3 : 1;
     inputEl.style.height = 'auto';
     inputEl.classList.toggle('chat-input__field--multiline', kind === 'textarea');
@@ -399,17 +399,17 @@ class ChatBubble extends StatelessComponent {
     if (kind === 'tel') {
       cc.removeAttribute('hidden');
       inputEl.setAttribute('inputmode', 'tel');
-      inputEl.setAttribute('placeholder', '5XX XXX XXX');
+      inputEl.setAttribute('placeholder', customPlaceholder || '5XX XXX XXX');
     } else {
       cc.setAttribute('hidden','');
       inputEl.removeAttribute('inputmode');
       if (kind === 'email') {
         inputEl.setAttribute('inputmode', 'email');
-        inputEl.setAttribute('placeholder', 'you@example.com');
+        inputEl.setAttribute('placeholder', customPlaceholder || 'you@example.com');
       } else if (kind === 'textarea') {
-        inputEl.setAttribute('placeholder', 'اكتب رسالتك…');
+        inputEl.setAttribute('placeholder', customPlaceholder || 'اكتب رسالتك…');
       } else {
-        inputEl.setAttribute('placeholder', 'اكتب هنا…');
+        inputEl.setAttribute('placeholder', customPlaceholder || 'اكتب هنا…');
       }
     }
     setTimeout(function(){ inputEl.focus({preventScroll:true}); }, 350);
@@ -456,9 +456,12 @@ class ChatBubble extends StatelessComponent {
 
   function submit(viaSkip){
     var v = inputEl.value.trim();
-    if (step === 'name') {
-      if (!v) { return botError('ممكن اسمك؟','Mind sharing your name?'); }
-      data.name = v; addUser(v); goEmail();
+    if (step === 'first_name') {
+      if (!v) { return botError('ممكن اسمك الأول؟','What is your first name?'); }
+      data.first_name = v; addUser(v); askFamilyName();
+    } else if (step === 'family_name') {
+      if (!v) { return botError('وماذا عن اسم العائلة؟','And your family name?'); }
+      data.family_name = v; addUser(v); showChoices();
     } else if (step === 'email') {
       if (!v || !EMAIL_RE.test(v)) {
         return botError('هذا البريد غير صحيح.','That does not look like a valid email — try again?');
@@ -482,7 +485,7 @@ class ChatBubble extends StatelessComponent {
       data.message = v; addUser(v); send();
     } else if (step === 'other_what') {
       if (!v) { return botError('وضّح لي باختصار.','Just a sentence is fine.'); }
-      data.reason_other = v; addUser(v); goName();
+      data.reason_other = v; addUser(v); goEmail();
     }
   }
 
@@ -490,23 +493,44 @@ class ChatBubble extends StatelessComponent {
     addBot(ar, en, true);
   }
 
-  // Step transitions
+  // Step transitions — names first (filters out non-serious visitors),
+  // then the 5 reason chips, then email/phone/message.
   function start(){
     addBot(
-      'مرحباً 👋 شكراً لمرورك. كيف يمكنني مساعدتك؟',
-      'Hi! Thanks for stopping by. What brings you here?',
+      'مرحباً 👋 شكراً لمرورك. خلنا نبدأ — وش اسمك الأول؟',
+      "Hi! Thanks for stopping by. Let's start — what's your first name?",
       true,
       function(){
-        addChips([
-          {value:'project',  ar:'بدء مشروع',         en:'Start a project'},
-          {value:'hire',     ar:'توظيف / تعاون',     en:'Hire / collaborate'},
-          {value:'press',    ar:'صحافة أو محاضرات', en:'Press or speaking'},
-          {value:'question', ar:'سؤال عام',          en:'General question'},
-          {value:'feedback', ar:'ملاحظة أو اقتراح',  en:'Feedback or suggestion'},
-          {value:'other',    ar:'شيء آخر…',         en:'Something else…'}
-        ], pickReason);
+        step = 'first_name';
+        setInputKind('text', 'الاسم الأول · First name');
+        showSkip(false);
       }
     );
+  }
+
+  function askFamilyName(){
+    step = 'family_name';
+    addBot('وماذا عن اسم العائلة؟', 'And your family name?', true, function(){
+      setInputKind('text', 'اسم العائلة · Family name');
+      showSkip(false);
+    });
+  }
+
+  function showChoices(){
+    addBot('شرفنا ' + data.first_name + ' 🤝 وش الذي جابك اليوم؟',
+           'Nice to meet you, ' + data.first_name + ' — what brings you here?',
+           true,
+           function(){
+             setInputKind('hidden');
+             addChips([
+               {value:'project',  ar:'بدء مشروع',         en:'Start a project'},
+               {value:'hire',     ar:'توظيف / تعاون',     en:'Hire / collaborate'},
+               {value:'press',    ar:'صحافة أو محاضرات', en:'Press or speaking'},
+               {value:'question', ar:'سؤال عام',          en:'General question'},
+               {value:'feedback', ar:'ملاحظة أو اقتراح',  en:'Feedback or suggestion'},
+               {value:'other',    ar:'شيء آخر…',         en:'Something else…'}
+             ], pickReason);
+           });
   }
 
   function pickReason(c){
@@ -518,12 +542,8 @@ class ChatBubble extends StatelessComponent {
         setInputKind('text'); showSkip(false);
       });
     } else {
-      goName();
+      goEmail();
     }
-  }
-  function goName(){
-    step = 'name';
-    addBot('وش اسمك؟','And your name?', true, function(){ setInputKind('text'); showSkip(false); });
   }
   function goEmail(){
     step = 'email';
@@ -556,7 +576,8 @@ class ChatBubble extends StatelessComponent {
     var payload = {
       reason: data.reason,
       reason_other: data.reason_other,
-      name: data.name,
+      first_name: data.first_name,
+      family_name: data.family_name,
       email: data.email,
       phone: data.phone,
       message: data.message,
@@ -627,7 +648,11 @@ class ChatBubble extends StatelessComponent {
   restartBtn.addEventListener('click', function(){
     success.setAttribute('hidden','');
     feed.innerHTML = '';
-    data = { reason:'', reason_other:'', name:'', email:'', phone:'', phone_cc:data.phone_cc, message:'' };
+    data = {
+      reason:'', reason_other:'',
+      first_name:'', family_name:'',
+      email:'', phone:'', phone_cc: data.phone_cc, message:''
+    };
     step = null;
     inputEl.value = '';
     setInputKind('hidden');

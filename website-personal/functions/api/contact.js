@@ -98,7 +98,11 @@ export async function onRequestPost({ request, env }) {
     });
   }
 
-  const name    = clean(payload.name, 80);
+  const firstName  = clean(payload.first_name, 60);
+  const familyName = clean(payload.family_name, 60);
+  // Backwards-compatible: accept a single "name" if a caller still sends it.
+  const legacyName = clean(payload.name, 120);
+  const name = [firstName, familyName].filter(Boolean).join(' ') || legacyName;
   const email   = clean(payload.email, 120);
   const phone   = clean(payload.phone, 40);
   const message = clean(payload.message, 2000);
@@ -110,7 +114,8 @@ export async function onRequestPost({ request, env }) {
   const sourceRaw = clean(payload.source, 16).toLowerCase();
   const source = (sourceRaw === 'chat' || sourceRaw === 'form') ? sourceRaw : 'unknown';
 
-  if (!name)    return jsonResponse(400, { ok: false, error: 'Name is required.' });
+  if (!firstName)  return jsonResponse(400, { ok: false, error: 'First name is required.' });
+  if (!familyName && !legacyName) return jsonResponse(400, { ok: false, error: 'Family name is required.' });
   if (!email || !EMAIL_RE.test(email)) {
     return jsonResponse(400, { ok: false, error: 'A valid email is required.' });
   }
@@ -132,11 +137,12 @@ export async function onRequestPost({ request, env }) {
   const subject = `${sourceTag} [${reasonLabel}] ${name}`;
 
   const lines = [
-    `Source:  ${source}`,
-    `Reason:  ${reasonLabel}`,
-    `Name:    ${name}`,
-    `Email:   ${email}`,
-    phone ? `Phone:   ${phone}` : null,
+    `Source:       ${source}`,
+    `Reason:       ${reasonLabel}`,
+    `First name:   ${firstName || '—'}`,
+    `Family name:  ${familyName || '—'}`,
+    `Email:        ${email}`,
+    phone ? `Phone:        ${phone}` : null,
     '',
     'Message:',
     message,
@@ -156,7 +162,8 @@ export async function onRequestPost({ request, env }) {
       </div>
       <h2 style="margin:0 0 12px;font-size:16px;">${escapeHtml(reasonLabel)}</h2>
       <table style="font-size:14px;border-collapse:collapse;">
-        <tr><td style="padding:2px 12px 2px 0;color:#666;">Name</td><td>${escapeHtml(name)}</td></tr>
+        <tr><td style="padding:2px 12px 2px 0;color:#666;">First name</td><td>${escapeHtml(firstName)}</td></tr>
+        <tr><td style="padding:2px 12px 2px 0;color:#666;">Family name</td><td>${escapeHtml(familyName)}</td></tr>
         <tr><td style="padding:2px 12px 2px 0;color:#666;">Email</td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
         ${phone ? `<tr><td style="padding:2px 12px 2px 0;color:#666;">Phone</td><td>${escapeHtml(phone)}</td></tr>` : ''}
       </table>

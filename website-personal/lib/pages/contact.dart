@@ -41,13 +41,17 @@ class ContactPage extends StatelessComponent {
           form(id: 'contactForm', classes: 'contact-form', attributes: {'novalidate': ''}, [
             div(classes: 'contact-form__row', [
               div(classes: 'contact-form__field', [
-                label([text('الاسم · NAME *')]),
-                input(type: InputType.text, attributes: {'name': 'name', 'required': '', 'maxlength': '80', 'placeholder': 'اسمك', 'autocomplete': 'name'}),
+                label([text('الاسم الأول · FIRST NAME *')]),
+                input(type: InputType.text, attributes: {'name': 'first_name', 'required': '', 'maxlength': '60', 'placeholder': 'الاسم الأول', 'autocomplete': 'given-name'}),
               ]),
               div(classes: 'contact-form__field', [
-                label([text('البريد · EMAIL *')]),
-                input(type: InputType.email, attributes: {'name': 'email', 'required': '', 'maxlength': '120', 'placeholder': 'email@example.com', 'autocomplete': 'email'}),
+                label([text('اسم العائلة · FAMILY NAME *')]),
+                input(type: InputType.text, attributes: {'name': 'family_name', 'required': '', 'maxlength': '60', 'placeholder': 'اسم العائلة', 'autocomplete': 'family-name'}),
               ]),
+            ]),
+            div(classes: 'contact-form__field', [
+              label([text('البريد · EMAIL *')]),
+              input(type: InputType.email, attributes: {'name': 'email', 'required': '', 'maxlength': '120', 'placeholder': 'email@example.com', 'autocomplete': 'email'}),
             ]),
             div(classes: 'contact-form__field', [
               label([text('الموضوع · TOPIC *')]),
@@ -235,7 +239,8 @@ class ContactPage extends StatelessComponent {
 
     var fd = new FormData(formEl);
     var data = {
-      name:         (fd.get('name') || '').toString().trim(),
+      first_name:   (fd.get('first_name') || '').toString().trim(),
+      family_name:  (fd.get('family_name') || '').toString().trim(),
       email:        (fd.get('email') || '').toString().trim(),
       reason:       (fd.get('reason') || '').toString(),
       reason_other: (fd.get('reason_other') || '').toString().trim(),
@@ -247,7 +252,8 @@ class ContactPage extends StatelessComponent {
       page:         location.pathname,
     };
 
-    if (!data.name)  return setStatus('err', 'الاسم مطلوب · Name is required.');
+    if (!data.first_name)  return setStatus('err', 'الاسم الأول مطلوب · First name is required.');
+    if (!data.family_name) return setStatus('err', 'اسم العائلة مطلوب · Family name is required.');
     if (!data.email || !EMAIL_RE.test(data.email))
       return setStatus('err', 'البريد غير صحيح · Please enter a valid email.');
     if (!data.reason) return setStatus('err', 'اختر الموضوع · Please pick a topic.');
@@ -261,7 +267,8 @@ class ContactPage extends StatelessComponent {
     var payload = {
       reason:       data.reason,
       reason_other: data.reason_other,
-      name:         data.name,
+      first_name:   data.first_name,
+      family_name:  data.family_name,
       email:        data.email,
       phone:        data.phone_raw ? (data.phone_cc + ' ' + data.phone_raw) : '',
       message:      data.message,
