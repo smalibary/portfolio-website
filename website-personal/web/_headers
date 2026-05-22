@@ -1,23 +1,23 @@
-# Cloudflare Pages headers — tells the CDN + browser how to cache files.
+# Cloudflare Pages headers — never cache anything on this preview branch.
 # https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Rules are evaluated top-to-bottom; later more-specific rules can
+# override. We use a catch-all /* with multiple cache-busting headers,
+# then carve out images which are safe to cache.
 
-# HTML pages: never cache. The browser must hit Cloudflare every load,
-# Cloudflare itself rebuilds on every push. This fixes the "I still see
-# the old version after deploying" problem.
-/
-  Cache-Control: no-store, must-revalidate
 /*
-  Cache-Control: no-store, must-revalidate
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
+  Surrogate-Control: no-store
 
-# CSS / JS are content-versioned (?v=<build-timestamp>), but the file
-# paths themselves stay the same, so still safer to no-store on preview.
-/*.css
-  Cache-Control: no-store, must-revalidate
-/*.js
-  Cache-Control: no-store, must-revalidate
+/
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
 
-# Images / fonts can cache normally — they don't change between deploys.
+# Images are safe to cache — they don't change between deploys.
 /images/*
   Cache-Control: public, max-age=86400
-/tokens/*
-  Cache-Control: no-store, must-revalidate
+/favicon.ico
+  Cache-Control: public, max-age=86400
