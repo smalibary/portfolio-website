@@ -2,6 +2,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 
+import 'components/chat_bubble.dart';
 import 'data/blog_data.dart';
 import 'data/paper_data.dart';
 import 'data/site_data.dart';
@@ -73,7 +74,8 @@ class App extends StatelessComponent {
               "document.body.style.setProperty('--cursor-y',e.clientY+'px');});})();",
         ),
       ],
-      body: Router(
+      body: Component.fragment([
+        Router(
         routes: [
           Route(
             path: '/',
@@ -146,7 +148,9 @@ class App extends StatelessComponent {
             builder: (context, state) => const StyleguidePage(),
           ),
         ],
-      ),
+        ),
+        const ChatBubble(),
+      ]),
     );
   }
 }
