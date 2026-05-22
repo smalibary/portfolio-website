@@ -105,4 +105,72 @@
   --c-adm-login-max:         440px;
   --c-adm-login-h1-size:     22px;
   --c-adm-tooltip-shadow:    0 12px 32px -16px rgba(var(--color-shadow-rgb), 0.5);
+
+  /* ── Chat (lib/components/chat_bubble.dart) ─────────────────────── */
+  /* Floating launcher (FAB) */
+  --c-chat-bubble-size:      56px;
+  --c-chat-bubble-size-sm:   54px; /* mobile shrink */
+  --c-chat-bubble-shadow:    0 8px 24px -6px rgba(var(--color-shadow-rgb), 0.5);
+  --c-chat-bubble-bottom:    var(--space-5);
+  --c-chat-bubble-side:      var(--space-5);
+
+  /* Panel container */
+  --c-chat-panel-w:          380px;
+  --c-chat-panel-h:          640px;
+  --c-chat-panel-radius:     var(--radius-lg);
+  --c-chat-panel-shadow:     0 24px 60px -16px rgba(var(--color-shadow-rgb), 0.55);
+
+  /* Header */
+  --c-chat-header-pad-y:     var(--space-3);
+  --c-chat-header-pad-x:     var(--space-3-5);
+  --c-chat-header-gap:       var(--space-3);
+  --c-chat-avatar-size:      44px;
+  --c-chat-avatar-size-sm:   48px;
+  --c-chat-online-size:      10px;
+  --c-chat-online-radius:    var(--radius-sharp); /* squarish, like .status-dot */
+
+  /* Feed */
+  --c-chat-feed-pad:         var(--space-3);
+  --c-chat-feed-gap:         var(--space-2);
+
+  /* Message bubbles */
+  --c-chat-msg-radius:       var(--radius-md);
+  --c-chat-msg-radius-tail:  var(--radius-sharp);
+  --c-chat-msg-pad-y:        var(--space-2);
+  --c-chat-msg-pad-x:        var(--space-3);
+  --c-chat-msg-max-w:        85%;
+  --c-chat-msg-font:         var(--text-base);
+
+  /* Choice chips */
+  --c-chat-chip-radius:      var(--radius-pill);
+  --c-chat-chip-pad-y:       var(--space-2);
+  --c-chat-chip-pad-x:       var(--space-3-5);
+
+  /* Bottom input bar (floating card) */
+  --c-chat-input-radius:     var(--radius-lg);
+  --c-chat-input-pad:        var(--space-1-5);
+  --c-chat-input-gap:        var(--space-1-5);
+  --c-chat-input-margin-y:   var(--space-2);
+  --c-chat-input-margin-x:   var(--space-2-5);
+  --c-chat-input-shadow:     0 6px 18px -10px rgba(var(--color-shadow-rgb), 0.5);
+  --c-chat-textarea-pad-y:   var(--space-2);
+  --c-chat-textarea-pad-x:   var(--space-3);
+  --c-chat-textarea-max-h:   120px;
+
+  /* Send button (squarish, matches site button language) */
+  --c-chat-send-size:        38px;
+  --c-chat-send-radius:      var(--radius-sm);
+
+  /* Country code chip */
+  --c-chat-cc-radius:        var(--radius-pill);
+  --c-chat-cc-pad-y:         var(--space-2);
+  --c-chat-cc-pad-x:         var(--space-2-5);
+  --c-chat-cc-menu-radius:   var(--radius-md);
+
+  /* Runtime-set variables — declared so audit_css_tokens recognises them
+     as intentional. JS writes the actual values on the .chat-panel:
+       --chat-vh : window.visualViewport.height (px), for mobile keyboard tracking
+       --drift   : per-confetti random x-velocity, for the success animation */
+  --chat-vh: 100dvh;
+  --drift:   0px;
 }

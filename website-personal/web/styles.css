@@ -1390,14 +1390,17 @@ body { background: transparent; }
 .chat-panel [hidden] { display: none !important; }
 .chat-hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
 
-/* Toggle button */
+/* Toggle button (FAB) */
 .chat-bubble {
-  position: fixed; bottom: 20px; right: 20px; z-index: 200;
-  width: 56px; height: 56px; border-radius: 50%;
+  position: fixed;
+  bottom: var(--c-chat-bubble-bottom); right: var(--c-chat-bubble-side);
+  z-index: 200;
+  width: var(--c-chat-bubble-size); height: var(--c-chat-bubble-size);
+  border-radius: var(--radius-pill);
   background: var(--color-brand); color: var(--color-interactive-primary-text);
   border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px -6px rgba(var(--color-shadow-rgb), 0.5);
+  box-shadow: var(--c-chat-bubble-shadow);
   transition: transform .18s ease, box-shadow .18s ease, filter .15s;
 }
 .chat-bubble:hover { filter: brightness(1.1); transform: translateY(-2px); }
@@ -1411,12 +1414,15 @@ body { background: transparent; }
    input bar stays usable when the keyboard opens. */
 .chat-panel {
   direction: rtl; /* force layout direction so user/bot bubble sides are stable */
-  position: fixed; bottom: 92px; right: 20px; z-index: 199;
-  width: min(380px, calc(100vw - 32px));
-  height: min(640px, calc(100vh - 120px));
+  position: fixed;
+  bottom: calc(var(--c-chat-bubble-bottom) + var(--c-chat-bubble-size) + var(--space-4));
+  right: var(--c-chat-bubble-side);
+  z-index: 199;
+  width: min(var(--c-chat-panel-w), calc(100vw - 32px));
+  height: min(var(--c-chat-panel-h), calc(100vh - 120px));
   background: var(--color-surface-card); border: var(--border-rule);
-  border-radius: 14px;
-  box-shadow: 0 24px 60px -16px rgba(var(--color-shadow-rgb), 0.55);
+  border-radius: var(--c-chat-panel-radius);
+  box-shadow: var(--c-chat-panel-shadow);
   display: none; flex-direction: column; overflow: hidden;
   opacity: 0; transform: translateY(8px) scale(.98);
   transition: opacity .18s ease, transform .18s ease;
@@ -1425,8 +1431,8 @@ body { background: transparent; }
 
 /* Header */
 .chat-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
+  display: flex; align-items: center; gap: var(--c-chat-header-gap);
+  padding: var(--c-chat-header-pad-y) var(--c-chat-header-pad-x);
   background: var(--color-surface-elevated);
   border-bottom: var(--border-rule);
   flex: 0 0 auto;
@@ -1435,16 +1441,19 @@ body { background: transparent; }
 }
 .chat-header__avatar-wrap { position: relative; flex-shrink: 0; }
 .chat-header__avatar {
-  width: 44px; height: 44px; border-radius: 50%;
+  width: var(--c-chat-avatar-size); height: var(--c-chat-avatar-size);
+  border-radius: var(--radius-pill);
   object-fit: cover; display: block;
-  border: 2px solid var(--color-brand);
+  border: var(--border-accent);
 }
-/* Green online dot pinned to the avatar (visible corner depends on text direction).
-   In an LTR layout it sits bottom-right; in RTL the document flips it. */
+/* Online indicator — squarish to match the site's .status-dot / .sq-mark
+   language (small 2px-radius square, brand-colour). Pinned to avatar's
+   trailing-bottom corner. */
 .chat-header__avatar-dot {
   position: absolute; bottom: 0; inset-inline-end: 0;
-  width: 12px; height: 12px; border-radius: 50%;
-  background: #22c55e;
+  width: var(--c-chat-online-size); height: var(--c-chat-online-size);
+  border-radius: var(--c-chat-online-radius);
+  background: var(--color-brand);
   border: 2px solid var(--color-surface-elevated);
   box-sizing: border-box;
 }
@@ -1498,15 +1507,17 @@ body { background: transparent; }
   flex: 1 1 auto; min-height: 0; overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: var(--space-3) var(--space-3);
-  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--c-chat-feed-pad);
+  display: flex; flex-direction: column; gap: var(--c-chat-feed-gap);
   scroll-behavior: smooth;
 }
 
 /* Bubbles */
 .chat-msg {
-  max-width: 85%; padding: var(--space-2) var(--space-3);
-  border-radius: 14px; font-size: 14px; line-height: 1.5;
+  max-width: var(--c-chat-msg-max-w);
+  padding: var(--c-chat-msg-pad-y) var(--c-chat-msg-pad-x);
+  border-radius: var(--c-chat-msg-radius);
+  font-size: var(--c-chat-msg-font); line-height: 1.5;
   word-wrap: break-word; overflow-wrap: anywhere;
   animation: chatBubbleIn .22s ease-out both;
 }
@@ -1516,12 +1527,12 @@ body { background: transparent; }
 }
 .chat-msg p { margin: 0; }
 .chat-msg p + p { margin-top: 4px; }
-.chat-msg__en { font-size: 11.5px; color: var(--color-text-muted); }
+.chat-msg__en { font-size: var(--text-2xs); color: var(--color-text-muted); }
 .chat-msg--bot {
   align-self: flex-start;
   background: var(--color-surface-elevated); color: var(--color-text-default);
   border: var(--border-rule);
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: var(--c-chat-msg-radius-tail);
 }
 /* Both AR and EN lines in bot bubbles right-aligned (panel is RTL, so
    "right" = the visual side the bubble sits on). dir="ltr" on the EN
@@ -1531,7 +1542,7 @@ body { background: transparent; }
 .chat-msg--user {
   align-self: flex-end;
   background: var(--color-brand); color: var(--color-interactive-primary-text);
-  border-bottom-right-radius: 4px;
+  border-bottom-right-radius: var(--c-chat-msg-radius-tail);
 }
 .chat-msg--user .chat-msg__en { color: color-mix(in srgb, var(--color-interactive-primary-text) 75%, transparent); }
 
@@ -1558,10 +1569,10 @@ body { background: transparent; }
 }
 .chat-chip {
   display: inline-flex; flex-direction: column; gap: 1px;
-  padding: 8px 14px;
+  padding: var(--c-chat-chip-pad-y) var(--c-chat-chip-pad-x);
   background: color-mix(in srgb, var(--color-brand) 22%, var(--color-surface-card));
   border: 1px solid color-mix(in srgb, var(--color-brand) 45%, transparent);
-  border-radius: 999px;
+  border-radius: var(--c-chat-chip-radius);
   color: var(--color-text-default);
   font-family: inherit; cursor: pointer;
   transition: background .15s, transform .1s, border-color .15s;
@@ -1580,25 +1591,25 @@ body { background: transparent; }
   text-transform: uppercase; line-height: 1.2;
 }
 
-/* Bottom input bar — floating card style (matches Claude Code's pattern).
-   Margin around the card → it visibly floats above the panel surface
-   rather than sitting flush at the bottom edge. */
+/* Bottom input bar — floating card style. Margin around the card so it
+   visibly floats above the panel surface. */
 .chat-input {
   flex: 0 0 auto;
-  margin: 8px 10px;
-  margin-bottom: max(10px, env(safe-area-inset-bottom, 0));
-  padding: 6px 6px 6px 6px;
-  display: flex; align-items: flex-end; gap: 6px;
+  margin: var(--c-chat-input-margin-y) var(--c-chat-input-margin-x);
+  margin-bottom: max(var(--c-chat-input-margin-y), env(safe-area-inset-bottom, 0));
+  padding: var(--c-chat-input-pad);
+  display: flex; align-items: flex-end; gap: var(--c-chat-input-gap);
   background: var(--color-surface-elevated);
-  border: 1px solid var(--color-border-default);
-  border-radius: 22px;
-  box-shadow: 0 6px 18px -10px rgba(var(--color-shadow-rgb), 0.5);
+  border: var(--border-rule);
+  border-radius: var(--c-chat-input-radius);
+  box-shadow: var(--c-chat-input-shadow);
   position: relative;
 }
 .chat-input__field { flex: 1; min-width: 0; align-self: center; }
 .chat-input__field textarea#chat-input-el {
-  width: 100%; resize: none; overflow-y: auto; max-height: 120px;
-  padding: 8px 12px;
+  width: 100%; resize: none; overflow-y: auto;
+  max-height: var(--c-chat-textarea-max-h);
+  padding: var(--c-chat-textarea-pad-y) var(--c-chat-textarea-pad-x);
   background: transparent; border: none;
   color: var(--color-text-default);
   font-family: inherit; font-size: 16px; line-height: 1.4;
@@ -1607,9 +1618,10 @@ body { background: transparent; }
 .chat-input__field textarea#chat-input-el::placeholder { color: var(--color-text-faint); }
 
 .chat-input__send {
-  width: 38px; height: 38px; flex-shrink: 0;
+  width: var(--c-chat-send-size); height: var(--c-chat-send-size);
+  flex-shrink: 0;
   background: var(--color-brand); color: var(--color-interactive-primary-text);
-  border: none; border-radius: var(--radius-sm);
+  border: none; border-radius: var(--c-chat-send-radius);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: filter .15s, transform .1s;
@@ -1632,10 +1644,10 @@ body { background: transparent; }
 /* Country code chip inside input bar */
 .chat-cc { position: relative; flex-shrink: 0; align-self: center; }
 .chat-cc__btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 8px 10px;
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: var(--c-chat-cc-pad-y) var(--c-chat-cc-pad-x);
   background: var(--color-surface-card); border: var(--border-rule);
-  border-radius: 999px; color: var(--color-text-default);
+  border-radius: var(--c-chat-cc-radius); color: var(--color-text-default);
   font-family: inherit; cursor: pointer;
   transition: border-color .15s;
 }
@@ -1644,11 +1656,11 @@ body { background: transparent; }
 .chat-cc__flag { font-size: 15px; line-height: 1; }
 .chat-cc__code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 .chat-cc__menu {
-  display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+  display: none; position: absolute; bottom: calc(100% + var(--space-1-5)); left: 0;
   width: min(260px, calc(100vw - 60px));
   max-height: 240px; overflow-y: auto;
   background: var(--color-surface-card); border: var(--border-rule);
-  border-radius: 10px; box-shadow: var(--shadow-card);
+  border-radius: var(--c-chat-cc-menu-radius); box-shadow: var(--shadow-card);
   z-index: 20;
 }
 .chat-cc.open .chat-cc__menu { display: block; }
@@ -1755,26 +1767,27 @@ body { background: transparent; }
 @media (max-width: 640px) {
   /* Plain bottom value (no env() calc) — iOS Safari's URL-bar collapse
      made the env-based calc jitter on scroll. Static gap is rock-stable. */
-  .chat-bubble { bottom: 22px; right: 16px; width: 54px; height: 54px; }
+  .chat-bubble {
+    bottom: var(--space-5-5); right: var(--space-4);
+    width: var(--c-chat-bubble-size-sm); height: var(--c-chat-bubble-size-sm);
+  }
   .chat-bubble.open { opacity: 0; pointer-events: none; transform: scale(.6); }
 
   .chat-panel {
-    /* Full-screen sheet on mobile. Height is driven by JS using the
-       VisualViewport API (--chat-vh) — that's the only reliable way to
-       follow the soft keyboard on Android Chrome, where 100dvh ignores
-       the keyboard. The 100dvh fallback covers desktops + pre-API browsers. */
+    /* Full-screen sheet on mobile. Height is driven by JS via the
+       VisualViewport API (--chat-vh) so the keyboard pushes the input
+       bar up instead of leaving it stranded behind the keyboard. */
     top: 0; right: 0; left: 0; bottom: auto;
     width: auto;
     height: var(--chat-vh, 100dvh);
     max-height: none;
     border-radius: 0; border: none;
   }
-  .chat-msg { max-width: 88%; font-size: 15px; }
-  .chat-chip__ar { font-size: 14px; }
+  .chat-msg { max-width: 88%; font-size: var(--text-md); }
+  .chat-chip__ar { font-size: var(--text-base); }
 
   /* Slightly bigger header on full-screen */
-  .chat-header { padding: 14px 16px; }
-  .chat-header__avatar { width: 48px; height: 48px; }
-  .chat-header__avatar-dot { width: 13px; height: 13px; }
-  .chat-header__name-ar { font-size: 16px; }
+  .chat-header { padding: var(--space-3-5) var(--space-4); }
+  .chat-header__avatar { width: var(--c-chat-avatar-size-sm); height: var(--c-chat-avatar-size-sm); }
+  .chat-header__name-ar { font-size: var(--text-md); }
 }
