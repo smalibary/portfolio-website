@@ -1396,7 +1396,7 @@ body { background: transparent; }
   bottom: var(--c-chat-bubble-bottom); right: var(--c-chat-bubble-side);
   z-index: 200;
   width: var(--c-chat-bubble-size); height: var(--c-chat-bubble-size);
-  border-radius: var(--radius-pill);
+  border-radius: var(--c-chat-bubble-radius);
   background: var(--color-brand); color: var(--color-interactive-primary-text);
   border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;

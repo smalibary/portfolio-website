@@ -107,9 +107,10 @@
   --c-adm-tooltip-shadow:    0 12px 32px -16px rgba(var(--color-shadow-rgb), 0.5);
 
   /* ── Chat (lib/components/chat_bubble.dart) ─────────────────────── */
-  /* Floating launcher (FAB) */
+  /* Floating launcher (FAB) — squarish like every other button on the site */
   --c-chat-bubble-size:      56px;
   --c-chat-bubble-size-sm:   54px; /* mobile shrink */
+  --c-chat-bubble-radius:    var(--radius-sm);
   --c-chat-bubble-shadow:    0 8px 24px -6px rgba(var(--color-shadow-rgb), 0.5);
   --c-chat-bubble-bottom:    var(--space-5);
   --c-chat-bubble-side:      var(--space-5);
@@ -146,8 +147,9 @@
   --c-chat-chip-pad-y:       var(--space-2);
   --c-chat-chip-pad-x:       var(--space-3-5);
 
-  /* Bottom input bar (floating card) */
-  --c-chat-input-radius:     var(--radius-lg);
+  /* Bottom input bar (floating card) — radius matches the send button it
+     wraps so they read as one cohesive control, not two competing shapes. */
+  --c-chat-input-radius:     var(--radius-sm);
   --c-chat-input-pad:        var(--space-1-5);
   --c-chat-input-gap:        var(--space-1-5);
   --c-chat-input-margin-y:   var(--space-2);
