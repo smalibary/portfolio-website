@@ -1463,6 +1463,8 @@ body { background: transparent; }
 .chat-header__name-en,
 .chat-header__status-ar,
 .chat-header__status-en {
+  display: block;
+  width: 100%;
   text-align: right;
 }
 .chat-header__name-ar {
