@@ -124,7 +124,9 @@ class ChatBubble extends StatelessComponent {
               id: 'chat-send',
               classes: 'chat-input__send',
               attributes: const {'type': 'button', 'aria-label': 'Send'},
-              [text('◀')],
+              [
+                raw('<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11 2L11 14L3 8Z"/></svg>'),
+              ],
             ),
           ]),
 
