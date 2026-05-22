@@ -15,6 +15,7 @@ to follow.
 | `writing_list.dart` | section | Recent-blog-posts list (home and /writing) |
 | `social_icons.dart` | atom | Row of small social-platform icon links from site.yaml |
 | `theme_toggle.dart` | atom (side-effecting) | Dark/light toggle — switches document data-theme via inline JS, no Dart hydration |
+| `chat_bubble.dart` | chrome (side-effecting) | Floating chat bubble + conversational contact panel — state machine in inline JS, POSTs to /api/contact (Resend) |
 | `admin/admin_shell.dart` | layout | Auth gate + rail mount + page body slot for /admin/* pages |
 | `admin/rail.dart` | chrome | Vertical navigation rail for admin: profile/blog/research + logout |
 | `admin/topbar.dart` | chrome | Admin header bar: section name + save state + action button |
