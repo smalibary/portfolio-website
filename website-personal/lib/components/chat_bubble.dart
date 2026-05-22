@@ -57,7 +57,6 @@ class ChatBubble extends StatelessComponent {
                 alt: nameEn,
                 attributes: const {'width': '44', 'height': '44'},
               ),
-              span(classes: 'chat-header__avatar-dot', attributes: const {'aria-hidden': 'true'}, []),
             ]),
             div(classes: 'chat-header__meta', [
               div(classes: 'chat-header__name', [
@@ -252,7 +251,6 @@ class ChatBubble extends StatelessComponent {
     email: '', phone: '', phone_cc: '+966', message: '',
   };
   var step = null;
-  var started = false;
 
   // Keyboard handling — use VisualViewport so the panel stays above the
   // soft keyboard on Android/iOS (where 100dvh doesn't shrink reliably).
@@ -294,6 +292,19 @@ class ChatBubble extends StatelessComponent {
     window.scrollTo(0, savedScrollY);
   }
 
+  function resetConversation(){
+    feed.innerHTML = '';
+    success.setAttribute('hidden', '');
+    data = {
+      reason:'', reason_other:'',
+      first_name:'', family_name:'',
+      email:'', phone:'', phone_cc:'+966', message:''
+    };
+    step = null;
+    inputEl.value = '';
+    setInputKind('hidden');
+  }
+
   function openPanel(){
     panel.classList.add('open');
     bubble.classList.add('open');
@@ -301,7 +312,9 @@ class ChatBubble extends StatelessComponent {
     panel.setAttribute('aria-hidden','false');
     lockBody();
     updateViewportHeight();
-    if (!started) { started = true; start(); }
+    // Always start fresh — no resumed conversations.
+    resetConversation();
+    start();
   }
   function closePanel(){
     panel.classList.remove('open');
@@ -318,8 +331,19 @@ class ChatBubble extends StatelessComponent {
     if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
   });
 
+  // Scroll the feed to the bottom after the bubble layout settles. Two
+  // rAFs gives the new child a chance to mount + the animation to start
+  // its frame before we measure scrollHeight.
   function scrollDown(){
-    setTimeout(function(){ feed.scrollTop = feed.scrollHeight; }, 30);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        feed.scrollTop = feed.scrollHeight;
+        var last = feed.lastElementChild;
+        if (last && last.scrollIntoView) {
+          try { last.scrollIntoView({ block: 'end', behavior: 'smooth' }); } catch (_) {}
+        }
+      });
+    });
   }
 
   function botBubble(arHtml, enHtml){
@@ -646,16 +670,7 @@ class ChatBubble extends StatelessComponent {
 
   // Reset everything for "New chat" — clear feed, reset state, restart.
   restartBtn.addEventListener('click', function(){
-    success.setAttribute('hidden','');
-    feed.innerHTML = '';
-    data = {
-      reason:'', reason_other:'',
-      first_name:'', family_name:'',
-      email:'', phone:'', phone_cc: data.phone_cc, message:''
-    };
-    step = null;
-    inputEl.value = '';
-    setInputKind('hidden');
+    resetConversation();
     start();
   });
 })();
