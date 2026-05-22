@@ -1288,8 +1288,12 @@ body { background: transparent; }
     padding: var(--space-8) var(--space-5);
     min-height: auto;
   }
-  .hero__portrait { max-width: 240px; order: -1; margin-inline: auto; } /* intentionally literal: mobile portrait cap */
-  .hero__name-en, .hero__lede-en { text-align: center; }
+  .hero__portrait { max-width: 320px; order: -1; margin-inline: auto; } /* intentionally literal: mobile portrait cap */
+  /* Right-align both languages on mobile so the hero reads like the rest
+     of an RTL portfolio (Arabic + English flush to the trailing edge). */
+  .hero__name-ar { text-align: right; }
+  .hero__name-en { text-align: right; }
+  .hero__lede-en { text-align: right; }
   .socials { justify-content: center; }
   .hero__meta-item .label { min-width: 70px; } /* intentionally literal: narrower label column on mobile */
 
@@ -1334,7 +1338,7 @@ body { background: transparent; }
   .hero { padding: var(--space-6) var(--space-4); gap: var(--space-6); }
   .hero__name-ar { font-size: 32px; } /* intentionally literal: mobile clamp override */
   .hero__lede-ar { font-size: 16px; } /* intentionally literal: mobile clamp override */
-  .hero__portrait { max-width: 180px; } /* intentionally literal: small mobile portrait cap */
+  .hero__portrait { max-width: 280px; } /* intentionally literal: small mobile portrait cap */
   .hero__meta-item .label { min-width: 60px; }
   .status-line { font-size: var(--text-xs); }
 
