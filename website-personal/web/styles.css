@@ -1609,11 +1609,9 @@ body { background: transparent; }
 .chat-input__send {
   width: 38px; height: 38px; flex-shrink: 0;
   background: var(--color-brand); color: var(--color-interactive-primary-text);
-  border: none; border-radius: 50%; cursor: pointer;
+  border: none; border-radius: var(--radius-sm);
+  cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  /* Triangle glyph — same family used by .nav__split-arrow's ▼.
-     Optical-center it by nudging 1px right (left-pointing glyph leans). */
-  font-size: 17px; line-height: 1; padding-right: 1px;
   transition: filter .15s, transform .1s;
   align-self: flex-end;
 }
