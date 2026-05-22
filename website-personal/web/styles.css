@@ -1651,7 +1651,7 @@ body { background: transparent; }
   background: var(--color-surface-card);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 14px; padding: 32px 24px;
+  gap: 22px; padding: 32px 24px;
   text-align: center; z-index: 5;
   animation: chatSuccessIn .35s ease-out both;
 }
@@ -1677,23 +1677,26 @@ body { background: transparent; }
   to { stroke-dashoffset: 0; }
 }
 .chat-success__title {
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex; flex-direction: column; gap: 8px;
   font-size: 22px; font-weight: 600; color: var(--color-text-default);
-  line-height: 1.2;
+  line-height: 1.35;
 }
 .chat-success__title-en {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; letter-spacing: .08em;
   color: var(--color-text-muted); text-transform: uppercase;
   font-weight: 500;
+  margin-top: 2px;
 }
 .chat-success__sub {
-  margin: 0; display: flex; flex-direction: column; gap: 2px;
+  margin: 0; display: flex; flex-direction: column; gap: 8px;
   font-size: 14px; color: var(--color-text-muted);
+  line-height: 1.5;
 }
 .chat-success__sub-en {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; letter-spacing: .04em; color: var(--color-text-faint);
+  margin-top: 2px;
 }
 .chat-success__restart {
   margin-top: 16px;
