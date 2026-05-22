@@ -454,6 +454,30 @@ class ChatBubble extends StatelessComponent {
     }
   });
 
+  // Forward finger-drags on the input bar to the chat feed — same
+  // pattern Claude Code itself uses. If the textarea has overflowing
+  // text the user is trying to scroll, let the textarea handle it;
+  // otherwise the drag becomes a feed scroll. Stops touches on the
+  // input area from escaping into the page underneath.
+  var lastTouchY = 0;
+  inputBar.addEventListener('touchstart', function(e){
+    lastTouchY = e.touches[0].clientY;
+  }, { passive: true });
+  inputBar.addEventListener('touchmove', function(e){
+    var taCanScroll = inputEl.scrollHeight > inputEl.clientHeight + 1;
+    // If the user is dragging on a textarea that has its own scrollable
+    // content, let the textarea consume the scroll natively.
+    if (e.target === inputEl && taCanScroll) {
+      lastTouchY = e.touches[0].clientY;
+      return;
+    }
+    var currentY = e.touches[0].clientY;
+    var deltaY = lastTouchY - currentY;
+    lastTouchY = currentY;
+    feed.scrollTop += deltaY;
+    e.preventDefault();
+  }, { passive: false });
+
   // Country code dropdown
   ccBtn.addEventListener('click', function(e){
     e.stopPropagation();

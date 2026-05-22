@@ -1602,13 +1602,12 @@ body { background: transparent; }
   border-radius: var(--c-chat-input-radius);
   box-shadow: var(--c-chat-input-shadow);
   position: relative;
-  /* Reject scroll gestures on the input chrome itself; the textarea
-     inside re-opts in to touch via touch-action: auto. */
-  touch-action: none;
+  /* Touch events on the input bar are forwarded to the feed by JS
+     (see chat_bubble.dart) so finger-scrolling here scrolls the chat
+     instead of escaping into the page underneath. */
+  touch-action: auto;
 }
-.chat-input__field { touch-action: auto; }
-.chat-input__field textarea#chat-input-el { touch-action: auto; }
-.chat-input__field { flex: 1; min-width: 0; align-self: center; touch-action: auto; }
+.chat-input__field { flex: 1; min-width: 0; align-self: center; }
 .chat-input__field textarea#chat-input-el {
   width: 100%; resize: none; overflow-y: auto;
   overscroll-behavior: contain;
@@ -1617,8 +1616,6 @@ body { background: transparent; }
   background: transparent; border: none;
   color: var(--color-text-default);
   font-family: inherit; font-size: 16px; line-height: 1.4;
-  /* Allow vertical pan inside the textarea so long messages scroll. */
-  touch-action: pan-y;
 }
 .chat-input__field textarea#chat-input-el:focus { outline: none; }
 .chat-input__field textarea#chat-input-el::placeholder { color: var(--color-text-faint); }
