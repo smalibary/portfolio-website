@@ -136,18 +136,23 @@ export async function onRequestPost({ request, env }) {
   const sourceTag = source === 'chat' ? '[CHAT]' : source === 'form' ? '[FORM]' : '[WEB]';
   const subject = `${sourceTag} [${reasonLabel}] ${name}`;
 
+  // Body also leads with the tag so the source is unmissable when reading
+  // the email itself (not just the subject line).
   const lines = [
-    `Source:       ${source}`,
-    `Reason:       ${reasonLabel}`,
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    `  ${sourceTag}   ${reasonLabel}`,
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    '',
     `First name:   ${firstName || '—'}`,
     `Family name:  ${familyName || '—'}`,
     `Email:        ${email}`,
-    phone ? `Phone:        ${phone}` : null,
+    `Phone:        ${phone || '— (not provided)'}`,
     '',
     'Message:',
     message,
     '',
     '— meta —',
+    `Source:  ${source}`,
     page ? `Page:    ${page}` : null,
     `IP:      ${ip}${country ? ` (${country})` : ''}`,
     `When:    ${new Date().toISOString()}`,
@@ -155,24 +160,25 @@ export async function onRequestPost({ request, env }) {
 
   const textBody = lines.join('\n');
 
+  const badgeBg = source === 'chat' ? '#0ea5e9' : source === 'form' ? '#8b5cf6' : '#64748b';
   const htmlBody = `
-    <div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;color:#111;">
-      <div style="font-size:11px;color:#888;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">
-        via ${escapeHtml(source)}
+    <div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;color:#111;max-width:600px;">
+      <div style="display:inline-block;padding:6px 12px;background:${badgeBg};color:#fff;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">
+        ${escapeHtml(sourceTag)} &nbsp;·&nbsp; ${escapeHtml(reasonLabel)}
       </div>
-      <h2 style="margin:0 0 12px;font-size:16px;">${escapeHtml(reasonLabel)}</h2>
-      <table style="font-size:14px;border-collapse:collapse;">
-        <tr><td style="padding:2px 12px 2px 0;color:#666;">First name</td><td>${escapeHtml(firstName)}</td></tr>
-        <tr><td style="padding:2px 12px 2px 0;color:#666;">Family name</td><td>${escapeHtml(familyName)}</td></tr>
-        <tr><td style="padding:2px 12px 2px 0;color:#666;">Email</td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
-        ${phone ? `<tr><td style="padding:2px 12px 2px 0;color:#666;">Phone</td><td>${escapeHtml(phone)}</td></tr>` : ''}
+      <table style="font-size:14px;border-collapse:collapse;width:100%;">
+        <tr><td style="padding:4px 12px 4px 0;color:#666;width:120px;">First name</td><td>${escapeHtml(firstName)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Family name</td><td>${escapeHtml(familyName)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td><a href="mailto:${escapeHtml(email)}" style="color:#0ea5e9;">${escapeHtml(email)}</a></td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Phone</td><td>${phone ? escapeHtml(phone) : '<span style="color:#bbb;">— (not provided)</span>'}</td></tr>
       </table>
-      <hr style="border:none;border-top:1px solid #eee;margin:16px 0;" />
-      <div style="white-space:pre-wrap;font-size:14px;">${escapeHtml(message)}</div>
-      <hr style="border:none;border-top:1px solid #eee;margin:16px 0;" />
+      <hr style="border:none;border-top:1px solid #eee;margin:18px 0;" />
+      <div style="white-space:pre-wrap;font-size:14px;padding:12px 16px;background:#f8fafc;border-radius:8px;border-left:3px solid ${badgeBg};">${escapeHtml(message)}</div>
+      <hr style="border:none;border-top:1px solid #eee;margin:18px 0;" />
       <div style="font-size:12px;color:#888;">
         ${page ? `Page: ${escapeHtml(page)}<br/>` : ''}
         IP: ${escapeHtml(ip)}${country ? ` (${escapeHtml(country)})` : ''}<br/>
+        Source: ${escapeHtml(source)}<br/>
         Sent: ${new Date().toISOString()}
       </div>
     </div>`;
