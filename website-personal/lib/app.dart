@@ -149,7 +149,11 @@ class App extends StatelessComponent {
           ),
         ],
         ),
-        const ChatBubble(),
+        ChatBubble(
+          photoUrl: site.photoDark,
+          nameAr: site.nameAr,
+          nameEn: site.nameEn,
+        ),
       ]),
     );
   }
