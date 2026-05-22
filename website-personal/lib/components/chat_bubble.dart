@@ -224,11 +224,28 @@ class ChatBubble extends StatelessComponent {
   var step = null;
   var started = false;
 
+  // Keyboard handling — use VisualViewport so the panel stays above the
+  // soft keyboard on Android/iOS (where 100dvh doesn't shrink reliably).
+  function updateViewportHeight(){
+    if (window.visualViewport) {
+      panel.style.setProperty('--chat-vh', window.visualViewport.height + 'px');
+    } else {
+      panel.style.setProperty('--chat-vh', window.innerHeight + 'px');
+    }
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateViewportHeight);
+    window.visualViewport.addEventListener('scroll', updateViewportHeight);
+  }
+  window.addEventListener('resize', updateViewportHeight);
+  updateViewportHeight();
+
   function openPanel(){
     panel.classList.add('open');
     bubble.classList.add('open');
     bubble.setAttribute('aria-expanded','true');
     panel.setAttribute('aria-hidden','false');
+    updateViewportHeight();
     if (!started) { started = true; start(); }
   }
   function closePanel(){

@@ -1525,28 +1525,31 @@ body { background: transparent; }
   text-transform: uppercase; line-height: 1.2;
 }
 
-/* Bottom input bar */
+/* Bottom input bar — floating card style (matches Claude Code's pattern).
+   Margin around the card → it visibly floats above the panel surface
+   rather than sitting flush at the bottom edge. */
 .chat-input {
   flex: 0 0 auto;
+  margin: 8px 10px;
+  margin-bottom: max(10px, env(safe-area-inset-bottom, 0));
+  padding: 6px 6px 6px 6px;
   display: flex; align-items: flex-end; gap: 6px;
-  padding: 8px 10px; padding-bottom: max(8px, env(safe-area-inset-bottom, 0));
   background: var(--color-surface-elevated);
-  border-top: var(--border-rule);
+  border: 1px solid var(--color-border-default);
+  border-radius: 22px;
+  box-shadow: 0 6px 18px -10px rgba(var(--color-shadow-rgb), 0.5);
   position: relative;
 }
-.chat-input__field { flex: 1; min-width: 0; }
+.chat-input__field { flex: 1; min-width: 0; align-self: center; }
 .chat-input__field textarea#chat-input-el {
   width: 100%; resize: none; overflow-y: auto; max-height: 120px;
-  padding: 10px 14px;
-  background: var(--color-surface-card); border: var(--border-rule);
-  border-radius: 20px; color: var(--color-text-default);
+  padding: 8px 12px;
+  background: transparent; border: none;
+  color: var(--color-text-default);
   font-family: inherit; font-size: 16px; line-height: 1.4;
-  transition: border-color .15s;
 }
-.chat-input__field textarea#chat-input-el:focus {
-  outline: none; border-color: var(--color-brand);
-}
-.chat-input__field--multiline { /* nothing extra — auto-height handled by JS */ }
+.chat-input__field textarea#chat-input-el:focus { outline: none; }
+.chat-input__field textarea#chat-input-el::placeholder { color: var(--color-text-faint); }
 
 .chat-input__send {
   width: 38px; height: 38px; flex-shrink: 0;
@@ -1554,24 +1557,27 @@ body { background: transparent; }
   border: none; border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: filter .15s, transform .1s;
+  align-self: flex-end;
 }
 .chat-input__send:hover { filter: brightness(1.1); }
 .chat-input__send:active { transform: scale(.95); }
+.chat-input__send:disabled { opacity: .4; cursor: not-allowed; }
 
 .chat-input__skip {
-  background: transparent; border: var(--border-rule);
-  border-radius: 999px; color: var(--color-text-muted);
+  background: transparent; border: none;
+  color: var(--color-text-muted);
   font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  letter-spacing: .04em; padding: 8px 12px;
-  cursor: pointer; transition: color .15s, border-color .15s;
+  letter-spacing: .04em; padding: 8px 10px;
+  cursor: pointer; transition: color .15s;
+  align-self: center;
 }
-.chat-input__skip:hover { color: var(--color-text-default); border-color: var(--color-brand); }
+.chat-input__skip:hover { color: var(--color-text-default); }
 
 /* Country code chip inside input bar */
-.chat-cc { position: relative; flex-shrink: 0; }
+.chat-cc { position: relative; flex-shrink: 0; align-self: center; }
 .chat-cc__btn {
   display: inline-flex; align-items: center; gap: 4px;
-  padding: 9px 10px;
+  padding: 8px 10px;
   background: var(--color-surface-card); border: var(--border-rule);
   border-radius: 999px; color: var(--color-text-default);
   font-family: inherit; cursor: pointer;
@@ -1615,12 +1621,15 @@ body { background: transparent; }
   .chat-bubble.open { opacity: 0; pointer-events: none; transform: scale(.6); }
 
   .chat-panel {
-    /* Full-screen sheet on mobile */
-    inset: 0;
-    width: auto; height: 100dvh; max-height: none;
+    /* Full-screen sheet on mobile. Height is driven by JS using the
+       VisualViewport API (--chat-vh) — that's the only reliable way to
+       follow the soft keyboard on Android Chrome, where 100dvh ignores
+       the keyboard. The 100dvh fallback covers desktops + pre-API browsers. */
+    top: 0; right: 0; left: 0; bottom: auto;
+    width: auto;
+    height: var(--chat-vh, 100dvh);
+    max-height: none;
     border-radius: 0; border: none;
-    /* When keyboard opens, 100dvh shrinks and the input bar floats up
-       naturally because the feed flex-shrinks. */
   }
   .chat-msg { max-width: 88%; font-size: 15px; }
   .chat-chip__ar { font-size: 14px; }
