@@ -1357,6 +1357,13 @@ body { background: transparent; }
 /* ─────────────────────────────────────────────────────────────────────
    CHAT BUBBLE (global organism — lib/components/chat_bubble.dart)
    ───────────────────────────────────────────────────────────────────── */
+/* The `hidden` HTML attribute defaults to display:none, but element rules
+   below (display:flex, etc.) override it. Force the contract back. */
+.chat-panel [hidden],
+.chat-form[hidden],
+.chat-choices[hidden],
+.chat-success[hidden] { display: none !important; }
+
 .chat-bubble {
   position: fixed; bottom: 20px; right: 20px; z-index: 200;
   width: 56px; height: 56px; border-radius: 50%;
@@ -1406,9 +1413,12 @@ body { background: transparent; }
   text-transform: uppercase;
 }
 
+/* The whole panel scrolls as one column — no inner scroll regions
+   (those caused fight-with-the-keyboard bugs on mobile). */
+.chat-panel { overflow-y: auto; }
 .chat-feed {
   padding: var(--space-3) var(--space-4);
-  overflow-y: auto; flex: 0 1 auto; max-height: 220px;
+  flex: 0 0 auto;
   display: flex; flex-direction: column; gap: var(--space-2);
 }
 .chat-msg {
@@ -1457,7 +1467,6 @@ body { background: transparent; }
 .chat-form {
   padding: var(--space-3) var(--space-4) var(--space-4);
   border-top: var(--border-rule);
-  overflow-y: auto;
 }
 .chat-form__field { margin-bottom: var(--space-2-5); }
 .chat-form__field label {
@@ -1466,12 +1475,14 @@ body { background: transparent; }
   letter-spacing: .08em; text-transform: uppercase;
   margin-bottom: 4px;
 }
+/* 16px font-size on form inputs — anything smaller and iOS Safari
+   auto-zooms when the user taps the field. Hard requirement. */
 .chat-form__field input,
 .chat-form__field textarea {
-  width: 100%; padding: var(--space-2) var(--space-2-5);
+  width: 100%; padding: var(--space-2-5) var(--space-3);
   background: var(--color-surface-elevated); border: var(--border-rule);
   border-radius: var(--radius-sm); color: var(--color-text-default);
-  font-family: inherit; font-size: var(--text-sm);
+  font-family: inherit; font-size: 16px;
   transition: border-color .15s;
 }
 .chat-form__field input:focus,
@@ -1518,10 +1529,10 @@ body { background: transparent; }
 .chat-phone__cc { position: relative; flex-shrink: 0; }
 .chat-phone__cc-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: var(--space-2) var(--space-2-5);
+  padding: var(--space-2-5) var(--space-3);
   background: var(--color-surface-elevated); border: var(--border-rule);
   border-radius: var(--radius-sm); color: var(--color-text-default);
-  font-family: inherit; font-size: var(--text-sm); cursor: pointer;
+  font-family: inherit; font-size: 15px; cursor: pointer;
   transition: border-color .15s;
 }
 .chat-phone__cc-btn:hover { border-color: color-mix(in srgb, var(--color-brand) 40%, var(--color-border-default)); }
@@ -1572,7 +1583,14 @@ body { background: transparent; }
 [dir="rtl"] .chat-panel { right: auto; left: 20px; }
 
 @media (max-width: 640px) {
-  .chat-bubble { bottom: 16px; right: 16px; width: 52px; height: 52px; }
-  .chat-panel  { bottom: 80px; right: 16px; left: 16px; width: auto; }
-  .chat-feed   { max-height: 180px; }
+  /* Lift the bubble above the iOS home indicator + bottom Safari bar. */
+  .chat-bubble { bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); right: 16px; width: 52px; height: 52px; }
+  .chat-panel  {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 82px);
+    right: 12px; left: 12px; width: auto;
+    max-height: calc(100dvh - env(safe-area-inset-bottom, 0px) - 110px);
+  }
+  /* Country dropdown is anchored to a small button — clamp width so it
+     never exceeds the panel on narrow phones. */
+  .chat-phone__cc-menu { min-width: 0; width: min(260px, calc(100vw - 60px)); }
 }
