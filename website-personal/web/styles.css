@@ -1390,6 +1390,21 @@ body { background: transparent; }
 .chat-panel [hidden] { display: none !important; }
 .chat-hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
 
+/* When the chat panel is open, freeze the entire document so mobile
+   browsers stop animating the URL bar on touch-scroll (which was
+   making the chat input visibly jump around as the viewport resized).
+   JS sets this class on <html> in lockBody(). */
+html.chat-locked {
+  overflow: hidden !important;
+  height: 100% !important;
+  position: fixed !important;
+  width: 100% !important;
+  /* Belt: also reject document-level touch panning so the browser
+     can't pick up a "scroll the page" intent at all. Inner scrollable
+     regions (chat-feed, textarea) override this themselves. */
+  touch-action: none;
+}
+
 /* Toggle button (FAB) */
 .chat-bubble {
   position: fixed;
