@@ -1448,10 +1448,22 @@ body { background: transparent; }
   border: 2px solid var(--color-surface-elevated);
   box-sizing: border-box;
 }
-.chat-header__meta { flex: 1; min-width: 0; text-align: end; }
+.chat-header__meta {
+  flex: 1; min-width: 0;
+  /* Right-align both AR and EN consistently. text-align: end was flipping
+     EN to the visual right and AR to the visual left because each span
+     has its own direction. Force physical right. */
+  text-align: right;
+}
 .chat-header__name {
   display: flex; flex-direction: column; gap: 3px;
   line-height: 1.2;
+}
+.chat-header__name-ar,
+.chat-header__name-en,
+.chat-header__status-ar,
+.chat-header__status-en {
+  text-align: right;
 }
 .chat-header__name-ar {
   font-size: 15px; font-weight: 600; color: var(--color-text-default);
