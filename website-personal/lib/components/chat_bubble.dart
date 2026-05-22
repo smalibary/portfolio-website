@@ -240,11 +240,36 @@ class ChatBubble extends StatelessComponent {
   window.addEventListener('resize', updateViewportHeight);
   updateViewportHeight();
 
+  // Body-scroll lock — needed so the page beneath doesn't scroll, doesn't
+  // bounce, and doesn't make iOS Safari/Chrome animate their URL bar
+  // (which was making the chat header/input appear to disappear while
+  // the user scrolled inside the feed).
+  var savedScrollY = 0;
+  function lockBody(){
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = -savedScrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockBody(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, savedScrollY);
+  }
+
   function openPanel(){
     panel.classList.add('open');
     bubble.classList.add('open');
     bubble.setAttribute('aria-expanded','true');
     panel.setAttribute('aria-hidden','false');
+    lockBody();
     updateViewportHeight();
     if (!started) { started = true; start(); }
   }
@@ -253,6 +278,7 @@ class ChatBubble extends StatelessComponent {
     bubble.classList.remove('open');
     bubble.setAttribute('aria-expanded','false');
     panel.setAttribute('aria-hidden','true');
+    unlockBody();
   }
   bubble.addEventListener('click', function(){
     panel.classList.contains('open') ? closePanel() : openPanel();
