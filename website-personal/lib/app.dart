@@ -31,6 +31,11 @@ class App extends StatelessComponent {
     final posts = BlogPost.loadAll();
     final papers = Paper.loadAll();
 
+    // Build-time cache-bust. Browsers (esp. iOS Safari) aggressively cache
+    // /styles.css since it has no fingerprint. Stamping a per-build query
+    // string on every stylesheet href forces a refetch on every deploy.
+    final cacheBust = DateTime.now().millisecondsSinceEpoch.toString();
+
 
     // jaspr Document uses a conditional export — the unnamed constructor
     // is only on the server variant. Analyzer resolves to the client variant
@@ -58,11 +63,11 @@ class App extends StatelessComponent {
           href:
               'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap',
         ),
-        link(rel: 'stylesheet', href: '/tokens/primitives.css'),
-        link(rel: 'stylesheet', href: '/tokens/semantic.css'),
-        link(rel: 'stylesheet', href: '/tokens/components.css'),
-        link(rel: 'stylesheet', href: '/styles.css'),
-        link(rel: 'stylesheet', href: '/admin.css'),
+        link(rel: 'stylesheet', href: '/tokens/primitives.css?v=$cacheBust'),
+        link(rel: 'stylesheet', href: '/tokens/semantic.css?v=$cacheBust'),
+        link(rel: 'stylesheet', href: '/tokens/components.css?v=$cacheBust'),
+        link(rel: 'stylesheet', href: '/styles.css?v=$cacheBust'),
+        link(rel: 'stylesheet', href: '/admin.css?v=$cacheBust'),
         // Apply persisted theme before paint to avoid flash of wrong theme
         script(
           content:
