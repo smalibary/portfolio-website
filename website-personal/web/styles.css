@@ -1613,7 +1613,7 @@ body { background: transparent; }
   display: flex; align-items: center; justify-content: center;
   /* Triangle glyph — same family used by .nav__split-arrow's ▼.
      Optical-center it by nudging 1px right (left-pointing glyph leans). */
-  font-size: 13px; line-height: 1; padding-right: 1px;
+  font-size: 17px; line-height: 1; padding-right: 1px;
   transition: filter .15s, transform .1s;
   align-self: flex-end;
 }
