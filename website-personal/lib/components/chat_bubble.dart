@@ -2,17 +2,27 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
 /// Role: organism (global)
-/// Floating chat bubble + conversational contact panel. Renders on every
-/// page via App. State machine and validation live in the inline script;
-/// submit POSTs to /api/contact (a Cloudflare Pages Function backed by
-/// Resend). Recipient is configured in the function via CONTACT_EMAIL.
+/// Conversational chat bubble. Renders Salem's avatar + name in a header,
+/// streams bot/user messages into a feed, and morphs a single bottom input
+/// bar based on the current step (choice chips → name → email → phone →
+/// message → send). State machine and validation live in inline JS; submit
+/// POSTs to /api/contact (a Cloudflare Pages Function backed by Resend).
 class ChatBubble extends StatelessComponent {
-  const ChatBubble({super.key});
+  const ChatBubble({
+    required this.photoUrl,
+    required this.nameAr,
+    required this.nameEn,
+    super.key,
+  });
+
+  final String photoUrl;
+  final String nameAr;
+  final String nameEn;
 
   @override
   Component build(BuildContext context) {
     return Component.fragment([
-      // Toggle button (always visible, fixed bottom-end)
+      // Toggle button
       button(
         id: 'chat-bubble',
         classes: 'chat-bubble',
@@ -32,151 +42,98 @@ class ChatBubble extends StatelessComponent {
         ],
       ),
 
-      // Panel (hidden by default; toggled via .open on body wrapper)
+      // Panel
       div(
         id: 'chat-panel',
         classes: 'chat-panel',
         attributes: const {'role': 'dialog', 'aria-label': 'Chat with Salem', 'aria-hidden': 'true'},
         [
-          // Header
-          div(classes: 'chat-panel__header', [
-            div(classes: 'chat-panel__title', [
-              span(classes: 'chat-panel__dot', []),
-              span([text('Salem · سالم')]),
+          // Header — avatar, name, status, close
+          div(classes: 'chat-header', [
+            img(
+              classes: 'chat-header__avatar',
+              src: '/images/$photoUrl',
+              alt: nameEn,
+              attributes: const {'width': '40', 'height': '40'},
+            ),
+            div(classes: 'chat-header__meta', [
+              div(classes: 'chat-header__name', [
+                span(classes: 'chat-header__name-ar', [text(nameAr)]),
+                span(classes: 'chat-header__name-en', [text(nameEn)]),
+              ]),
+              div(classes: 'chat-header__status', [
+                span(classes: 'chat-header__dot', []),
+                span([text('عادة يرد خلال يوم · usually replies within a day')]),
+              ]),
             ]),
-            span(classes: 'chat-panel__sub', [text('عادة يرد خلال يوم · usually replies within a day')]),
-          ]),
-
-          // Conversation feed
-          div(id: 'chat-feed', classes: 'chat-feed', [
-            div(classes: 'chat-msg chat-msg--bot', [
-              p([text('مرحباً 👋 شكراً لمرورك. كيف يمكنني مساعدتك؟')]),
-              p(classes: 'chat-msg__en', [text("Hi! Thanks for stopping by. What brings you here?")]),
-            ]),
-          ]),
-
-          // Stage 1: choices
-          div(id: 'chat-choices', classes: 'chat-choices', [
-            _choice('project', 'بدء مشروع', 'Start a project'),
-            _choice('hire', 'توظيف / تعاون', 'Hire / collaborate'),
-            _choice('press', 'صحافة أو محاضرات', 'Press or speaking'),
-            _choice('question', 'سؤال عام', 'General question'),
-            _choice('feedback', 'ملاحظة أو اقتراح', 'Feedback or suggestion'),
-            _choice('other', 'شيء آخر…', 'Something else…'),
-          ]),
-
-          // Stage 2: form (hidden until a choice is made)
-          form(
-            id: 'chat-form',
-            classes: 'chat-form',
-            attributes: const {'novalidate': '', 'hidden': ''},
-            [
-              // Hidden — captures the choice (or free-text from "other")
-              input(type: InputType.hidden, attributes: const {'name': 'reason', 'id': 'cb-reason'}),
-
-              // "Other" free-text (hidden unless 'other' was picked)
-              div(id: 'cb-other-wrap', classes: 'chat-form__field', attributes: const {'hidden': ''}, [
-                label(attributes: const {'for': 'cb-other'}, [text('عن ماذا؟ · ABOUT WHAT?')]),
-                input(
-                  type: InputType.text,
-                  id: 'cb-other',
-                  attributes: const {'name': 'reason_other', 'maxlength': '120', 'placeholder': 'باختصار…'},
-                ),
-              ]),
-
-              div(classes: 'chat-form__field', [
-                label(attributes: const {'for': 'cb-name'}, [text('الاسم · NAME *')]),
-                input(
-                  type: InputType.text,
-                  id: 'cb-name',
-                  attributes: const {'name': 'name', 'required': '', 'maxlength': '80', 'autocomplete': 'name'},
-                ),
-                span(classes: 'chat-form__error', attributes: const {'data-error-for': 'cb-name'}, []),
-              ]),
-
-              div(classes: 'chat-form__field', [
-                label(attributes: const {'for': 'cb-email'}, [text('البريد · EMAIL *')]),
-                input(
-                  type: InputType.email,
-                  id: 'cb-email',
-                  attributes: const {'name': 'email', 'required': '', 'maxlength': '120', 'autocomplete': 'email', 'placeholder': 'you@example.com'},
-                ),
-                span(classes: 'chat-form__error', attributes: const {'data-error-for': 'cb-email'}, []),
-              ]),
-
-              div(classes: 'chat-form__field', [
-                label(attributes: const {'for': 'cb-phone'}, [text('الجوال (اختياري) · PHONE (optional)')]),
-                div(classes: 'chat-phone', [
-                  // Country code dropdown
-                  div(classes: 'chat-phone__cc', [
-                    button(
-                      classes: 'chat-phone__cc-btn',
-                      attributes: const {'type': 'button', 'aria-haspopup': 'listbox', 'aria-expanded': 'false'},
-                      [
-                        span(classes: 'chat-phone__cc-flag', [text('🇸🇦')]),
-                        span(classes: 'chat-phone__cc-code', [text('+966')]),
-                        span(classes: 'chat-phone__cc-caret', [text('▾')]),
-                      ],
-                    ),
-                    input(type: InputType.hidden, attributes: const {'name': 'phone_cc', 'id': 'cb-phone-cc', 'value': '+966'}),
-                    div(classes: 'chat-phone__cc-menu', attributes: const {'role': 'listbox'}, _countryOptions()),
-                  ]),
-                  input(
-                    type: InputType.tel,
-                    id: 'cb-phone',
-                    attributes: const {'name': 'phone', 'maxlength': '20', 'autocomplete': 'tel-national', 'placeholder': '5XX XXX XXX', 'inputmode': 'tel'},
-                  ),
-                ]),
-                span(classes: 'chat-form__error', attributes: const {'data-error-for': 'cb-phone'}, []),
-              ]),
-
-              div(classes: 'chat-form__field', [
-                label(attributes: const {'for': 'cb-message'}, [text('الرسالة · MESSAGE *')]),
-                textarea(
-                  id: 'cb-message',
-                  attributes: const {'name': 'message', 'required': '', 'rows': '4', 'maxlength': '2000', 'placeholder': 'اكتب رسالتك هنا…'},
-                  [],
-                ),
-                span(classes: 'chat-form__error', attributes: const {'data-error-for': 'cb-message'}, []),
-              ]),
-
-              // Honeypot — visually hidden, bots fill it, we drop the submit
-              div(classes: 'chat-form__honeypot', attributes: const {'aria-hidden': 'true'}, [
-                label(attributes: const {'for': 'cb-website'}, [text('Website')]),
-                input(type: InputType.text, id: 'cb-website', attributes: const {'name': 'website', 'tabindex': '-1', 'autocomplete': 'off'}),
-              ]),
-
-              div(classes: 'chat-form__actions', [
-                button(
-                  type: ButtonType.button,
-                  classes: 'chat-form__back',
-                  attributes: const {'id': 'cb-back'},
-                  [text('← رجوع · Back')],
-                ),
-                button(
-                  type: ButtonType.submit,
-                  classes: 'chat-form__submit',
-                  attributes: const {'id': 'cb-submit'},
-                  [text('إرسال · Send')],
-                ),
-              ]),
-
-              span(id: 'cb-form-error', classes: 'chat-form__error chat-form__error--form', []),
-            ],
-          ),
-
-          // Stage 3: success
-          div(id: 'chat-success', classes: 'chat-success', attributes: const {'hidden': ''}, [
-            div(classes: 'chat-success__check', [text('✓')]),
-            p([text('وصلتني رسالتك. سأرد عليك قريباً.')]),
-            p(classes: 'chat-msg__en', [text('Got it. I will get back to you soon.')]),
             button(
-              type: ButtonType.button,
-              classes: 'chat-form__back',
-              attributes: const {'id': 'cb-restart'},
-              [text('محادثة جديدة · New chat')],
+              id: 'chat-close',
+              classes: 'chat-header__close',
+              attributes: const {'type': 'button', 'aria-label': 'Close chat'},
+              [
+                raw('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'),
+              ],
             ),
           ]),
+
+          // Feed — bot/user bubbles get appended here by JS
+          div(id: 'chat-feed', classes: 'chat-feed', []),
+
+          // Bottom input bar — JS toggles visibility and configures kind
+          div(id: 'chat-input', classes: 'chat-input', attributes: const {'hidden': ''}, [
+            // Country code (shown only for the phone step)
+            div(id: 'chat-cc', classes: 'chat-cc', attributes: const {'hidden': ''}, [
+              button(
+                id: 'chat-cc-btn',
+                classes: 'chat-cc__btn',
+                attributes: const {'type': 'button', 'aria-haspopup': 'listbox'},
+                [
+                  span(id: 'chat-cc-flag', classes: 'chat-cc__flag', [text('🇸🇦')]),
+                  span(id: 'chat-cc-code', classes: 'chat-cc__code', [text('+966')]),
+                ],
+              ),
+              div(id: 'chat-cc-menu', classes: 'chat-cc__menu', attributes: const {'role': 'listbox'}, _countryOptions()),
+            ]),
+
+            // The actual input control (single-line input OR textarea, swapped by JS)
+            div(classes: 'chat-input__field', [
+              textarea(
+                id: 'chat-input-el',
+                attributes: const {
+                  'rows': '1',
+                  'placeholder': 'اكتب رسالتك…',
+                  'maxlength': '2000',
+                  'autocomplete': 'off',
+                  'enterkeyhint': 'send',
+                },
+                [],
+              ),
+            ]),
+
+            button(
+              id: 'chat-skip',
+              classes: 'chat-input__skip',
+              attributes: const {'type': 'button', 'hidden': ''},
+              [text('تخطى · Skip')],
+            ),
+
+            button(
+              id: 'chat-send',
+              classes: 'chat-input__send',
+              attributes: const {'type': 'button', 'aria-label': 'Send'},
+              [
+                raw('<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>'),
+              ],
+            ),
+          ]),
+
+          // Honeypot (visually hidden)
+          input(
+            type: InputType.text,
+            id: 'chat-hp',
+            classes: 'chat-hp',
+            attributes: const {'name': 'website', 'tabindex': '-1', 'autocomplete': 'off', 'aria-hidden': 'true'},
+          ),
         ],
       ),
 
@@ -185,19 +142,6 @@ class ChatBubble extends StatelessComponent {
     ]);
   }
 
-  static Component _choice(String value, String ar, String en) {
-    return button(
-      classes: 'chat-choice',
-      attributes: {'type': 'button', 'data-choice': value},
-      [
-        span(classes: 'chat-choice__ar', [text(ar)]),
-        span(classes: 'chat-choice__en', [text(en)]),
-      ],
-    );
-  }
-
-  // Curated country code list. Keep this short — GCC + a few global. Users
-  // can add more by editing this list.
   static List<Component> _countryOptions() {
     const list = <List<String>>[
       ['🇸🇦', '+966', 'Saudi Arabia'],
@@ -210,7 +154,7 @@ class ChatBubble extends StatelessComponent {
       ['🇯🇴', '+962', 'Jordan'],
       ['🇱🇧', '+961', 'Lebanon'],
       ['🇹🇷', '+90', 'Türkiye'],
-      ['🇺🇸', '+1', 'United States / Canada'],
+      ['🇺🇸', '+1', 'US / Canada'],
       ['🇬🇧', '+44', 'United Kingdom'],
       ['🇦🇺', '+61', 'Australia'],
       ['🇫🇷', '+33', 'France'],
@@ -223,17 +167,12 @@ class ChatBubble extends StatelessComponent {
     return [
       for (final c in list)
         button(
-          classes: 'chat-phone__cc-opt',
-          attributes: {
-            'type': 'button',
-            'role': 'option',
-            'data-cc': c[1],
-            'data-flag': c[0],
-          },
+          classes: 'chat-cc__opt',
+          attributes: {'type': 'button', 'role': 'option', 'data-cc': c[1], 'data-flag': c[0]},
           [
-            span(classes: 'chat-phone__cc-flag', [text(c[0])]),
-            span(classes: 'chat-phone__cc-name', [text(c[2])]),
-            span(classes: 'chat-phone__cc-code', [text(c[1])]),
+            span(classes: 'chat-cc__flag', [text(c[0])]),
+            span(classes: 'chat-cc__name', [text(c[2])]),
+            span(classes: 'chat-cc__code', [text(c[1])]),
           ],
         ),
     ];
@@ -241,34 +180,29 @@ class ChatBubble extends StatelessComponent {
 
   static const _script = r'''
 (function(){
-  var bubble  = document.getElementById('chat-bubble');
-  var panel   = document.getElementById('chat-panel');
+  var bubble = document.getElementById('chat-bubble');
+  var panel  = document.getElementById('chat-panel');
   if (!bubble || !panel) return;
 
-  // Hide on admin pages — visitors only.
+  // Hide on admin pages.
   if (location.pathname.indexOf('/admin') === 0) {
     bubble.style.display = 'none';
     panel.style.display  = 'none';
     return;
   }
 
-  var choices    = document.getElementById('chat-choices');
-  var form       = document.getElementById('chat-form');
-  var feed       = document.getElementById('chat-feed');
-  var success    = document.getElementById('chat-success');
-  var reasonIn   = document.getElementById('cb-reason');
-  var otherWrap  = document.getElementById('cb-other-wrap');
-  var otherIn    = document.getElementById('cb-other');
-  var nameIn     = document.getElementById('cb-name');
-  var emailIn    = document.getElementById('cb-email');
-  var phoneIn    = document.getElementById('cb-phone');
-  var phoneCcIn  = document.getElementById('cb-phone-cc');
-  var msgIn      = document.getElementById('cb-message');
-  var hpIn       = document.getElementById('cb-website');
-  var submitBtn  = document.getElementById('cb-submit');
-  var backBtn    = document.getElementById('cb-back');
-  var restartBtn = document.getElementById('cb-restart');
-  var formErr    = document.getElementById('cb-form-error');
+  var feed     = document.getElementById('chat-feed');
+  var inputBar = document.getElementById('chat-input');
+  var inputEl  = document.getElementById('chat-input-el');
+  var sendBtn  = document.getElementById('chat-send');
+  var skipBtn  = document.getElementById('chat-skip');
+  var closeBtn = document.getElementById('chat-close');
+  var cc       = document.getElementById('chat-cc');
+  var ccBtn    = document.getElementById('chat-cc-btn');
+  var ccMenu   = document.getElementById('chat-cc-menu');
+  var ccFlag   = document.getElementById('chat-cc-flag');
+  var ccCode   = document.getElementById('chat-cc-code');
+  var hp       = document.getElementById('chat-hp');
 
   var REASONS = {
     project:  ['بدء مشروع',          'Start a project'],
@@ -279,11 +213,20 @@ class ChatBubble extends StatelessComponent {
     other:    ['شيء آخر',            'Something else']
   };
 
+  // Conversation state
+  var data = {
+    reason: '', reason_other: '',
+    name: '', email: '', phone: '', phone_cc: '+966', message: '',
+  };
+  var step = null;
+  var started = false;
+
   function openPanel(){
     panel.classList.add('open');
     bubble.classList.add('open');
     bubble.setAttribute('aria-expanded','true');
     panel.setAttribute('aria-hidden','false');
+    if (!started) { started = true; start(); }
   }
   function closePanel(){
     panel.classList.remove('open');
@@ -292,163 +235,254 @@ class ChatBubble extends StatelessComponent {
     panel.setAttribute('aria-hidden','true');
   }
   bubble.addEventListener('click', function(){
-    if (panel.classList.contains('open')) closePanel(); else openPanel();
+    panel.classList.contains('open') ? closePanel() : openPanel();
+  });
+  closeBtn.addEventListener('click', closePanel);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
   });
 
-  // Choice click → reveal form, hide choices, append messages to feed
-  choices.querySelectorAll('[data-choice]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var val = btn.getAttribute('data-choice');
-      reasonIn.value = val;
-      var labels = REASONS[val] || ['',''];
+  function scrollDown(){
+    setTimeout(function(){ feed.scrollTop = feed.scrollHeight; }, 30);
+  }
 
-      var userMsg = document.createElement('div');
-      userMsg.className = 'chat-msg chat-msg--user';
-      userMsg.innerHTML = '<p>'+labels[0]+'</p>';
-      feed.appendChild(userMsg);
-
-      var botReply = document.createElement('div');
-      botReply.className = 'chat-msg chat-msg--bot';
-      if (val === 'other') {
-        botReply.innerHTML = '<p>تمام. شاركني التفاصيل وسأرد عليك.</p>'+
-                             '<p class="chat-msg__en">Got it — share the details below and I will reply.</p>';
-        otherWrap.removeAttribute('hidden');
-      } else {
-        botReply.innerHTML = '<p>عظيم. أكمل المعلومات وسأتواصل معك.</p>'+
-                             '<p class="chat-msg__en">Great — fill in the details and I will get in touch.</p>';
-      }
-      feed.appendChild(botReply);
-
-      choices.setAttribute('hidden','');
-      form.removeAttribute('hidden');
-      feed.scrollTop = feed.scrollHeight;
-      setTimeout(function(){ (otherWrap.hasAttribute('hidden') ? nameIn : otherIn).focus(); }, 60);
-    });
-  });
-
-  backBtn.addEventListener('click', function(){
-    form.setAttribute('hidden','');
-    choices.removeAttribute('hidden');
-    // Remove last 2 chat messages (the user choice + bot reply)
-    var bots = feed.querySelectorAll('.chat-msg');
-    if (bots.length > 2) {
-      feed.removeChild(bots[bots.length - 1]);
-      feed.removeChild(bots[bots.length - 2]);
+  function addBot(arHtml, enHtml, withTyping, done){
+    if (withTyping) {
+      var typing = document.createElement('div');
+      typing.className = 'chat-msg chat-msg--bot chat-typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      feed.appendChild(typing);
+      scrollDown();
+      setTimeout(function(){
+        feed.removeChild(typing);
+        var b = document.createElement('div');
+        b.className = 'chat-msg chat-msg--bot';
+        b.innerHTML = '<p>'+arHtml+'</p>' + (enHtml ? '<p class="chat-msg__en">'+enHtml+'</p>' : '');
+        feed.appendChild(b);
+        scrollDown();
+        if (done) done();
+      }, 550);
+    } else {
+      var b = document.createElement('div');
+      b.className = 'chat-msg chat-msg--bot';
+      b.innerHTML = '<p>'+arHtml+'</p>' + (enHtml ? '<p class="chat-msg__en">'+enHtml+'</p>' : '');
+      feed.appendChild(b);
+      scrollDown();
+      if (done) done();
     }
-    clearErrors();
-  });
+  }
 
-  restartBtn.addEventListener('click', function(){
-    success.setAttribute('hidden','');
-    form.removeAttribute('hidden');
-    form.reset();
-    choices.removeAttribute('hidden');
-    form.setAttribute('hidden','');
-    otherWrap.setAttribute('hidden','');
-    reasonIn.value = '';
-    // Trim feed back to the original greeting
-    var msgs = feed.querySelectorAll('.chat-msg');
-    for (var i = 1; i < msgs.length; i++) feed.removeChild(msgs[i]);
-    clearErrors();
+  function addUser(textValue){
+    var b = document.createElement('div');
+    b.className = 'chat-msg chat-msg--user';
+    var p = document.createElement('p');
+    p.textContent = textValue;
+    b.appendChild(p);
+    feed.appendChild(b);
+    scrollDown();
+  }
+
+  function addChips(choices, onPick){
+    var wrap = document.createElement('div');
+    wrap.className = 'chat-chips';
+    choices.forEach(function(c){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chat-chip';
+      b.setAttribute('data-value', c.value);
+      b.innerHTML = '<span class="chat-chip__ar">'+c.ar+'</span>'+
+                    '<span class="chat-chip__en">'+c.en+'</span>';
+      b.addEventListener('click', function(){
+        wrap.classList.add('chat-chips--locked');
+        wrap.querySelectorAll('button').forEach(function(x){
+          if (x !== b) x.remove();
+          x.disabled = true;
+        });
+        onPick(c);
+      });
+      wrap.appendChild(b);
+    });
+    feed.appendChild(wrap);
+    scrollDown();
+  }
+
+  // Input bar config
+  function setInputKind(kind){
+    // kind: 'text' | 'email' | 'tel' | 'textarea' | 'hidden'
+    if (kind === 'hidden') { inputBar.setAttribute('hidden',''); return; }
+    inputBar.removeAttribute('hidden');
+    inputEl.value = '';
+    // Reset attributes
+    inputEl.removeAttribute('type'); // textarea ignores type
+    inputEl.rows = (kind === 'textarea') ? 3 : 1;
+    inputEl.style.height = 'auto';
+    inputEl.classList.toggle('chat-input__field--multiline', kind === 'textarea');
+
+    if (kind === 'tel') {
+      cc.removeAttribute('hidden');
+      inputEl.setAttribute('inputmode', 'tel');
+      inputEl.setAttribute('placeholder', '5XX XXX XXX');
+    } else {
+      cc.setAttribute('hidden','');
+      inputEl.removeAttribute('inputmode');
+      if (kind === 'email') {
+        inputEl.setAttribute('inputmode', 'email');
+        inputEl.setAttribute('placeholder', 'you@example.com');
+      } else if (kind === 'textarea') {
+        inputEl.setAttribute('placeholder', 'اكتب رسالتك…');
+      } else {
+        inputEl.setAttribute('placeholder', 'اكتب هنا…');
+      }
+    }
+    setTimeout(function(){ inputEl.focus({preventScroll:true}); }, 350);
+  }
+  function showSkip(show){ show ? skipBtn.removeAttribute('hidden') : skipBtn.setAttribute('hidden',''); }
+
+  // Auto-resize textarea
+  inputEl.addEventListener('input', function(){
+    if (inputEl.classList.contains('chat-input__field--multiline')) {
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
+    }
   });
 
   // Country code dropdown
-  var ccWrap = panel.querySelector('.chat-phone__cc');
-  if (ccWrap) {
-    var ccBtn  = ccWrap.querySelector('.chat-phone__cc-btn');
-    var ccMenu = ccWrap.querySelector('.chat-phone__cc-menu');
-    var ccFlag = ccBtn.querySelector('.chat-phone__cc-flag');
-    var ccCode = ccBtn.querySelector('.chat-phone__cc-code');
-    ccBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      var open = ccWrap.classList.toggle('open');
-      ccBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  ccBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    cc.classList.toggle('open');
+  });
+  document.addEventListener('click', function(e){
+    if (!cc.contains(e.target)) cc.classList.remove('open');
+  });
+  ccMenu.querySelectorAll('[data-cc]').forEach(function(opt){
+    opt.addEventListener('click', function(){
+      data.phone_cc = opt.getAttribute('data-cc');
+      ccFlag.textContent = opt.getAttribute('data-flag');
+      ccCode.textContent = opt.getAttribute('data-cc');
+      cc.classList.remove('open');
+      inputEl.focus();
     });
-    document.addEventListener('click', function(e){
-      if (!ccWrap.contains(e.target)) {
-        ccWrap.classList.remove('open');
-        ccBtn.setAttribute('aria-expanded','false');
-      }
-    });
-    ccMenu.querySelectorAll('[data-cc]').forEach(function(opt){
-      opt.addEventListener('click', function(){
-        phoneCcIn.value = opt.getAttribute('data-cc');
-        ccFlag.textContent = opt.getAttribute('data-flag');
-        ccCode.textContent = opt.getAttribute('data-cc');
-        ccWrap.classList.remove('open');
-        ccBtn.setAttribute('aria-expanded','false');
-        phoneIn.focus();
-      });
-    });
-  }
+  });
 
-  // Validation
-  function showError(field, msg){
-    var holder = panel.querySelector('[data-error-for="'+field.id+'"]');
-    if (holder) holder.textContent = msg || '';
-    if (msg) field.classList.add('invalid'); else field.classList.remove('invalid');
-  }
-  function clearErrors(){
-    panel.querySelectorAll('.chat-form__error').forEach(function(e){ e.textContent = ''; });
-    panel.querySelectorAll('.invalid').forEach(function(e){ e.classList.remove('invalid'); });
-    formErr.textContent = '';
-  }
+  // Send + Skip + Enter handling
+  sendBtn.addEventListener('click', submit);
+  skipBtn.addEventListener('click', function(){ submit(true); });
+  inputEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey &&
+        !inputEl.classList.contains('chat-input__field--multiline')) {
+      e.preventDefault(); submit();
+    }
+  });
+
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  function validateEmail(){
-    var v = emailIn.value.trim();
-    if (!v) { showError(emailIn, 'البريد مطلوب · Email is required'); return false; }
-    if (!EMAIL_RE.test(v)) { showError(emailIn, 'البريد غير صحيح · Hmm, that does not look like a valid email.'); return false; }
-    showError(emailIn, ''); return true;
-  }
-  function validatePhone(){
-    var v = phoneIn.value.trim();
-    if (!v) { showError(phoneIn, ''); return true; } // optional
-    var digits = v.replace(/[^\d]/g,'');
-    if (digits.length < 6 || digits.length > 15) {
-      showError(phoneIn, 'الرقم يبدو غير صحيح · That number looks off — please double-check.');
-      return false;
+  function submit(viaSkip){
+    var v = inputEl.value.trim();
+    if (step === 'name') {
+      if (!v) { return botError('ممكن اسمك؟','Mind sharing your name?'); }
+      data.name = v; addUser(v); goEmail();
+    } else if (step === 'email') {
+      if (!v || !EMAIL_RE.test(v)) {
+        return botError('هذا البريد غير صحيح.','That does not look like a valid email — try again?');
+      }
+      data.email = v; addUser(v); goPhone();
+    } else if (step === 'phone') {
+      if (viaSkip || !v) {
+        data.phone = '';
+        addUser('تخطى · Skipped');
+      } else {
+        var digits = v.replace(/[^\d]/g,'');
+        if (digits.length < 6 || digits.length > 15) {
+          return botError('الرقم يبدو غير صحيح. حاول مرة أخرى أو تخطى.','That number looks off — try again or skip.');
+        }
+        data.phone = data.phone_cc + ' ' + v;
+        addUser(data.phone);
+      }
+      goMessage();
+    } else if (step === 'message') {
+      if (v.length < 2) { return botError('اكتب لي شيئاً عن سؤالك.','Tell me a bit about what is on your mind.'); }
+      data.message = v; addUser(v); send();
+    } else if (step === 'other_what') {
+      if (!v) { return botError('وضّح لي باختصار.','Just a sentence is fine.'); }
+      data.reason_other = v; addUser(v); goName();
     }
-    showError(phoneIn, ''); return true;
-  }
-  function validateName(){
-    var v = nameIn.value.trim();
-    if (!v) { showError(nameIn, 'الاسم مطلوب · Name is required'); return false; }
-    showError(nameIn, ''); return true;
-  }
-  function validateMessage(){
-    var v = msgIn.value.trim();
-    if (v.length < 2) { showError(msgIn, 'الرسالة مطلوبة · Please write a message.'); return false; }
-    showError(msgIn, ''); return true;
   }
 
-  emailIn.addEventListener('blur', validateEmail);
-  phoneIn.addEventListener('blur', validatePhone);
-  nameIn.addEventListener('blur', validateName);
-  msgIn.addEventListener('blur', validateMessage);
+  function botError(ar, en){
+    addBot(ar, en, true);
+  }
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    formErr.textContent = '';
-    // Run all validators
-    var ok = [validateName(), validateEmail(), validatePhone(), validateMessage()]
-      .every(function(x){ return x; });
-    if (!ok) return;
+  // Step transitions
+  function start(){
+    addBot(
+      'مرحباً 👋 شكراً لمرورك. كيف يمكنني مساعدتك؟',
+      'Hi! Thanks for stopping by. What brings you here?',
+      true,
+      function(){
+        addChips([
+          {value:'project',  ar:'بدء مشروع',         en:'Start a project'},
+          {value:'hire',     ar:'توظيف / تعاون',     en:'Hire / collaborate'},
+          {value:'press',    ar:'صحافة أو محاضرات', en:'Press or speaking'},
+          {value:'question', ar:'سؤال عام',          en:'General question'},
+          {value:'feedback', ar:'ملاحظة أو اقتراح',  en:'Feedback or suggestion'},
+          {value:'other',    ar:'شيء آخر…',         en:'Something else…'}
+        ], pickReason);
+      }
+    );
+  }
 
-    // Honeypot — silent drop
-    if (hpIn.value) { success.removeAttribute('hidden'); form.setAttribute('hidden',''); return; }
+  function pickReason(c){
+    data.reason = c.value;
+    addUser(c.ar + ' · ' + c.en);
+    if (c.value === 'other') {
+      step = 'other_what';
+      addBot('عظيم. عن ماذا؟','Got it — about what?', true, function(){
+        setInputKind('text'); showSkip(false);
+      });
+    } else {
+      goName();
+    }
+  }
+  function goName(){
+    step = 'name';
+    addBot('وش اسمك؟','And your name?', true, function(){ setInputKind('text'); showSkip(false); });
+  }
+  function goEmail(){
+    step = 'email';
+    addBot('وبريدك الإلكتروني؟','Your email?', true, function(){ setInputKind('email'); showSkip(false); });
+  }
+  function goPhone(){
+    step = 'phone';
+    addBot('جوالك؟ (اختياري — تقدر تتخطى)','Phone number? (optional — feel free to skip)', true, function(){ setInputKind('tel'); showSkip(true); });
+  }
+  function goMessage(){
+    step = 'message';
+    addBot('وأخيراً — وش تحب تخبر سالم؟','Last one — what would you like to tell Salem?', true, function(){ setInputKind('textarea'); showSkip(false); });
+  }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = '...جارٍ الإرسال · Sending';
+  function send(){
+    step = 'sending';
+    setInputKind('hidden');
+    var typing = document.createElement('div');
+    typing.className = 'chat-msg chat-msg--bot chat-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    feed.appendChild(typing);
+    scrollDown();
+
+    if (hp.value) {
+      // Honeypot — pretend success
+      setTimeout(function(){ feed.removeChild(typing); finished(true); }, 400);
+      return;
+    }
 
     var payload = {
-      reason: reasonIn.value || '',
-      reason_other: otherIn.value || '',
-      name: nameIn.value.trim(),
-      email: emailIn.value.trim(),
-      phone: phoneIn.value.trim() ? (phoneCcIn.value + ' ' + phoneIn.value.trim()) : '',
-      message: msgIn.value.trim(),
-      website: hpIn.value || '',
+      reason: data.reason,
+      reason_other: data.reason_other,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      message: data.message,
+      website: hp.value || '',
       page: location.pathname
     };
 
@@ -459,28 +493,30 @@ class ChatBubble extends StatelessComponent {
     })
       .then(function(r){ return r.json().then(function(j){ return { ok: r.ok, body: j }; }); })
       .then(function(res){
+        feed.removeChild(typing);
         if (res.ok && res.body && res.body.ok) {
-          form.setAttribute('hidden','');
-          success.removeAttribute('hidden');
+          finished(true);
         } else {
-          formErr.textContent = (res.body && res.body.error)
-            ? res.body.error
-            : 'حدث خطأ. حاول مرة أخرى أو راسلني مباشرة. · Something went wrong — please try again.';
+          finished(false, (res.body && res.body.error) || '');
         }
       })
       .catch(function(){
-        formErr.textContent = 'تعذر الاتصال. تحقق من الإنترنت. · Connection error — check your network and retry.';
-      })
-      .then(function(){
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'إرسال · Send';
+        feed.removeChild(typing);
+        finished(false, 'تعذر الاتصال. تحقق من الإنترنت. · Connection error — check your network.');
       });
-  });
+  }
 
-  // Close on Escape
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
-  });
+  function finished(ok, errMsg){
+    if (ok) {
+      step = 'sent';
+      addBot('وصلتني رسالتك ✓ سأرد عليك قريباً.','Got it ✓ I will get back to you soon.', false);
+    } else {
+      step = 'message';
+      addBot('حدث خطأ. ' + (errMsg||'حاول مرة أخرى.'), 'Something went wrong. ' + (errMsg ? '' : 'Please try again.'), false);
+      setInputKind('textarea'); showSkip(false);
+      inputEl.value = data.message;
+    }
+  }
 })();
 ''';
 }
