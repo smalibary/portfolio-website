@@ -252,18 +252,16 @@ class ChatBubble extends StatelessComponent {
   };
   var step = null;
 
-  // Keyboard handling — use VisualViewport to compute the soft-keyboard
-  // height and expose it as a CSS variable. The mobile panel keeps inset:0
-  // so it always covers the full viewport (no page content peeking through
-  // under the input bar), but applies padding-bottom: --chat-keyboard-h so
-  // the input bar floats up to sit right above the keyboard.
+  // Keyboard handling — visualViewport.height vs window.innerHeight tells
+  // us how much of the screen the soft keyboard is consuming. Expose it
+  // as --chat-keyboard-h so the panel's padding-bottom can lift the
+  // input bar above the keyboard.
   function updateViewportHeight(){
     var kbH = 0;
     if (window.visualViewport) {
-      kbH = Math.max(0, window.innerHeight - window.visualViewport.height);
+      kbH = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
     }
     panel.style.setProperty('--chat-keyboard-h', kbH + 'px');
-    // Legacy var still consumed by desktop CSS as a fallback.
     panel.style.setProperty('--chat-vh',
       (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px');
   }
@@ -287,6 +285,10 @@ class ChatBubble extends StatelessComponent {
     document.body.style.right = '0';
     document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
+    // Lock <html> too — without this, Chrome / Firefox on mobile still
+    // hide the URL bar on touch-scroll inside the chat, which resizes
+    // the viewport and makes the input bar visibly jump around.
+    document.documentElement.classList.add('chat-locked');
   }
   function unlockBody(){
     document.body.style.position = '';
@@ -295,6 +297,7 @@ class ChatBubble extends StatelessComponent {
     document.body.style.right = '';
     document.body.style.width = '';
     document.body.style.overflow = '';
+    document.documentElement.classList.remove('chat-locked');
     window.scrollTo(0, savedScrollY);
   }
 
