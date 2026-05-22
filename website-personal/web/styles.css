@@ -1608,14 +1608,17 @@ body { background: transparent; }
 }
 .chat-input__field { touch-action: auto; }
 .chat-input__field textarea#chat-input-el { touch-action: auto; }
-.chat-input__field { flex: 1; min-width: 0; align-self: center; }
+.chat-input__field { flex: 1; min-width: 0; align-self: center; touch-action: auto; }
 .chat-input__field textarea#chat-input-el {
   width: 100%; resize: none; overflow-y: auto;
+  overscroll-behavior: contain;
   max-height: var(--c-chat-textarea-max-h);
   padding: var(--c-chat-textarea-pad-y) var(--c-chat-textarea-pad-x);
   background: transparent; border: none;
   color: var(--color-text-default);
   font-family: inherit; font-size: 16px; line-height: 1.4;
+  /* Allow vertical pan inside the textarea so long messages scroll. */
+  touch-action: pan-y;
 }
 .chat-input__field textarea#chat-input-el:focus { outline: none; }
 .chat-input__field textarea#chat-input-el::placeholder { color: var(--color-text-faint); }
@@ -1777,13 +1780,14 @@ body { background: transparent; }
   .chat-bubble.open { opacity: 0; pointer-events: none; transform: scale(.6); }
 
   .chat-panel {
-    /* Full-screen sheet on mobile. Height is driven by JS via the
-       VisualViewport API (--chat-vh) so the keyboard pushes the input
-       bar up instead of leaving it stranded behind the keyboard. */
-    top: 0; right: 0; left: 0; bottom: auto;
-    width: auto;
-    height: var(--chat-vh, 100dvh);
-    max-height: none;
+    /* Full-screen sheet on mobile — inset:0 so it ALWAYS covers the
+       whole viewport (no page content peeking under the input bar when
+       the keyboard opens). padding-bottom: --chat-keyboard-h (set by JS
+       from VisualViewport) shrinks the usable layout area so the input
+       bar floats right above the keyboard. */
+    inset: 0;
+    width: auto; height: 100dvh; max-height: none;
+    padding-bottom: var(--chat-keyboard-h, 0);
     border-radius: 0; border: none;
   }
   .chat-msg { max-width: 88%; font-size: var(--text-md); }

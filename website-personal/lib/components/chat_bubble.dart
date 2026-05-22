@@ -252,14 +252,20 @@ class ChatBubble extends StatelessComponent {
   };
   var step = null;
 
-  // Keyboard handling — use VisualViewport so the panel stays above the
-  // soft keyboard on Android/iOS (where 100dvh doesn't shrink reliably).
+  // Keyboard handling — use VisualViewport to compute the soft-keyboard
+  // height and expose it as a CSS variable. The mobile panel keeps inset:0
+  // so it always covers the full viewport (no page content peeking through
+  // under the input bar), but applies padding-bottom: --chat-keyboard-h so
+  // the input bar floats up to sit right above the keyboard.
   function updateViewportHeight(){
+    var kbH = 0;
     if (window.visualViewport) {
-      panel.style.setProperty('--chat-vh', window.visualViewport.height + 'px');
-    } else {
-      panel.style.setProperty('--chat-vh', window.innerHeight + 'px');
+      kbH = Math.max(0, window.innerHeight - window.visualViewport.height);
     }
+    panel.style.setProperty('--chat-keyboard-h', kbH + 'px');
+    // Legacy var still consumed by desktop CSS as a fallback.
+    panel.style.setProperty('--chat-vh',
+      (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px');
   }
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', updateViewportHeight);
