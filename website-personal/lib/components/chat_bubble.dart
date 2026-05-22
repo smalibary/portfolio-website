@@ -48,22 +48,25 @@ class ChatBubble extends StatelessComponent {
         classes: 'chat-panel',
         attributes: const {'role': 'dialog', 'aria-label': 'Chat with Salem', 'aria-hidden': 'true'},
         [
-          // Header — avatar, name, status, close
+          // Header — avatar (with online dot), name, status, close
           div(classes: 'chat-header', [
-            img(
-              classes: 'chat-header__avatar',
-              src: '/images/$photoUrl',
-              alt: nameEn,
-              attributes: const {'width': '40', 'height': '40'},
-            ),
+            div(classes: 'chat-header__avatar-wrap', [
+              img(
+                classes: 'chat-header__avatar',
+                src: '/images/$photoUrl',
+                alt: nameEn,
+                attributes: const {'width': '44', 'height': '44'},
+              ),
+              span(classes: 'chat-header__avatar-dot', attributes: const {'aria-hidden': 'true'}, []),
+            ]),
             div(classes: 'chat-header__meta', [
               div(classes: 'chat-header__name', [
                 span(classes: 'chat-header__name-ar', [text(nameAr)]),
-                span(classes: 'chat-header__name-en', [text(nameEn)]),
+                span(classes: 'chat-header__name-en', attributes: const {'dir': 'ltr'}, [text(nameEn)]),
               ]),
               div(classes: 'chat-header__status', [
-                span(classes: 'chat-header__dot', []),
-                span([text('عادة يرد خلال يوم · usually replies within a day')]),
+                span(classes: 'chat-header__status-ar', [text('عادة يرد خلال دقائق')]),
+                span(classes: 'chat-header__status-en', attributes: const {'dir': 'ltr'}, [text('Usually replies within minutes')]),
               ]),
             ]),
             button(
@@ -71,7 +74,7 @@ class ChatBubble extends StatelessComponent {
               classes: 'chat-header__close',
               attributes: const {'type': 'button', 'aria-label': 'Close chat'},
               [
-                raw('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'),
+                raw('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'),
               ],
             ),
           ]),
@@ -246,6 +249,14 @@ class ChatBubble extends StatelessComponent {
     setTimeout(function(){ feed.scrollTop = feed.scrollHeight; }, 30);
   }
 
+  function botBubble(arHtml, enHtml){
+    var b = document.createElement('div');
+    b.className = 'chat-msg chat-msg--bot';
+    var arPart = '<p dir="rtl">'+arHtml+'</p>';
+    var enPart = enHtml ? '<p class="chat-msg__en" dir="ltr">'+enHtml+'</p>' : '';
+    b.innerHTML = arPart + enPart;
+    return b;
+  }
   function addBot(arHtml, enHtml, withTyping, done){
     if (withTyping) {
       var typing = document.createElement('div');
@@ -255,18 +266,12 @@ class ChatBubble extends StatelessComponent {
       scrollDown();
       setTimeout(function(){
         feed.removeChild(typing);
-        var b = document.createElement('div');
-        b.className = 'chat-msg chat-msg--bot';
-        b.innerHTML = '<p>'+arHtml+'</p>' + (enHtml ? '<p class="chat-msg__en">'+enHtml+'</p>' : '');
-        feed.appendChild(b);
+        feed.appendChild(botBubble(arHtml, enHtml));
         scrollDown();
         if (done) done();
       }, 550);
     } else {
-      var b = document.createElement('div');
-      b.className = 'chat-msg chat-msg--bot';
-      b.innerHTML = '<p>'+arHtml+'</p>' + (enHtml ? '<p class="chat-msg__en">'+enHtml+'</p>' : '');
-      feed.appendChild(b);
+      feed.appendChild(botBubble(arHtml, enHtml));
       scrollDown();
       if (done) done();
     }
@@ -277,6 +282,7 @@ class ChatBubble extends StatelessComponent {
     b.className = 'chat-msg chat-msg--user';
     var p = document.createElement('p');
     p.textContent = textValue;
+    p.setAttribute('dir', 'auto'); // auto-detect AR vs EN from user's typing
     b.appendChild(p);
     feed.appendChild(b);
     scrollDown();
@@ -290,8 +296,8 @@ class ChatBubble extends StatelessComponent {
       b.type = 'button';
       b.className = 'chat-chip';
       b.setAttribute('data-value', c.value);
-      b.innerHTML = '<span class="chat-chip__ar">'+c.ar+'</span>'+
-                    '<span class="chat-chip__en">'+c.en+'</span>';
+      b.innerHTML = '<span class="chat-chip__ar" dir="rtl">'+c.ar+'</span>'+
+                    '<span class="chat-chip__en" dir="ltr">'+c.en+'</span>';
       b.addEventListener('click', function(){
         wrap.classList.add('chat-chips--locked');
         wrap.querySelectorAll('button').forEach(function(x){
