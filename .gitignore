@@ -65,6 +65,7 @@ desktop.ini
 # =====================================================================
 .env
 .env.*
+!.env.example
 *.key
 *.pem
 *credentials*
