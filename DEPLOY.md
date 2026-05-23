@@ -71,10 +71,69 @@ Set on the Pages project (per-environment) via `wrangler pages secret put NAME -
 | `RESEND_API_KEY` | Production + Preview | Resend API key for `/api/contact` |
 | `CONTACT_EMAIL` | Production + Preview | Recipient for contact-form emails (e.g. `hey@smalibary.me`) |
 | `FROM_EMAIL` (optional) | Production | Override "From:" address. Defaults to `Salem Portfolio <onboarding@resend.dev>` |
+| `SUPABASE_URL` | Production + Preview | Used at **build time** by Dart loaders + at **runtime** by admin Pages Functions |
+| `SUPABASE_ANON_KEY` | Production + Preview | Used at build time only (public reads via RLS) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Production + Preview | Used only by `/api/admin/*` Functions — bypasses RLS for admin writes |
+| `ADMIN_PASSCODE` | Production + Preview | What `/api/admin/login` compares against. Defaults to `1379`; rotate with wrangler |
+| `ADMIN_SESSION_SECRET` | Production + Preview | HMAC key for signing admin session cookies. Rotating it invalidates every session |
+| `DEPLOY_HOOK_URL` | Production + Preview | Cloudflare deploy hook the admin Functions POST after every successful write to rebuild the site |
 
 Secrets are environment-scoped — setting one on Preview does NOT set it on Production. Verify both with:
 ```bash
 wrangler pages secret list --project-name salem-portfolio
+wrangler pages secret list --project-name salem-portfolio --env preview
+```
+
+The build itself only needs `SUPABASE_URL` and `SUPABASE_ANON_KEY` (RLS lets the anon role read only what the public site should see — published posts, visible papers, profile). Everything else is for Pages Functions at request time.
+
+## Backend / Supabase
+
+As of Phase 2 of the May 2026 migration, the site's content lives in Supabase Postgres (project `smalibary's Project`, region eu-central-1 / Frankfurt), not in `content/blog/*` and `content/_data/*.yaml` files. The files are kept around for the data migration script only.
+
+### Schema
+
+Schema `portfolio`. Tables: `posts`, `research_papers`, `profile` (singleton). RLS lets the anon role read only published / visible / profile rows. Admin writes via service_role bypass RLS.
+
+Migrations live under `supabase/migrations/`. Push new ones with:
+```bash
+supabase db push
+```
+
+### Content flow
+
+| Step | Where it happens |
+|---|---|
+| Build pulls all rows from Supabase | `website-personal/lib/data/{blog,paper,site}_data.dart` via `supabase_client.dart` |
+| Sitemap regenerates from Supabase | `website-personal/tool/generate_sitemap.dart` |
+| Static site is uploaded to Cloudflare Pages | Standard CI flow |
+| Visitor hits HTML, all content baked in | No request-time DB hits except `/api/*` |
+
+### Admin flow
+
+| Step | Where it happens |
+|---|---|
+| Admin enters passcode at `/admin/login` | POSTs `/api/admin/login`; server checks `ADMIN_PASSCODE`, sets HttpOnly signed cookie |
+| Admin reads/writes profile / posts / papers | `/api/admin/*` Pages Functions in `website-personal/functions/api/admin/` |
+| Auth guard | `_middleware.js` rejects everything except `/login` and `/logout` without a valid signed session cookie |
+| Successful write triggers rebuild | `_lib/deploy.js` POSTs `DEPLOY_HOOK_URL` so the public site rebuilds in ~90s |
+
+### Rotating the passcode
+
+```bash
+echo "new-passcode" | wrangler pages secret put ADMIN_PASSCODE --project-name salem-portfolio
+echo "new-passcode" | wrangler pages secret put ADMIN_PASSCODE --project-name salem-portfolio --env preview
+```
+
+To invalidate all existing sessions without changing the passcode, rotate `ADMIN_SESSION_SECRET` instead.
+
+### Re-running the one-shot data migration
+
+`tools/migrate_content_to_supabase.mjs` reads the file-based content and upserts into Supabase. Idempotent — safe to re-run any time you want to re-baseline from the YAML/JSON files.
+
+```bash
+cd tools
+npm install   # first time only
+node migrate_content_to_supabase.mjs
 ```
 
 ## Email Routing (`@smalibary.me` addresses)
