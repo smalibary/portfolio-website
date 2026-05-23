@@ -3,13 +3,12 @@
 // Receives chat-bubble submissions, validates them, and forwards via Resend
 // to CONTACT_EMAIL. Sender is fixed to onboarding@resend.dev for now (no
 // domain verification required); swap to a verified `From` once DNS for
-// australia-gpa.com (or another owned domain) is added in the Resend
-// dashboard.
+// smalibary.me is added in the Resend dashboard.
 //
 // Required environment variables (set in Cloudflare dashboard → Pages →
 // Project → Settings → Variables and Secrets):
 //   RESEND_API_KEY  — Resend API key (secret)
-//   CONTACT_EMAIL   — recipient email (e.g. salimmalibari@gmail.com)
+//   CONTACT_EMAIL   — recipient email (e.g. hey@smalibary.me)
 //
 // Optional:
 //   FROM_EMAIL      — override the "From:" address. Defaults to

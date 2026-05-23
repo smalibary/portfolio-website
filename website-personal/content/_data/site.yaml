@@ -5,7 +5,7 @@
 
 # Canonical site origin. Used by tool/generate_sitemap.dart, by JSON-LD
 # emitted on blog posts, and by per-page Open Graph URLs. No trailing slash.
-base_url: https://salem.australia-gpa.com
+base_url: https://smalibary.me
 
 name_ar: سالم مليباري
 name_en: Salem Malibary

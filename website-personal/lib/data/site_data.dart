@@ -56,7 +56,7 @@ class SiteData {
   String social(String platform) => socials[platform] ?? '#';
 
   static const SiteData fallback = SiteData(
-    baseUrl: 'https://salemmalibary.com',
+    baseUrl: 'https://smalibary.me',
     nameAr: 'سالم مليباري',
     nameEn: 'Salem Malibary',
     taglineAr: '',

@@ -2,7 +2,7 @@
 
 ## How it works
 
-Every push to `main` auto-deploys to production (`salem.australia-gpa.com`).
+Every push to `main` auto-deploys to production (`smalibary.me`).
 Pushes to `preview` get preview URLs (`*.salem-portfolio.pages.dev`).
 
 ## Architecture
@@ -73,7 +73,7 @@ for line in json.load(sys.stdin)['result']['data']:
 
 | What | URL |
 |---|---|
-| **Production** | https://salem.australia-gpa.com |
+| **Production** | https://smalibary.me |
 | **Latest preview** | See `website-personal/preview.md` (updated by `/preview` prompt) |
 | **Dashboard** | https://dash.cloudflare.com/00b7e159c67efe0662f8f90f7ec0db04/pages/view/salem-portfolio |
 

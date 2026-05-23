@@ -106,7 +106,7 @@ def render(post_id: str) -> Path:
     label_font = _try_font(
         ["consola.ttf", "JetBrainsMono-Regular.ttf", "Cascadia.ttf", "cour.ttf"], 22
     )
-    draw.text((PAD, PAD - 30), "salemmalibary.com / blog", font=label_font, fill=MUTED)
+    draw.text((PAD, PAD - 30), "smalibary.me / blog", font=label_font, fill=MUTED)
 
     # Headline. Sized to fit; wraps to 2-3 lines max.
     headline_font = _try_font(

@@ -563,7 +563,7 @@ class AdminBlogPage extends StatelessComponent {
               _field('العنوان بالعربي', '', 'title_ar', required: true),
               _field('', 'TITLE · ENGLISH', 'title_en', required: true),
             ]),
-            _field('المعرّف · SLUG', '', 'slug', required: true, hint: 'salemmalibary.com/blog/<slug>'),
+            _field('المعرّف · SLUG', '', 'slug', required: true, hint: 'smalibary.me/blog/<slug>'),
             div(classes: 'row', [
               _textarea('المقتطف بالعربي', '', 'excerpt_ar', rows: 3),
               _textarea('', 'EXCERPT · ENGLISH', 'excerpt_en', rows: 3),
