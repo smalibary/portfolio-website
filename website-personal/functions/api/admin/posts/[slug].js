@@ -5,6 +5,7 @@
 // DELETE → removes the row.
 
 import { SupabaseAdmin, json } from '../../../_lib/supabase.js';
+import { triggerRebuild } from '../../../_lib/deploy.js';
 
 const ALLOWED_FIELDS = [
   'slug', 'language', 'status', 'published_at',
@@ -34,7 +35,8 @@ export async function onRequestGet({ params, env }) {
   }
 }
 
-export async function onRequestPost({ request, params, env }) {
+export async function onRequestPost(context) {
+  const { request, params, env } = context;
   try {
     const slug = String(params.slug || '').trim();
     if (!slug) return json(400, { ok: false, error: 'slug missing' });
@@ -56,18 +58,21 @@ export async function onRequestPost({ request, params, env }) {
 
     const sb = new SupabaseAdmin(env);
     const result = await sb.upsert('posts', row, { onConflict: 'slug' });
+    triggerRebuild(env, context);
     return json(200, { ok: true, post: result[0] || null });
   } catch (e) {
     return json(500, { ok: false, error: String(e.message || e) });
   }
 }
 
-export async function onRequestDelete({ params, env }) {
+export async function onRequestDelete(context) {
+  const { params, env } = context;
   try {
     const slug = encSlug(params.slug);
     if (!slug) return json(400, { ok: false, error: 'slug missing' });
     const sb = new SupabaseAdmin(env);
     await sb.delete('posts', `slug=eq.${slug}`);
+    triggerRebuild(env, context);
     return json(200, { ok: true });
   } catch (e) {
     return json(500, { ok: false, error: String(e.message || e) });

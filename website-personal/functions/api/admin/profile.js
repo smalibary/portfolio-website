@@ -7,6 +7,7 @@
 //        socials (object), hero_meta (array of {label,value}).
 
 import { SupabaseAdmin, json } from '../../_lib/supabase.js';
+import { triggerRebuild } from '../../_lib/deploy.js';
 
 const ALLOWED_FIELDS = [
   'name_ar', 'name_en',
@@ -30,7 +31,8 @@ export async function onRequestGet({ env }) {
   }
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   try {
     const body = await request.json();
     const row = { id: 1 };
@@ -39,6 +41,7 @@ export async function onRequestPost({ request, env }) {
     }
     const sb = new SupabaseAdmin(env);
     const result = await sb.upsert('profile', row);
+    triggerRebuild(env, context);
     return json(200, { ok: true, profile: result[0] || null });
   } catch (e) {
     return json(500, { ok: false, error: String(e.message || e) });

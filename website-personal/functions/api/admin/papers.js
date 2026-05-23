@@ -8,6 +8,7 @@
 // Body shape: { papers: [ { id, status, ... }, ... ] }
 
 import { SupabaseAdmin, json } from '../../_lib/supabase.js';
+import { triggerRebuild } from '../../_lib/deploy.js';
 
 const ALLOWED_FIELDS = [
   'id',
@@ -38,7 +39,8 @@ export async function onRequestGet({ env }) {
   }
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   try {
     const body = await request.json();
     if (!Array.isArray(body.papers)) {
@@ -87,6 +89,7 @@ export async function onRequestPost({ request, env }) {
       'research_papers',
       'select=*&order=display_order.asc',
     );
+    triggerRebuild(env, context);
     return json(200, { ok: true, papers: fresh });
   } catch (e) {
     return json(500, { ok: false, error: String(e.message || e) });
