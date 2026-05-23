@@ -1,0 +1,15 @@
+{
+  "name": "my-cv-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "One-off utility scripts for the my-cv portfolio site (separate from the website-personal/ Jaspr app).",
+  "type": "module",
+  "scripts": {
+    "migrate-content": "node migrate_content_to_supabase.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0"
+  }
+}

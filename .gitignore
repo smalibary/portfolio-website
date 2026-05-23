@@ -28,6 +28,7 @@ website-jaspr/.packages
 **/doc/api/
 *.class
 *.pyc
+node_modules/
 __pycache__/
 
 # =====================================================================
