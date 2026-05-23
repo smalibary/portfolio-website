@@ -15,22 +15,27 @@ class AdminShell extends StatelessComponent {
   final String current;
   final List<Component> body;
 
-  /// Inline guard that runs before any render. If `sessionStorage['admin-auth']`
-  /// isn't `ok`, redirect to /admin/login. Hides body until verified to prevent
-  /// flash of admin content. The `<style>` reveals body once JS confirms auth.
+  /// Auth gate — hides the page until a probe request to /api/admin/profile
+  /// confirms the session cookie is valid. 401 → redirect to /admin/login.
+  /// The HttpOnly session cookie can't be read from JS directly, so we have
+  /// to make a server round-trip; the small flash of hidden content is the
+  /// tradeoff for not exposing the token to XSS.
   static const _authGate = '''
 (function(){
   document.documentElement.style.visibility = 'hidden';
-  try {
-    if (sessionStorage.getItem('admin-auth') !== 'ok') {
-      window.location.replace('/admin/login');
-      return;
-    }
-  } catch(e) {
-    window.location.replace('/admin/login');
-    return;
-  }
-  document.documentElement.style.visibility = '';
+  fetch('/api/admin/profile', { credentials: 'same-origin' })
+    .then(function(r){
+      if (r.status === 401) {
+        window.location.replace('/admin/login');
+        return;
+      }
+      document.documentElement.style.visibility = '';
+    })
+    .catch(function(){
+      // Network blip — let the page render and let individual API calls
+      // surface their own errors.
+      document.documentElement.style.visibility = '';
+    });
 })();
 ''';
 

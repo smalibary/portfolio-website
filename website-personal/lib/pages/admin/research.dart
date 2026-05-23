@@ -9,11 +9,9 @@ import '../../components/admin/admin_shell.dart';
 class AdminResearchPage extends StatelessComponent {
   const AdminResearchPage({super.key});
 
-  static const _api = 'http://localhost:9090';
-
   static const _script = '''
 (function(){
-  var API = '$_api';
+  var API = '/api/admin';
   var \$ = function(s, root){ return (root||document).querySelector(s); };
   var \$\$ = function(s, root){ return Array.from((root||document).querySelectorAll(s)); };
 
@@ -177,7 +175,7 @@ class AdminResearchPage extends StatelessComponent {
 
   function loadAll(){
     setSaveState('saving', 'LOADING');
-    return fetch(API + '/api/papers').then(function(r){ return r.json(); }).then(function(data){
+    return fetch(API + '/papers').then(function(r){ return r.json(); }).then(function(data){
       papers = (data && data.papers) || [];
       if (papers.length > 0) {
         currentIdx = 0;
@@ -199,7 +197,7 @@ class AdminResearchPage extends StatelessComponent {
   function save(){
     syncFormToCurrent();
     setSaveState('saving', 'SAVING...');
-    fetch(API + '/api/papers', {
+    fetch(API + '/papers', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ papers: papers })

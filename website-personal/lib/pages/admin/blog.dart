@@ -9,11 +9,9 @@ import '../../components/admin/admin_shell.dart';
 class AdminBlogPage extends StatelessComponent {
   const AdminBlogPage({super.key});
 
-  static const _api = 'http://localhost:9090';
-
   static const _script = '''
 (function(){
-  var API = '$_api';
+  var API = '/api/admin';
   var \$ = function(s, root){ return (root||document).querySelector(s); };
   var \$\$ = function(s, root){ return Array.from((root||document).querySelectorAll(s)); };
 
@@ -79,7 +77,7 @@ class AdminBlogPage extends StatelessComponent {
   if (pickerNew) pickerNew.addEventListener('click', function(){
     var slug = prompt('slug for the new post (e.g. \\'my-new-post\\')');
     if (!slug) return;
-    fetch(API + '/api/posts', {
+    fetch(API + '/posts', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ slug: slug, title_ar: '(عنوان جديد)', title_en: '(new title)' })
@@ -127,7 +125,7 @@ class AdminBlogPage extends StatelessComponent {
 
   // ---------- list / select / save / delete ----------
   function loadList(){
-    return fetch(API + '/api/posts').then(function(r){ return r.json(); }).then(function(data){
+    return fetch(API + '/posts').then(function(r){ return r.json(); }).then(function(data){
       posts = data;
       renderPicker();
     });
@@ -137,7 +135,7 @@ class AdminBlogPage extends StatelessComponent {
     currentId = id;
     pickerBtn.classList.remove('open');
     setSaveState('saving', 'LOADING');
-    fetch(API + '/api/posts/' + id).then(function(r){ return r.json(); }).then(function(data){
+    fetch(API + '/posts/' + id).then(function(r){ return r.json(); }).then(function(data){
       fillForm(data);
       markSaved();
       attachDirtyListeners();
@@ -390,7 +388,7 @@ class AdminBlogPage extends StatelessComponent {
     if (!currentId) return;
     setSaveState('saving', 'SAVING...');
     var payload = readForm();
-    fetch(API + '/api/posts/' + currentId, {
+    fetch(API + '/posts/' + currentId, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
@@ -434,7 +432,7 @@ class AdminBlogPage extends StatelessComponent {
       setTimeout(function(){ deleteArmed = false; deleteBtn.textContent = orig; deleteBtn.classList.remove('armed'); }, 4000);
       return;
     }
-    fetch(API + '/api/posts/' + currentId, { method: 'DELETE' })
+    fetch(API + '/posts/' + currentId, { method: 'DELETE' })
       .then(function(r){ return r.json(); })
       .then(function(){
         currentId = null;

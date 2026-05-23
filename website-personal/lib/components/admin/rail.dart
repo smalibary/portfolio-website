@@ -13,8 +13,8 @@ class AdminRail extends StatelessComponent {
   var btn = document.querySelector('.adm .rail [data-logout]');
   if (!btn) return;
   btn.addEventListener('click', function(){
-    try { sessionStorage.removeItem('admin-auth'); } catch(e) {}
-    window.location.href = '/admin/login';
+    fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
+      .finally(function(){ window.location.href = '/admin/login'; });
   });
   var tBtns = document.querySelectorAll('.adm .rail [data-theme-set]');
   function applyTheme(t){

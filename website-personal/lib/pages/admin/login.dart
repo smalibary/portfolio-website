@@ -1,10 +1,11 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
-/// Admin login. Cosmetic passcode gate (1379) — see AGENTS.md for why this is
-/// not real auth. On correct submit: sets `sessionStorage['admin-auth'] = 'ok'`
-/// and redirects to `/admin/profile`. Other admin pages will check that flag
-/// and bounce to here if it's missing.
+/// Admin login. POSTs the entered passcode to /api/admin/login. If it
+/// matches the server-side ADMIN_PASSCODE secret, the server sets an
+/// HttpOnly session cookie (HMAC-signed, 7-day TTL) and the page redirects
+/// to /admin/profile. Other admin pages verify the cookie by probing
+/// /api/admin/profile on mount.
 class AdminLoginPage extends StatelessComponent {
   const AdminLoginPage({super.key});
 
@@ -47,19 +48,39 @@ class AdminLoginPage extends StatelessComponent {
     });
   });
 
+  function showError(msg){
+    err.classList.add('show');
+    err.textContent = msg;
+    pins.forEach(function(p){ p.classList.remove('filled'); p.classList.add('error'); p.value = ''; });
+    setTimeout(function(){ pins.forEach(function(p){ p.classList.remove('error'); }); }, 400);
+    pins[0].focus();
+  }
+
   function attemptSubmit(){
     var code = Array.from(pins).map(function(p){ return p.value; }).join('');
     if (code.length !== 4) return;
-    if (code === '1379') {
-      try { sessionStorage.setItem('admin-auth', 'ok'); } catch(e) {}
-      window.location.href = '/admin/profile';
-    } else {
-      err.classList.add('show');
-      err.textContent = 'الرقم غير صحيح · WRONG PASSCODE';
-      pins.forEach(function(p){ p.classList.remove('filled'); p.classList.add('error'); p.value = ''; });
-      setTimeout(function(){ pins.forEach(function(p){ p.classList.remove('error'); }); }, 400);
-      pins[0].focus();
-    }
+    btn.disabled = true;
+    fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
+      body: JSON.stringify({ passcode: code })
+    })
+      .then(function(r){
+        if (r.ok) {
+          window.location.href = '/admin/profile';
+          return;
+        }
+        return r.json().then(function(b){
+          showError(b && b.error ? 'الرقم غير صحيح · WRONG PASSCODE' : 'خطأ · ERROR');
+        }).catch(function(){
+          showError('خطأ · ERROR');
+        });
+      })
+      .catch(function(){
+        showError('تعذر الاتصال · CONNECTION ERROR');
+      })
+      .finally(function(){ btn.disabled = false; });
   }
 
   btn.addEventListener('click', function(e){ e.preventDefault(); attemptSubmit(); });
@@ -106,7 +127,7 @@ class AdminLoginPage extends StatelessComponent {
             ]),
             button(classes: 'btn login-btn', [text('دخول · ENTER')]),
             div(classes: 'login-error', []),
-            div(classes: 'login-meta', [text('LOCAL DEV · NOT FOR PRODUCTION')]),
+            div(classes: 'login-meta', [text('SESSION GATED · COOKIE AUTH')]),
           ]),
         ]),
       ]),

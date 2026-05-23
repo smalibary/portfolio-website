@@ -9,12 +9,12 @@ import '../../components/admin/topbar.dart';
 class AdminProfilePage extends StatelessComponent {
   const AdminProfilePage({super.key});
 
-  static const _api = 'http://localhost:9090';
-
   static const _script = '''
 (function(){
-  var API = '$_api/api/profile';
-  var UPLOAD = '$_api/api/upload';
+  var API = '/api/admin/profile';
+  // Image upload via Supabase Storage is a v2 feature; for now the photo
+  // fields take a plain filename that lives under web/images/.
+  var UPLOAD = null;
   var \$ = function(s, root){ return (root||document).querySelector(s); };
   var \$\$ = function(s, root){ return Array.from((root||document).querySelectorAll(s)); };
   var savedChip = \$('.adm .topbar .chip');
@@ -61,19 +61,31 @@ class AdminProfilePage extends StatelessComponent {
     row.appendChild(p); row.appendChild(i); row.appendChild(b);
     return row;
   }
-  function renderSocials(list){
+  // Supabase stores socials as a map { platform -> url }. The editor uses
+  // a list of rows for ergonomics; we translate at the boundary.
+  function renderSocials(socialsMap){
     if (!socialsTarget) return;
     socialsTarget.innerHTML = '';
-    (list || []).forEach(function(s){ socialsTarget.appendChild(buildSocialRow(s)); });
+    var entries = [];
+    if (socialsMap && typeof socialsMap === 'object' && !Array.isArray(socialsMap)) {
+      Object.keys(socialsMap).forEach(function(p){
+        entries.push({ platform: p, url: socialsMap[p] });
+      });
+    } else if (Array.isArray(socialsMap)) {
+      // Tolerate legacy list shape so old payloads still render.
+      entries = socialsMap;
+    }
+    entries.forEach(function(s){ socialsTarget.appendChild(buildSocialRow(s)); });
   }
   function readSocials(){
-    if (!socialsTarget) return [];
-    return \$\$('.socials', socialsTarget).map(function(row){
-      return {
-        platform: (\$('.platform', row).textContent || '').trim().toLowerCase(),
-        url: \$('input', row).value
-      };
+    if (!socialsTarget) return {};
+    var out = {};
+    \$\$('.socials', socialsTarget).forEach(function(row){
+      var platform = (\$('.platform', row).textContent || '').trim().toLowerCase();
+      var url = \$('input', row).value;
+      if (platform) out[platform] = url;
     });
+    return out;
   }
   if (addSocialBtn) addSocialBtn.addEventListener('click', function(){
     var p = prompt('platform name (e.g. mastodon)');
@@ -109,61 +121,39 @@ class AdminProfilePage extends StatelessComponent {
   });
 
   // ---- photo upload ----
+  // Image upload via Supabase Storage is a v2 feature. For now the upload
+  // buttons surface a hint to set the filename manually; the photo files
+  // continue to live in web/images/ and are served as static assets.
   \$\$('.adm [data-upload]').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var slot = btn.dataset.upload; // 'dark' | 'light'
-      var fileInput = \$('.adm [data-upload-input="' + slot + '"]');
-      if (fileInput) fileInput.click();
-    });
-  });
-  \$\$('.adm [data-upload-input]').forEach(function(input){
-    input.addEventListener('change', function(){
-      var file = input.files && input.files[0];
-      if (!file) return;
-      var slot = input.dataset.uploadInput; // 'dark' | 'light'
-      var targetField = \$('.adm [data-field="photo_' + slot + '"]');
+      var slot = btn.dataset.upload;
       var status = \$('.adm [data-upload-status="' + slot + '"]');
-      if (status) status.textContent = 'UPLOADING...';
-      var reader = new FileReader();
-      reader.onload = function(){
-        var b64 = reader.result.split(',')[1];
-        fetch(UPLOAD, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ filename: file.name, base64: b64 })
-        }).then(function(r){ return r.json(); }).then(function(res){
-          if (res.ok && res.filename) {
-            if (targetField) { targetField.value = res.filename; markDirty(); }
-            if (status) status.textContent = 'UPLOADED · ' + res.filename;
-          } else {
-            if (status) status.textContent = 'UPLOAD ERROR';
-            console.error(res);
-          }
-        }).catch(function(e){
-          if (status) status.textContent = 'UPLOAD ERROR';
-          console.error(e);
-        });
-      };
-      reader.readAsDataURL(file);
+      if (status) status.textContent = 'UPLOAD COMING SOON · type filename into the field';
     });
   });
 
   // ---- load / save ----
   function load(){
     setSaveState('saving', 'LOADING');
-    fetch(API).then(function(r){ return r.json(); }).then(function(data){
-      \$\$('.adm [data-field]').forEach(function(el){
-        var key = el.dataset.field;
-        if (data[key] != null) el.value = data[key];
+    fetch(API, { credentials: 'same-origin' })
+      .then(function(r){
+        if (r.status === 401) { window.location.replace('/admin/login'); return null; }
+        return r.json();
+      })
+      .then(function(data){
+        if (!data) return;
+        \$\$('.adm [data-field]').forEach(function(el){
+          var key = el.dataset.field;
+          if (data[key] != null) el.value = data[key];
+        });
+        renderSocials(data.socials);
+        renderHeroMeta(data.hero_meta);
+        setSaveState('saved', 'SAVED');
+        attachDirtyListeners();
+      }).catch(function(e){
+        setSaveState('error', 'LOAD ERROR');
+        console.error('load failed:', e);
       });
-      renderSocials(data.socials);
-      renderHeroMeta(data.hero_meta);
-      setSaveState('saved', 'SAVED');
-      attachDirtyListeners();
-    }).catch(function(e){
-      setSaveState('error', 'LOAD ERROR');
-      console.error('load failed:', e);
-    });
   }
 
   function save(){
@@ -175,8 +165,13 @@ class AdminProfilePage extends StatelessComponent {
     fetch(API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
       body: JSON.stringify(payload)
-    }).then(function(r){ return r.json(); }).then(function(res){
+    }).then(function(r){
+      if (r.status === 401) { window.location.replace('/admin/login'); return null; }
+      return r.json();
+    }).then(function(res){
+      if (!res) return;
       if (res.ok) setSaveState('saved', 'SAVED ✓');
       else { setSaveState('error', 'SAVE ERROR'); console.error(res); }
     }).catch(function(e){
