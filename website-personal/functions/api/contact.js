@@ -91,9 +91,18 @@ export async function onRequestPost({ request, env }) {
   const ipForLimit = request.headers.get('cf-connecting-ip') || 'unknown';
   const rl = await checkAndIncrementRateLimit(ipForLimit);
   if (!rl.allowed) {
+    // Hours until UTC midnight (when the per-IP counter resets).
+    const nowMs = Date.now();
+    const eodMs = Date.UTC(
+      new Date(nowMs).getUTCFullYear(),
+      new Date(nowMs).getUTCMonth(),
+      new Date(nowMs).getUTCDate() + 1,
+    );
+    const hours = Math.max(1, Math.ceil((eodMs - nowMs) / (60 * 60 * 1000)));
+    const hourWord = hours === 1 ? 'hour' : 'hours';
     return jsonResponse(429, {
       ok: false,
-      error: 'لقد أرسلت رسائل كثيرة اليوم. حاول غداً. · You have sent the maximum messages for today — please try again tomorrow.',
+      error: `لقد أرسلت رسائل كثيرة اليوم. حاول بعد ${hours} ساعة. · You have sent the maximum messages for today — try again in ${hours} ${hourWord}.`,
     });
   }
 
