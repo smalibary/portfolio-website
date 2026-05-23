@@ -1,12 +1,11 @@
-/// Profile + hero copy loaded from `content/_data/site.yaml` at build time.
+/// Profile + hero copy loaded from Supabase (`portfolio.profile`) at build
+/// time.
 ///
-/// The admin (`/admin/profile`) writes this file via the local save server;
-/// the public site reads it here when pre-rendering.
+/// The admin (`/admin/profile`) writes the singleton row via Cloudflare
+/// Pages Functions; the public site reads it here when pre-rendering.
 library;
 
-import 'dart:io';
-
-import 'package:yaml/yaml.dart';
+import 'supabase_client.dart';
 
 class HeroMetaItem {
   const HeroMetaItem({required this.label, required this.value});
@@ -55,6 +54,9 @@ class SiteData {
 
   String social(String platform) => socials[platform] ?? '#';
 
+  /// Used only if the build cannot reach Supabase or the row is missing.
+  /// Production builds should never use this — it's a safety net so a
+  /// transient network blip during CI doesn't ship an empty homepage.
   static const SiteData fallback = SiteData(
     baseUrl: 'https://smalibary.me',
     nameAr: 'سالم مليباري',
@@ -72,53 +74,52 @@ class SiteData {
     socials: {},
   );
 
-  static SiteData load() {
-    final file = File('content/_data/site.yaml');
-    if (!file.existsSync()) return fallback;
-    try {
-      final yaml = loadYaml(file.readAsStringSync()) as YamlMap?;
-      if (yaml == null) return fallback;
+  /// Fetch the singleton profile row from Supabase. There's exactly one
+  /// (id=1, enforced by a CHECK constraint).
+  static Future<SiteData> load() async {
+    final rows = await fetchRows(
+      'profile',
+      query: 'select=*&id=eq.1',
+    );
+    if (rows.isEmpty) return fallback;
+    final r = rows.first;
 
-      final socialsList = (yaml['socials'] as YamlList?) ?? const <dynamic>[];
-      final socials = <String, String>{
-        for (final entry in socialsList)
-          if (entry is YamlMap && entry['platform'] is String && entry['url'] is String)
-            (entry['platform'] as String).toLowerCase(): entry['url'] as String,
-      };
-
-      final metaList = (yaml['hero_meta'] as YamlList?) ?? const <dynamic>[];
-      final heroMeta = <HeroMetaItem>[
-        for (final m in metaList)
-          if (m is YamlMap)
-            HeroMetaItem(
-              label: (m['label'] as String?) ?? '',
-              value: (m['value'] as String?) ?? '',
-            ),
-      ];
-
-      // Support legacy `photo` field as fallback for both variants.
-      final legacy = (yaml['photo'] as String?) ?? '';
-      final rawBase = ((yaml['base_url'] as String?) ?? fallback.baseUrl).trim();
-      final baseUrl = rawBase.replaceAll(RegExp(r'/+$'), '');
-      return SiteData(
-        baseUrl: baseUrl,
-        nameAr: (yaml['name_ar'] as String?) ?? fallback.nameAr,
-        nameEn: (yaml['name_en'] as String?) ?? fallback.nameEn,
-        taglineAr: (yaml['tagline_ar'] as String?) ?? '',
-        taglineEn: (yaml['tagline_en'] as String?) ?? '',
-        bioAr: (yaml['bio_ar'] as String?)?.trim() ?? '',
-        bioEn: (yaml['bio_en'] as String?)?.trim() ?? '',
-        photoDark: (yaml['photo_dark'] as String?) ?? (legacy.isNotEmpty ? legacy : fallback.photoDark),
-        photoLight: (yaml['photo_light'] as String?) ?? (legacy.isNotEmpty ? legacy : fallback.photoLight),
-        statusLine: (yaml['status_line'] as String?)?.trim() ?? '',
-        ledeAr: (yaml['lede_ar'] as String?)?.trim() ?? '',
-        ledeEn: (yaml['lede_en'] as String?)?.trim() ?? '',
-        heroMeta: heroMeta,
-        socials: socials,
-      );
-    } catch (e) {
-      stderr.writeln('site_data: failed to parse site.yaml: $e');
-      return fallback;
+    final socialsRaw = r['socials'];
+    final socials = <String, String>{};
+    if (socialsRaw is Map) {
+      socialsRaw.forEach((k, v) {
+        if (k is String && v is String) socials[k.toLowerCase()] = v;
+      });
     }
+
+    final heroMetaRaw = (r['hero_meta'] as List?) ?? const [];
+    final heroMeta = <HeroMetaItem>[
+      for (final m in heroMetaRaw)
+        if (m is Map)
+          HeroMetaItem(
+            label: (m['label'] as String?) ?? '',
+            value: (m['value'] as String?) ?? '',
+          ),
+    ];
+
+    final rawBase = ((r['base_url'] as String?) ?? fallback.baseUrl).trim();
+    final baseUrl = rawBase.replaceAll(RegExp(r'/+$'), '');
+
+    return SiteData(
+      baseUrl: baseUrl,
+      nameAr: (r['name_ar'] as String?) ?? fallback.nameAr,
+      nameEn: (r['name_en'] as String?) ?? fallback.nameEn,
+      taglineAr: (r['tagline_ar'] as String?) ?? '',
+      taglineEn: (r['tagline_en'] as String?) ?? '',
+      bioAr: (r['bio_ar'] as String?)?.trim() ?? '',
+      bioEn: (r['bio_en'] as String?)?.trim() ?? '',
+      photoDark: (r['photo_dark'] as String?) ?? fallback.photoDark,
+      photoLight: (r['photo_light'] as String?) ?? fallback.photoLight,
+      statusLine: (r['status_line'] as String?)?.trim() ?? '',
+      ledeAr: (r['lede_ar'] as String?)?.trim() ?? '',
+      ledeEn: (r['lede_en'] as String?)?.trim() ?? '',
+      heroMeta: heroMeta,
+      socials: socials,
+    );
   }
 }

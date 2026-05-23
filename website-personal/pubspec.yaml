@@ -9,11 +9,15 @@ dependencies:
   jaspr: ^0.23.0
   jaspr_content: ^0.5.2
   jaspr_router: ^0.8.2
-  # Loads content/_data/site.yaml at build time so the homepage reflects
-  # what the admin saves. See lib/data/site_data.dart.
+  # YAML is still used by tool/save_server.dart (local admin save server)
+  # and tool/migrate_sections.dart. Site content itself is now loaded from
+  # Supabase, not YAML/JSON files.
   yaml: ^3.1.0
   # Renders blog post markdown bodies to HTML at build time.
   markdown: ^7.2.0
+  # HTTP client used by data loaders to fetch from Supabase PostgREST at
+  # build time. See lib/data/supabase_client.dart.
+  http: ^1.2.0
 
 dev_dependencies:
   build_runner: ^2.10.0

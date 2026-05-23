@@ -40,16 +40,36 @@ async function migrateProfile() {
   const text = await fs.readFile(path.join(CONTENT_DIR, '_data', 'site.yaml'), 'utf8');
   const data = yaml.load(text) || {};
 
+  // YAML stores socials as [{platform, url}, ...]; the Dart loader and the
+  // rest of the app expect a map { platform -> url } so it can do direct
+  // lookups. Transform here.
+  const socialsList = Array.isArray(data.socials) ? data.socials : [];
+  const socialsMap = {};
+  for (const entry of socialsList) {
+    if (entry && typeof entry.platform === 'string' && typeof entry.url === 'string') {
+      socialsMap[entry.platform.toLowerCase()] = entry.url;
+    }
+  }
+
+  // hero_meta stays as an array of {label, value} — natural shape.
+  const heroMeta = Array.isArray(data.hero_meta) ? data.hero_meta : [];
+
   const row = {
     id: 1,
     name_ar: data.name_ar ?? null,
     name_en: data.name_en ?? null,
     tagline_ar: data.tagline_ar ?? null,
     tagline_en: data.tagline_en ?? null,
-    bio_ar: data.bio_ar ?? null,
-    bio_en: data.bio_en ?? null,
+    bio_ar: (data.bio_ar ?? '').trim() || null,
+    bio_en: (data.bio_en ?? '').trim() || null,
     base_url: data.base_url ?? null,
-    socials: data.socials ?? {},
+    photo_dark: data.photo_dark ?? null,
+    photo_light: data.photo_light ?? null,
+    status_line: (data.status_line ?? '').trim() || null,
+    lede_ar: (data.lede_ar ?? '').trim() || null,
+    lede_en: (data.lede_en ?? '').trim() || null,
+    hero_meta: heroMeta,
+    socials: socialsMap,
   };
 
   const { error } = await supabase.from('profile').upsert(row);

@@ -1,27 +1,30 @@
-/// Generates `web/sitemap.xml` from site.yaml + content/blog/*/post.json.
+/// Generates `web/sitemap.xml` from data in Supabase (portfolio.profile,
+/// portfolio.posts, portfolio.research_papers).
 ///
 /// Two ways to invoke:
 ///   1. CLI:   `dart run tool/generate_sitemap.dart` (from website-personal/)
 ///   2. Lib:   `import 'tool/generate_sitemap.dart'; await writeSitemap();`
 ///
-/// The save server (tool/save_server.dart) calls writeSitemap() on every
-/// post create/update/delete so the sitemap stays fresh while authoring.
-/// The build script (tool/build.dart) calls it before each jaspr build.
+/// The build script (tool/build.dart) calls writeSitemap() before each
+/// jaspr build, so smalibary.me/sitemap.xml always matches what's deployed.
 ///
 /// Routes enumerated:
-///   - `/`                          (homepage)
-///   - `/blog/<slug>` for each post (excludes posts without a slug)
+///   - `/`                            (homepage)
+///   - `/writing`                     (blog index)
+///   - `/blog/<slug>` for each post   (posts with non-empty slug)
+///   - `/research/<id>` for each paper (visible papers)
 ///
-/// Admin routes (`/admin/*`) are deliberately excluded — they are local-only
-/// and `web/robots.txt` already disallows them as defence-in-depth.
+/// Admin routes (`/admin/*`) are deliberately excluded — they require
+/// authentication and `web/robots.txt` already disallows them.
 library;
 
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:yaml/yaml.dart';
+import 'package:website_jaspr/data/blog_data.dart';
+import 'package:website_jaspr/data/paper_data.dart';
+import 'package:website_jaspr/data/site_data.dart';
 
-void main(List<String> args) async {
+Future<void> main(List<String> args) async {
   try {
     final count = await writeSitemap();
     stdout.writeln('Wrote web/sitemap.xml ($count URLs).');
@@ -33,21 +36,13 @@ void main(List<String> args) async {
 
 /// Generates the sitemap and writes it to `web/sitemap.xml`. Returns the
 /// number of URLs written. Throws `_SitemapException` on a fatal config
-/// problem (e.g. missing `base_url`).
+/// problem (e.g. missing base_url).
 Future<int> writeSitemap() async {
-  final siteFile = File('content/_data/site.yaml');
-  if (!siteFile.existsSync()) {
-    throw _SitemapException(
-      'content/_data/site.yaml not found (run from website-personal/ root).',
-    );
+  final site = await SiteData.load();
+  final baseUrl = site.baseUrl;
+  if (baseUrl.isEmpty) {
+    throw _SitemapException('profile.base_url is empty in Supabase.');
   }
-
-  final siteYaml = loadYaml(siteFile.readAsStringSync()) as YamlMap;
-  final rawBase = (siteYaml['base_url'] as String?)?.trim() ?? '';
-  if (rawBase.isEmpty) {
-    throw _SitemapException('site.yaml is missing `base_url`.');
-  }
-  final baseUrl = rawBase.replaceAll(RegExp(r'/+$'), '');
 
   final today = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final entries = <_UrlEntry>[
@@ -55,51 +50,28 @@ Future<int> writeSitemap() async {
     _UrlEntry(loc: '$baseUrl/writing', lastmod: today, changefreq: 'weekly', priority: '0.9'),
   ];
 
-  final blogDir = Directory('content/blog');
-  if (blogDir.existsSync()) {
-    final dirs = blogDir.listSync().whereType<Directory>().toList()
-      ..sort((a, b) => a.path.compareTo(b.path));
-    for (final dir in dirs) {
-      final metaFile = File('${dir.path}/post.json');
-      if (!metaFile.existsSync()) continue;
-      try {
-        final meta = jsonDecode(metaFile.readAsStringSync()) as Map<String, dynamic>;
-        final slug = (meta['slug'] as String?)?.trim() ?? '';
-        if (slug.isEmpty) continue;
-        final lastmod = (meta['last_modified'] as String?) ?? (meta['date'] as String?) ?? today;
-        entries.add(_UrlEntry(
-          loc: '$baseUrl/blog/$slug',
-          lastmod: lastmod,
-          changefreq: 'monthly',
-          priority: '0.8',
-        ));
-      } catch (e) {
-        stderr.writeln('generate_sitemap: skipping ${dir.path} ($e)');
-      }
-    }
+  final posts = await BlogPost.loadAll();
+  for (final post in posts) {
+    final slug = post.slug.trim();
+    if (slug.isEmpty) continue;
+    final lastmod = post.date.isNotEmpty ? post.date : today;
+    entries.add(_UrlEntry(
+      loc: '$baseUrl/blog/$slug',
+      lastmod: lastmod,
+      changefreq: 'monthly',
+      priority: '0.8',
+    ));
   }
 
-  // Per-paper detail routes.
-  final papersFile = File('content/_data/papers.yaml');
-  if (papersFile.existsSync()) {
-    try {
-      final yaml = loadYaml(papersFile.readAsStringSync()) as YamlMap?;
-      final list = (yaml?['papers'] as YamlList?) ?? const <dynamic>[];
-      for (final p in list) {
-        if (p is! YamlMap) continue;
-        final id = (p['id'] as String?)?.trim() ?? '';
-        final visible = (p['visible'] as bool?) ?? true;
-        if (id.isEmpty || !visible) continue;
-        entries.add(_UrlEntry(
-          loc: '$baseUrl/research/$id',
-          lastmod: today,
-          changefreq: 'monthly',
-          priority: '0.7',
-        ));
-      }
-    } catch (e) {
-      stderr.writeln('generate_sitemap: papers.yaml parse failed ($e)');
-    }
+  final papers = await Paper.loadAll();
+  for (final paper in papers) {
+    if (!paper.visible || paper.id.isEmpty) continue;
+    entries.add(_UrlEntry(
+      loc: '$baseUrl/research/${paper.id}',
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.7',
+    ));
   }
 
   final buf = StringBuffer()

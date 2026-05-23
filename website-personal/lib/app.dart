@@ -20,17 +20,22 @@ import 'pages/admin/research.dart';
 import 'pages/admin/styleguide.dart';
 
 class App extends StatelessComponent {
-  const App({super.key});
+  const App({
+    super.key,
+    required this.site,
+    required this.posts,
+    required this.papers,
+  });
+
+  /// Pre-loaded site profile. Fetched once in main.server.dart from Supabase
+  /// before the app starts rendering — keeps build() synchronous so jaspr's
+  /// Component contract isn't broken by async loaders.
+  final SiteData site;
+  final List<BlogPost> posts;
+  final List<Paper> papers;
 
   @override
   Component build(BuildContext context) {
-    // Loaded once per build; SSG enumerates routes statically, so calling
-    // these here is safe — they read files synchronously and the data
-    // doesn't change mid-render.
-    final site = SiteData.load();
-    final posts = BlogPost.loadAll();
-    final papers = Paper.loadAll();
-
     // Build-time cache-bust. Browsers (esp. iOS Safari) aggressively cache
     // /styles.css since it has no fingerprint. Stamping a per-build query
     // string on every stylesheet href forces a refetch on every deploy.
