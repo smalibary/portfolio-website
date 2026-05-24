@@ -3,9 +3,10 @@ import 'package:jaspr/dom.dart';
 
 import '../../components/admin/admin_shell.dart';
 
-/// Blog editor. Picker in the topbar (V3 style — ⌘K to open). Editor below
-/// with tabs for content, metadata, and SEO. Inline JS handles all the
-/// dynamic bits — list fetch, picker filter, post load, save, delete.
+/// Blog admin — list-first. Default view is a list of all articles with
+/// DRAFT/PUBLISHED badges; click a row to open the editor, or "New Post" to
+/// create. The editor (tabs for content / metadata / sections / SEO) slides
+/// in over the same page; a back button returns to the list.
 class AdminBlogPage extends StatelessComponent {
   const AdminBlogPage({super.key});
 
@@ -15,17 +16,18 @@ class AdminBlogPage extends StatelessComponent {
   var \$ = function(s, root){ return (root||document).querySelector(s); };
   var \$\$ = function(s, root){ return Array.from((root||document).querySelectorAll(s)); };
 
-  var pickerBtn   = \$('.adm [data-picker-btn]');
-  var pickerSearch= \$('.adm [data-picker-search]');
-  var pickerList  = \$('.adm [data-picker-list]');
-  var pickerNew   = \$('.adm [data-picker-new]');
-  var pickerTitle = \$('.adm .picker-title');
-  var savedChip   = \$('.adm .topbar .chip');
-  var publishBtn  = \$('.adm [data-publish]');
-  var saveBtn     = \$('.adm [data-save]');
-  var deleteBtn   = \$('.adm [data-delete]');
-  var tagsTarget  = \$('.adm [data-tags]');
-  var tagInputEl  = null;
+  var listView      = \$('.adm [data-view="list"]');
+  var editView      = \$('.adm [data-view="edit"]');
+  var articleListEl = \$('.adm [data-article-list]');
+  var newBtn        = \$('.adm [data-new]');
+  var backBtn       = \$('.adm [data-back]');
+  var currentTitle  = \$('.adm [data-current-title]');
+  var savedChip     = \$('.adm .topbar .chip');
+  var publishBtn    = \$('.adm [data-publish]');
+  var saveBtn       = \$('.adm [data-save]');
+  var deleteBtn     = \$('.adm [data-delete]');
+  var tagsTarget    = \$('.adm [data-tags]');
+  var tagInputEl    = null;
 
   var posts = [];
   var currentId = null;
@@ -54,32 +56,83 @@ class AdminBlogPage extends StatelessComponent {
     if (dirty) { e.preventDefault(); e.returnValue = ''; }
   });
 
-  // ---------- picker ----------
-  if (pickerBtn) pickerBtn.addEventListener('click', function(e){
-    e.stopPropagation();
-    pickerBtn.classList.toggle('open');
-    if (pickerBtn.classList.contains('open') && pickerSearch) pickerSearch.focus();
+  // ---------- view switching ----------
+  function showList(){
+    if (editView) editView.classList.add('hidden');
+    if (listView) listView.classList.remove('hidden');
+    if (backBtn) backBtn.classList.add('hidden');
+    if (currentTitle) currentTitle.textContent = '';
+    setSaveState('idle', 'المقالات · ARTICLES');
+    renderList();
+  }
+  function showEdit(slug){
+    if (dirty && !confirm('Discard unsaved changes?')) return;
+    if (listView) listView.classList.add('hidden');
+    if (editView) editView.classList.remove('hidden');
+    if (backBtn) backBtn.classList.remove('hidden');
+    // default to the first tab
+    \$\$('.adm .tabs button').forEach(function(x, i){ x.classList.toggle('active', i === 0); });
+    \$\$('.adm .tab-panel').forEach(function(p){ p.classList.toggle('active', p.dataset.tab === 'content'); });
+    selectPost(slug);
+  }
+  if (backBtn) backBtn.addEventListener('click', function(){
+    if (dirty && !confirm('Discard unsaved changes?')) return;
+    dirty = false;
+    loadList().then(showList);
   });
-  document.addEventListener('click', function(e){
-    if (pickerBtn && !pickerBtn.parentElement.contains(e.target)) pickerBtn.classList.remove('open');
-  });
-  document.addEventListener('keydown', function(e){
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      pickerBtn.classList.toggle('open');
-      if (pickerBtn.classList.contains('open') && pickerSearch) pickerSearch.focus();
+
+  // ---------- article list ----------
+  function loadList(){
+    return window.adminFetch(API + '/posts').then(function(r){ return r.json(); }).then(function(data){
+      posts = Array.isArray(data) ? data : [];
+    });
+  }
+
+  function renderList(){
+    if (!articleListEl) return;
+    articleListEl.innerHTML = '';
+    if (!posts.length){
+      var empty = document.createElement('div');
+      empty.className = 'article-empty';
+      empty.textContent = 'لا توجد مقالات بعد · No articles yet — click + NEW POST.';
+      articleListEl.appendChild(empty);
+      return;
     }
-    if (e.key === 'Escape') pickerBtn.classList.remove('open');
-  });
+    posts.forEach(function(p){
+      var status = (p.status || 'draft');
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'article-row';
 
-  if (pickerSearch) pickerSearch.addEventListener('input', renderPicker);
+      var meta = document.createElement('div');
+      meta.className = 'article-row__meta';
+      var badge = document.createElement('span');
+      badge.className = 'article-row__status ' + (status === 'published' ? 'is-published' : 'is-draft');
+      badge.textContent = status.toUpperCase();
+      var date = document.createElement('span');
+      date.className = 'article-row__date';
+      date.textContent = p.date || '—';
+      meta.appendChild(badge); meta.appendChild(date);
 
-  if (pickerNew) pickerNew.addEventListener('click', function(){
-    var raw = prompt('slug for the new post (e.g. \\'my-new-post\\')');
+      var title = document.createElement('div');
+      title.className = 'article-row__title';
+      title.textContent = p.title_ar || p.title_en || p.slug;
+
+      var slug = document.createElement('div');
+      slug.className = 'article-row__slug';
+      slug.textContent = '/blog/' + p.slug;
+
+      row.appendChild(meta);
+      row.appendChild(title);
+      row.appendChild(slug);
+      row.addEventListener('click', function(){ showEdit(p.slug); });
+      articleListEl.appendChild(row);
+    });
+  }
+
+  if (newBtn) newBtn.addEventListener('click', function(){
+    var raw = prompt('slug for the new post (e.g. my-new-post)');
     if (!raw) return;
-    // URL-safe slug: lowercase, spaces → hyphens, strip anything that isn't
-    // a letter/number/hyphen. A space in the slug breaks the /posts/<slug>
-    // route, so this is enforced, not optional.
     var slug = raw.trim().toLowerCase()
       .replace(/\\s+/g, '-')
       .replace(/[^a-z0-9\\-]/g, '')
@@ -91,66 +144,24 @@ class AdminBlogPage extends StatelessComponent {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ slug: slug, language: 'ar', status: 'draft', title_ar: '(عنوان جديد)', title_en: '(new title)' })
     }).then(function(r){ return r.json(); }).then(function(res){
-      if (res.id) {
-        loadList().then(function(){ selectPost(res.id); });
+      if (res.id || res.slug) {
+        loadList().then(function(){ showEdit(res.slug || res.id); });
       } else {
         alert('Create failed: ' + (res.error || 'unknown'));
       }
     });
   });
 
-  function renderPicker(){
-    if (!pickerList) return;
-    var q = (pickerSearch && pickerSearch.value || '').toLowerCase();
-    pickerList.innerHTML = '';
-    var filtered = posts.filter(function(p){
-      if (!q) return true;
-      return ((p.title_ar||'') + ' ' + (p.title_en||'') + ' ' + (p.slug||'')).toLowerCase().indexOf(q) !== -1;
-    });
-    if (filtered.length === 0) {
-      var empty = document.createElement('div');
-      empty.style.padding = '20px'; empty.style.textAlign = 'center'; empty.style.color = 'var(--color-text-faint)';
-      empty.style.fontFamily = 'JetBrains Mono, monospace'; empty.style.fontSize = '12px';
-      empty.textContent = 'NO POSTS MATCH';
-      pickerList.appendChild(empty);
-      return;
-    }
-    filtered.forEach(function(p){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'pick-item' + (p.id === currentId ? ' active' : '');
-      var meta = document.createElement('div'); meta.className = 'pick-meta';
-      meta.textContent = (p.date || '') + ' · ' + ((p.word_count||0).toLocaleString()) + ' words';
-      var title = document.createElement('div'); title.className = 'pick-title';
-      title.textContent = p.title_ar || p.title_en || p.id;
-      var body = document.createElement('div'); body.className = 'pick-body';
-      body.appendChild(meta); body.appendChild(title);
-      btn.appendChild(body);
-      btn.addEventListener('click', function(){
-        if (dirty && p.id !== currentId && !confirm('Discard unsaved changes to current post?')) return;
-        selectPost(p.id);
-      });
-      pickerList.appendChild(btn);
-    });
-  }
-
-  // ---------- list / select / save / delete ----------
-  function loadList(){
-    return window.adminFetch(API + '/posts').then(function(r){ return r.json(); }).then(function(data){
-      posts = data;
-      renderPicker();
-    });
-  }
-
-  function selectPost(id){
-    currentId = id;
-    pickerBtn.classList.remove('open');
+  // ---------- select / load a single post ----------
+  function selectPost(slug){
+    currentId = slug;
     setSaveState('saving', 'LOADING');
-    window.adminFetch(API + '/posts/' + id).then(function(r){ return r.json(); }).then(function(data){
+    window.adminFetch(API + '/posts/' + slug).then(function(r){ return r.json(); }).then(function(data){
       fillForm(data);
       markSaved();
       attachDirtyListeners();
-      if (pickerTitle) pickerTitle.textContent = (data.meta && (data.meta.title_ar || data.meta.title_en)) || id;
+      var t = (data.meta && (data.meta.title_ar || data.meta.title_en)) || slug;
+      if (currentTitle) currentTitle.textContent = t;
     }).catch(function(e){
       setSaveState('error', 'LOAD ERROR');
       console.error('load failed', e);
@@ -173,8 +184,6 @@ class AdminBlogPage extends StatelessComponent {
   }
 
   // ---------- sections (live-document feature, #101) ----------
-  // Slugifier mirrors lib/data/sections.dart::slugify so anchors stay
-  // consistent between admin parsing and save_server merging.
   function slugifySection(s){
     s = (s || '').trim().toLowerCase();
     s = s.replace(/[\s ]+/g, '-');
@@ -203,13 +212,11 @@ class AdminBlogPage extends StatelessComponent {
     var bodyEl = \$('.adm [data-field="body"]');
     var bodySections = parseBodySections(bodyEl ? bodyEl.value : '');
 
-    // Build a lookup of saved metadata by anchor.
     var savedByAnchor = {};
     (savedSections || []).forEach(function(s){
       if (s && s.anchor) savedByAnchor[s.anchor] = s;
     });
 
-    // For each section in the current body, merge in saved metadata.
     var rows = bodySections.map(function(bs){
       var saved = savedByAnchor[bs.anchor] || {};
       return {
@@ -248,7 +255,6 @@ class AdminBlogPage extends StatelessComponent {
       var controls = document.createElement('div');
       controls.className = 'section-row__controls';
 
-      // Pin checkbox
       var pinLabel = document.createElement('label');
       pinLabel.className = 'section-row__pin';
       var pin = document.createElement('input');
@@ -259,7 +265,6 @@ class AdminBlogPage extends StatelessComponent {
       pinLabel.appendChild(pin);
       pinLabel.appendChild(document.createTextNode(' PIN'));
 
-      // Date input
       var dateLabel = document.createElement('label');
       dateLabel.className = 'section-row__date';
       dateLabel.appendChild(document.createTextNode('Updated '));
@@ -270,7 +275,6 @@ class AdminBlogPage extends StatelessComponent {
       dateInput.addEventListener('input', markDirty);
       dateLabel.appendChild(dateInput);
 
-      // Subtopic
       var subLabel = document.createElement('label');
       subLabel.className = 'section-row__sub';
       subLabel.appendChild(document.createTextNode('Subtopic '));
@@ -323,11 +327,8 @@ class AdminBlogPage extends StatelessComponent {
     });
   }
 
-  // Re-render the sections list when the body markdown changes (so newly
-  // added/removed ## headings appear immediately, not only after save).
   document.addEventListener('input', function(e){
     if (e.target && e.target.dataset && e.target.dataset.field === 'body') {
-      // Preserve current pin/date/subtopic state from existing rows.
       renderSections(readSections());
     }
   });
@@ -343,7 +344,6 @@ class AdminBlogPage extends StatelessComponent {
       previewEl.textContent = '(preview error)';
     }
   }
-  // Listen on the live body textarea (it stays the same DOM node across post switches).
   document.addEventListener('input', function(e){
     if (e.target && e.target.dataset && e.target.dataset.field === 'body') renderPreview();
   });
@@ -396,10 +396,8 @@ class AdminBlogPage extends StatelessComponent {
     return { meta: meta, body: bodyEl ? bodyEl.value : '' };
   }
 
-  // statusOverride: 'published' from the Publish button, 'draft' from
-  // Unpublish, or undefined for a plain Save (which leaves status as-is on
-  // the server). There's no status form field in this editor, so the only
-  // way status changes is through these buttons.
+  // statusOverride: 'published' from Publish, undefined for a plain Save
+  // (server keeps the existing status).
   function save(statusOverride){
     if (!currentId) return;
     setSaveState('saving', 'SAVING...');
@@ -413,8 +411,8 @@ class AdminBlogPage extends StatelessComponent {
       if (res.ok) {
         markSaved();
         if (res.post && res.post.status) setStatusLabel(res.post.status);
-        loadList(); // refresh — title may have changed
-        if (pickerTitle) pickerTitle.textContent = payload.meta.title_ar || payload.meta.title_en || currentId;
+        if (currentTitle) currentTitle.textContent = payload.meta.title_ar || payload.meta.title_en || currentId;
+        loadList(); // keep the list fresh for when we go back
       } else {
         setSaveState('error', 'SAVE ERROR');
         console.error(res);
@@ -427,7 +425,10 @@ class AdminBlogPage extends StatelessComponent {
 
   function setStatusLabel(status){
     var el = \$('.adm [data-status-label]');
-    if (el) el.textContent = (status || 'draft').toUpperCase();
+    if (!el) return;
+    status = status || 'draft';
+    el.textContent = status.toUpperCase();
+    el.className = 'status-pill is-' + status;
   }
 
   function attachDirtyListeners(){
@@ -454,20 +455,15 @@ class AdminBlogPage extends StatelessComponent {
     window.adminFetch(API + '/posts/' + currentId, { method: 'DELETE' })
       .then(function(r){ return r.json(); })
       .then(function(){
+        dirty = false;
         currentId = null;
-        loadList().then(function(){
-          if (posts.length) selectPost(posts[0].id);
-          else { fillForm({meta:{}, body:''}); if (pickerTitle) pickerTitle.textContent = '(no posts)'; markSaved(); }
-        });
+        loadList().then(showList);
       });
   });
 
-  // initial load — wait until the session is confirmed by admin_shell.
+  // initial — list view once the session is confirmed by admin_shell.
   window.__adminReady.then(function(){
-    loadList().then(function(){
-      if (posts.length) selectPost(posts[0].id);
-      else { fillForm({meta:{}, body:''}); if (pickerTitle) pickerTitle.textContent = '(no posts — click + NEW)'; markSaved(); }
-    });
+    loadList().then(showList);
   });
 })();
 ''';
@@ -477,57 +473,15 @@ class AdminBlogPage extends StatelessComponent {
     return AdminShell(
       current: 'blog',
       body: [
-        // custom topbar with picker (replacing AdminTopbar's static label)
         header(classes: 'topbar', [
           div(classes: 'topbar-l', [
-            div(classes: 'picker', [
-              button(
-                classes: 'picker-btn',
-                attributes: const {'data-picker-btn': '', 'type': 'button'},
-                [
-                  div(classes: 'picker-icon', [
-                    raw(
-                      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" '
-                      'stroke="currentColor" stroke-width="1.8">'
-                      '<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z"/>'
-                      '<path d="M8 9h8M8 13h6"/></svg>',
-                    ),
-                  ]),
-                  div(classes: 'picker-meta', [
-                    div(classes: 'picker-section', [text('BLOG · POST')]),
-                    div(classes: 'picker-title', [text('loading…')]),
-                  ]),
-                  span(classes: 'picker-chev', [text('▾')]),
-                  span(classes: 'picker-kbd', [text('⌘K')]),
-                ],
-              ),
-              div(classes: 'picker-panel', [
-                div(classes: 'picker-search', [
-                  raw(
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-                    '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
-                  ),
-                  input(
-                    type: InputType.text,
-                    attributes: const {
-                      'data-picker-search': '',
-                      'placeholder': 'ابحث ف المقالات... · search posts...',
-                    },
-                  ),
-                ]),
-                div(classes: 'picker-list', attributes: const {'data-picker-list': ''}, []),
-                div(classes: 'picker-foot', [
-                  button(
-                    classes: 'picker-new',
-                    attributes: const {'data-picker-new': '', 'type': 'button'},
-                    [text('+ مقال جديد · NEW POST')],
-                  ),
-                  span(classes: 'picker-hint', [
-                    raw('<kbd>↑↓</kbd> navigate <kbd>↵</kbd> open <kbd>esc</kbd> close'),
-                  ]),
-                ]),
-              ]),
-            ]),
+            button(
+              classes: 'back-btn hidden',
+              attributes: const {'data-back': '', 'type': 'button'},
+              [text('← المقالات · ALL ARTICLES')],
+            ),
+            div(classes: 'section-name', [text('المدونة · BLOG')]),
+            div(classes: 'current-title', attributes: const {'data-current-title': ''}, []),
           ]),
           div(classes: 'topbar-r', [
             a(
@@ -551,136 +505,146 @@ class AdminBlogPage extends StatelessComponent {
                 span([text('VIEW')]),
               ],
             ),
-            div(classes: 'chip on', [span(classes: 'dot', []), text('SAVED')]),
-            div(classes: 'status-badge', [
-              text('STATUS: '),
-              span(attributes: const {'data-status-label': ''}, [text('—')]),
-            ]),
+            div(classes: 'chip on', [span(classes: 'dot', []), text('المقالات')]),
+            span(classes: 'status-pill is-draft', attributes: const {'data-status-label': ''}, [text('—')]),
           ]),
         ]),
 
         main_(classes: 'main', [
-          div(classes: 'tabs', [
-            button(
-              classes: 'active',
-              attributes: const {'data-tab': 'content', 'type': 'button'},
-              [text('المحتوى · CONTENT')],
-            ),
-            button(
-              attributes: const {'data-tab': 'metadata', 'type': 'button'},
-              [text('البيانات الوصفية · METADATA')],
-            ),
-            button(
-              attributes: const {'data-tab': 'sections', 'type': 'button'},
-              [text('الأقسام · SECTIONS')],
-            ),
-            button(
-              attributes: const {'data-tab': 'seo', 'type': 'button'},
-              [text('SEO · AEO')],
-            ),
-          ]),
-
-          // CONTENT tab
-          div(classes: 'tab-panel active', attributes: const {'data-tab': 'content'}, [
-            div(classes: 'row', [
-              _field('العنوان بالعربي', '', 'title_ar', required: true),
-              _field('', 'TITLE · ENGLISH', 'title_en', required: true),
-            ]),
-            _field('المعرّف · SLUG', '', 'slug', required: true, hint: 'smalibary.me/blog/<slug>'),
-            div(classes: 'row', [
-              _textarea('المقتطف بالعربي', '', 'excerpt_ar', rows: 3),
-              _textarea('', 'EXCERPT · ENGLISH', 'excerpt_en', rows: 3),
-            ]),
-            // Body editor — split view with live markdown preview.
-            div(classes: 'field', [
-              label([
-                text('محتوى المقال · MARKDOWN BODY'),
-                span(classes: 'req', [text(' *')]),
+          // ===== LIST VIEW =====
+          div(attributes: const {'data-view': 'list'}, [
+            div(classes: 'list-head', [
+              div([
+                h1([text('المقالات')]),
+                div(classes: 'en', [text('ARTICLES · click a row to edit')]),
               ]),
-              div(classes: 'md-split-header', [
-                span([text('SOURCE · MARKDOWN')]),
-                span([text('PREVIEW')]),
+              button(
+                classes: 'btn',
+                attributes: const {'data-new': '', 'type': 'button'},
+                [text('+ مقال جديد · NEW POST')],
+              ),
+            ]),
+            div(classes: 'article-list', attributes: const {'data-article-list': ''}, []),
+          ]),
+
+          // ===== EDIT VIEW (hidden until a row/new is clicked) =====
+          div(classes: 'hidden', attributes: const {'data-view': 'edit'}, [
+            div(classes: 'tabs', [
+              button(
+                classes: 'active',
+                attributes: const {'data-tab': 'content', 'type': 'button'},
+                [text('المحتوى · CONTENT')],
+              ),
+              button(
+                attributes: const {'data-tab': 'metadata', 'type': 'button'},
+                [text('البيانات الوصفية · METADATA')],
+              ),
+              button(
+                attributes: const {'data-tab': 'sections', 'type': 'button'},
+                [text('الأقسام · SECTIONS')],
+              ),
+              button(
+                attributes: const {'data-tab': 'seo', 'type': 'button'},
+                [text('SEO · AEO')],
+              ),
+            ]),
+
+            // CONTENT tab
+            div(classes: 'tab-panel active', attributes: const {'data-tab': 'content'}, [
+              div(classes: 'row', [
+                _field('العنوان بالعربي', '', 'title_ar', required: true),
+                _field('', 'TITLE · ENGLISH', 'title_en', required: true),
               ]),
-              div(classes: 'md-split', [
-                textarea(
-                  attributes: const {
-                    'data-field': 'body',
-                    'spellcheck': 'false',
-                  },
-                  [],
-                ),
-                div(classes: 'md-preview', attributes: const {'data-md-preview': ''}, []),
+              _field('المعرّف · SLUG', '', 'slug', required: true, hint: 'smalibary.me/blog/<slug>'),
+              div(classes: 'row', [
+                _textarea('المقتطف بالعربي', '', 'excerpt_ar', rows: 3),
+                _textarea('', 'EXCERPT · ENGLISH', 'excerpt_en', rows: 3),
               ]),
-              div(classes: 'hint', [
-                text('Live preview powered by marked.js · auto-saves with the rest of the form'),
+              div(classes: 'field', [
+                label([
+                  text('محتوى المقال · MARKDOWN BODY'),
+                  span(classes: 'req', [text(' *')]),
+                ]),
+                div(classes: 'md-split-header', [
+                  span([text('SOURCE · MARKDOWN')]),
+                  span([text('PREVIEW')]),
+                ]),
+                div(classes: 'md-split', [
+                  textarea(
+                    attributes: const {
+                      'data-field': 'body',
+                      'spellcheck': 'false',
+                    },
+                    [],
+                  ),
+                  div(classes: 'md-preview', attributes: const {'data-md-preview': ''}, []),
+                ]),
+                div(classes: 'hint', [
+                  text('Live preview powered by marked.js · auto-saves with the rest of the form'),
+                ]),
               ]),
             ]),
-          ]),
 
-          // METADATA tab
-          div(classes: 'tab-panel', attributes: const {'data-tab': 'metadata'}, [
-            div(classes: 'row', [
-              _field('التاريخ · DATE', '', 'date', type: InputType.date, required: true),
+            // METADATA tab
+            div(classes: 'tab-panel', attributes: const {'data-tab': 'metadata'}, [
+              div(classes: 'row', [
+                _field('التاريخ · DATE', '', 'date', type: InputType.date, required: true),
+              ]),
+              div(classes: 'field', [
+                label([text('الوسوم · TAGS')]),
+                div(classes: 'tag-input', attributes: const {'data-tags': ''}, []),
+              ]),
+              div(classes: 'row', [
+                _field('وقت القراءة · READING TIME (min)', '', 'reading_time', type: InputType.number),
+                _field('اللغة · LANGUAGE', '', 'language', hint: 'ar / en'),
+              ]),
+              _textarea('خلاصة المقال · KEY TAKEAWAYS', '', 'takeaways', rows: 6),
+              div(classes: 'hint', [text('One line per takeaway. Supports **bold** and [links](url).')]),
             ]),
-            div(classes: 'field', [
-              label([text('الوسوم · TAGS')]),
-              div(classes: 'tag-input', attributes: const {'data-tags': ''}, []),
-            ]),
-            div(classes: 'row', [
-              _field('وقت القراءة · READING TIME (min)', '', 'reading_time', type: InputType.number),
-              _field('اللغة · LANGUAGE', '', 'language', hint: 'ar / en'),
-            ]),
-            _textarea('خلاصة المقال · KEY TAKEAWAYS', '', 'takeaways', rows: 6),
-            div(classes: 'hint', [text('One line per takeaway. Supports **bold** and [links](url).')]),
-          ]),
 
-          // SECTIONS tab — live-document section management (#101)
-          div(classes: 'tab-panel', attributes: const {'data-tab': 'sections'}, [
-            div(classes: 'sections-intro', [
-              p([text(
-                'Each H2 (## ) heading in the body is a live-document section. '
-                'Pin to promote a section to the top (in original order). '
-                'Dates auto-update on save when section text changes — set manually here to override.',
-              )]),
-              div(classes: 'sections-warn', attributes: const {'data-sections-warn': '', 'style': 'display:none;'}, []),
+            // SECTIONS tab
+            div(classes: 'tab-panel', attributes: const {'data-tab': 'sections'}, [
+              div(classes: 'sections-intro', [
+                p([text(
+                  'Each H2 (## ) heading in the body is a live-document section. '
+                  'Pin to promote a section to the top (in original order). '
+                  'Dates auto-update on save when section text changes — set manually here to override.',
+                )]),
+                div(classes: 'sections-warn', attributes: const {'data-sections-warn': '', 'style': 'display:none;'}, []),
+              ]),
+              div(classes: 'sections-list', attributes: const {'data-sections': ''}, []),
             ]),
-            div(classes: 'sections-list', attributes: const {'data-sections': ''}, []),
-          ]),
 
-          // SEO tab
-          div(classes: 'tab-panel', attributes: const {'data-tab': 'seo'}, [
-            _field('META TITLE', '', 'meta_title'),
-            _textarea('META DESCRIPTION', '', 'meta_description', rows: 3),
-            div(classes: 'row', [
-              _field('OG IMAGE', '', 'og_image', hint: 'relative to /images/'),
-              _field('CANONICAL URL', '', 'canonical_url', type: InputType.url),
+            // SEO tab
+            div(classes: 'tab-panel', attributes: const {'data-tab': 'seo'}, [
+              _field('META TITLE', '', 'meta_title'),
+              _textarea('META DESCRIPTION', '', 'meta_description', rows: 3),
+              div(classes: 'row', [
+                _field('OG IMAGE', '', 'og_image', hint: 'relative to /images/'),
+                _field('CANONICAL URL', '', 'canonical_url', type: InputType.url),
+              ]),
+              _field('ROBOTS', '', 'robots', hint: 'e.g. "index, follow"'),
             ]),
-            _field('ROBOTS', '', 'robots', hint: 'e.g. "index, follow"'),
-          ]),
 
-          // actions
-          div(classes: 'actions', [
-            button(
-              classes: 'btn danger',
-              attributes: const {'data-delete': '', 'type': 'button'},
-              [text('حذف · DELETE')],
-            ),
-            div(classes: 'flex-1', []),
-            button(
-              classes: 'btn ghost',
-              attributes: const {'type': 'button'},
-              [text('معاينة · PREVIEW')],
-            ),
-            button(
-              classes: 'btn ghost',
-              attributes: const {'data-save': '', 'type': 'button'},
-              [text('حفظ · SAVE')],
-            ),
-            button(
-              classes: 'btn',
-              attributes: const {'data-publish': '', 'type': 'button'},
-              [text('نشر · PUBLISH')],
-            ),
+            // actions
+            div(classes: 'actions', [
+              button(
+                classes: 'btn danger',
+                attributes: const {'data-delete': '', 'type': 'button'},
+                [text('حذف · DELETE')],
+              ),
+              div(classes: 'flex-1', []),
+              button(
+                classes: 'btn ghost',
+                attributes: const {'data-save': '', 'type': 'button'},
+                [text('حفظ كمسودة · SAVE DRAFT')],
+              ),
+              button(
+                classes: 'btn',
+                attributes: const {'data-publish': '', 'type': 'button'},
+                [text('نشر · PUBLISH')],
+              ),
+            ]),
           ]),
         ]),
         // Load marked.js BEFORE the inline script that uses it.
