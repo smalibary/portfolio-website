@@ -63,6 +63,13 @@ export async function onRequestPost(context) {
     if (row.language !== 'ar' && row.language !== 'en') delete row.language;
     if (!['draft', 'published', 'archived'].includes(row.status)) delete row.status;
 
+    // Stamp a publish date the first time a post goes live, so it shows a
+    // real date and sorts correctly. An empty string from the form counts
+    // as "not set".
+    if (row.status === 'published' && !row.published_at) {
+      row.published_at = new Date().toISOString();
+    }
+
     const sb = new SupabaseAdmin(env);
     const result = await sb.upsert('posts', row, { onConflict: 'slug' });
     triggerRebuild(env, context);
