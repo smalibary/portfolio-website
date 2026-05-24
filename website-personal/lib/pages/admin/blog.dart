@@ -413,6 +413,7 @@ class AdminBlogPage extends StatelessComponent {
         if (res.post && res.post.status) setStatusLabel(res.post.status);
         if (currentTitle) currentTitle.textContent = payload.meta.title_ar || payload.meta.title_en || currentId;
         loadList(); // keep the list fresh for when we go back
+        if (statusOverride === 'published') showRebuildNote();
       } else {
         setSaveState('error', 'SAVE ERROR');
         console.error(res);
@@ -421,6 +422,26 @@ class AdminBlogPage extends StatelessComponent {
       setSaveState('error', 'SAVE ERROR');
       console.error('save failed', e);
     });
+  }
+
+  // The site is statically built. Publishing updates Supabase instantly, then
+  // a rebuild (~90s) regenerates the pages. Tell the user to wait instead of
+  // wondering why the post isn't live the instant they click Publish.
+  function showRebuildNote(){
+    var note = \$('.adm [data-publish-note]');
+    if (!note) return;
+    note.innerHTML = '✓ تم النشر · Published. The site is rebuilding — your post will be live at '
+      + '<a href="/writing" target="_blank" rel="noopener">smalibary.me/writing</a> in about 90 seconds. '
+      + '<span class="countdown"></span>';
+    note.classList.add('show');
+    var left = 90;
+    var cd = note.querySelector('.countdown');
+    if (note._timer) clearInterval(note._timer);
+    note._timer = setInterval(function(){
+      left -= 1;
+      if (cd) cd.textContent = left > 0 ? '(~' + left + 's)' : '(should be live now — refresh /writing)';
+      if (left <= 0) clearInterval(note._timer);
+    }, 1000);
   }
 
   function setStatusLabel(status){
@@ -645,6 +666,7 @@ class AdminBlogPage extends StatelessComponent {
                 [text('نشر · PUBLISH')],
               ),
             ]),
+            div(classes: 'publish-note', attributes: const {'data-publish-note': ''}, []),
           ]),
         ]),
         // Load marked.js BEFORE the inline script that uses it.
