@@ -73,8 +73,8 @@ export async function onRequestPost(context) {
     if (body !== null) row.body_md = body;
 
     // Sensible defaults for brand-new posts.
-    if (!row.status) row.status = 'draft';
-    if (!row.language) row.language = 'ar';
+    if (!['draft', 'published', 'archived'].includes(row.status)) row.status = 'draft';
+    if (row.language !== 'ar' && row.language !== 'en') row.language = 'ar';
     if (!row.title_ar) row.title_ar = '';
     if (!row.title_en) row.title_en = '';
     if (!row.tags) row.tags = [];

@@ -75,15 +75,26 @@ class AdminBlogPage extends StatelessComponent {
   if (pickerSearch) pickerSearch.addEventListener('input', renderPicker);
 
   if (pickerNew) pickerNew.addEventListener('click', function(){
-    var slug = prompt('slug for the new post (e.g. \\'my-new-post\\')');
-    if (!slug) return;
+    var raw = prompt('slug for the new post (e.g. \\'my-new-post\\')');
+    if (!raw) return;
+    // URL-safe slug: lowercase, spaces → hyphens, strip anything that isn't
+    // a letter/number/hyphen. A space in the slug breaks the /posts/<slug>
+    // route, so this is enforced, not optional.
+    var slug = raw.trim().toLowerCase()
+      .replace(/\\s+/g, '-')
+      .replace(/[^a-z0-9\\-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+\$/g, '');
+    if (!slug) { alert('Slug must contain letters or numbers.'); return; }
     window.adminFetch(API + '/posts', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ slug: slug, title_ar: '(عنوان جديد)', title_en: '(new title)' })
+      body: JSON.stringify({ slug: slug, language: 'ar', status: 'draft', title_ar: '(عنوان جديد)', title_en: '(new title)' })
     }).then(function(r){ return r.json(); }).then(function(res){
       if (res.id) {
         loadList().then(function(){ selectPost(res.id); });
+      } else {
+        alert('Create failed: ' + (res.error || 'unknown'));
       }
     });
   });

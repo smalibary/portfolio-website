@@ -56,6 +56,13 @@ export async function onRequestPost(context) {
     row.slug = slug;
     if (body !== null) row.body_md = body;
 
+    // Enum columns have CHECK constraints + DB defaults. If the editor sends
+    // an empty or invalid value, drop the field entirely so the existing row
+    // value (on update) or the column default (on insert) wins, instead of
+    // failing the constraint.
+    if (row.language !== 'ar' && row.language !== 'en') delete row.language;
+    if (!['draft', 'published', 'archived'].includes(row.status)) delete row.status;
+
     const sb = new SupabaseAdmin(env);
     const result = await sb.upsert('posts', row, { onConflict: 'slug' });
     triggerRebuild(env, context);
