@@ -2,6 +2,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 
+import 'components/build_stamp.dart';
 import 'components/chat_bubble.dart';
 import 'data/blog_data.dart';
 import 'data/paper_data.dart';
@@ -25,7 +26,6 @@ class App extends StatelessComponent {
     required this.site,
     required this.posts,
     required this.papers,
-    this.buildLabel = '',
   });
 
   /// Pre-loaded site profile. Fetched once in main.server.dart from Supabase
@@ -34,10 +34,6 @@ class App extends StatelessComponent {
   final SiteData site;
   final List<BlogPost> posts;
   final List<Paper> papers;
-
-  /// Build stamp (branch@sha · time) shown in the page corner. Set from
-  /// Cloudflare Pages env in main.server.dart.
-  final String buildLabel;
 
   @override
   Component build(BuildContext context) {
@@ -169,14 +165,8 @@ class App extends StatelessComponent {
           nameAr: site.nameAr,
           nameEn: site.nameEn,
         ),
-        // Build stamp — visible on every page so you can confirm which
-        // deploy is live. Changes automatically each Cloudflare deploy.
-        if (buildLabel.isNotEmpty)
-          div(
-            classes: 'build-stamp',
-            attributes: {'title': 'current deploy'},
-            [text(buildLabel)],
-          ),
+        // Temporary deploy badge — delete build_stamp.dart + this line to remove.
+        const BuildStamp(),
       ]),
     );
   }

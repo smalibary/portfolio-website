@@ -1814,24 +1814,3 @@ html.chat-locked {
   .chat-header__avatar { width: var(--c-chat-avatar-size-sm); height: var(--c-chat-avatar-size-sm); }
   .chat-header__name-ar { font-size: var(--text-md); }
 }
-
-/* Build stamp — tiny fixed corner badge showing the live deploy
-   (branch@sha · time). Set from Cloudflare Pages env at build time; changes
-   every deploy. Sits on the inline-end corner to clear the admin rail. */
-.build-stamp {
-  position: fixed;
-  bottom: var(--space-2);
-  inset-inline-end: var(--space-2);
-  z-index: 9999;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: var(--text-2xs);
-  letter-spacing: .02em;
-  color: var(--color-text-faint);
-  background: color-mix(in srgb, var(--color-surface-card) 88%, transparent);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-sm);
-  padding: var(--space-0-5) var(--space-2);
-  opacity: .45;
-  transition: opacity .15s;
-}
-.build-stamp:hover { opacity: 1; }
