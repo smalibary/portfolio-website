@@ -102,6 +102,7 @@
   --c-adm-md-min-h:          480px;
   --c-adm-md-max-h:          640px;
   --c-adm-main-max:          1100px;
+  --c-adm-main-narrow:       760px;
   --c-adm-login-max:         440px;
   --c-adm-login-h1-size:     22px;
   --c-adm-tooltip-shadow:    0 12px 32px -16px rgba(var(--color-shadow-rgb), 0.5);

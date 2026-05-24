@@ -324,7 +324,7 @@ class AdminResearchPage extends StatelessComponent {
           ]),
         ]),
 
-        main_(classes: 'main', [
+        main_(classes: 'main main--narrow', [
           // Visibility row
           div(classes: 'visibility', [
             div(classes: 'visibility-l', [

@@ -190,12 +190,12 @@ class AdminProfilePage extends StatelessComponent {
       current: 'profile',
       body: [
         AdminTopbar(sectionAr: 'الملف الشخصي', sectionEn: 'PROFILE'),
-        main_(classes: 'main', [
+        main_(classes: 'main main--narrow', [
           header(classes: 'head', [
             div([
               div(classes: 'eyebrow', [text('SECTION · IDENTITY')]),
               h1([text('الهوية و الروابط')]),
-              div(classes: 'en', [text('READS/WRITES content/_data/site.yaml')]),
+              div(classes: 'en', [text('READS/WRITES portfolio.profile (Supabase)')]),
             ]),
           ]),
 

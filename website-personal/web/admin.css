@@ -144,6 +144,9 @@
 
 /* main area */
 .adm .main{ position:relative; z-index:1; max-width:var(--c-adm-main-max); margin:0 auto; padding:var(--space-9) var(--space-8) 80px; /* intentionally literal: scroll-end breathing room, not a spacing-scale value */ }
+/* Narrower centred column for form-heavy pages (profile, research) so fields
+   don't stretch edge-to-edge on wide screens. Phone still goes full-width. */
+.adm .main--narrow{ max-width:var(--c-adm-main-narrow); }
 .adm .head{ margin-bottom:var(--space-7); display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-6); flex-wrap:wrap; }
 .adm .head h1{ margin:var(--space-1-5) 0 var(--space-1); font-size:var(--text-2xl); font-weight:500; letter-spacing:-.015em; }
 .adm .head .en{ font-family:'JetBrains Mono',monospace; font-size:var(--text-sm); color:var(--color-text-muted); letter-spacing:.04em; }
