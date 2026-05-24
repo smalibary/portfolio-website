@@ -120,7 +120,7 @@
 
 /* floating navigation column — squared glassy card, pinned bottom-right */
 .adm .rail{
-  position:fixed; inset-inline-end:var(--space-6); bottom:var(--space-6); top:auto; width:auto; height:auto;
+  position:fixed; right:var(--space-6); left:auto; bottom:var(--space-6); top:auto; width:auto; height:auto; /* physical right: the admin doc is dir=rtl, so logical inset-inline-end would flip to the left */
   display:flex; flex-direction:column; align-items:center; gap:var(--space-1); padding:var(--space-1-5); z-index:40;
   background:color-mix(in srgb, var(--color-surface-card) 94%, transparent); backdrop-filter:blur(10px); /* intentionally literal: 10px glass blur, a visual-effect value */
   border:var(--border-rule); border-radius:var(--c-adm-rail-item-radius);
@@ -148,7 +148,7 @@
 [data-theme="light"] .adm .rail-theme .sun { opacity:1; transform:none; }
 
 /* tooltip flies out to the left of the column */
-.adm .rail-tip{ position:absolute; inset-inline-end:calc(100% + var(--space-2)); inset-inline-start:auto; top:50%; transform:translateY(-50%); background:var(--color-surface-card); border:var(--border-rule); padding:var(--space-1-5) var(--space-3); border-radius:var(--radius-sm); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--color-text-default); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; box-shadow:var(--c-adm-tooltip-shadow); }
+.adm .rail-tip{ position:absolute; right:calc(100% + var(--space-2)); left:auto; top:50%; transform:translateY(-50%); background:var(--color-surface-card); border:var(--border-rule); padding:var(--space-1-5) var(--space-3); border-radius:var(--radius-sm); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--color-text-default); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; box-shadow:var(--c-adm-tooltip-shadow); }
 .adm .rail-item:hover .rail-tip{ opacity:1; }
 
 /* topbar */
