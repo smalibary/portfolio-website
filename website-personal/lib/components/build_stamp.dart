@@ -31,15 +31,17 @@ class BuildStamp extends StatelessComponent {
   }
 
   // Inline style keeps the component fully self-contained — no styles.css
-  // entry to clean up when this is deleted. Sits on the inline-end corner so
-  // it clears the admin rail.
+  // entry to clean up when this is deleted. position:fixed pins it to the
+  // viewport (floats as you scroll); bottom-left corner. left/bottom are
+  // explicit (not inset-inline-*) so it stays bottom-left regardless of RTL.
   static const _style =
-      'position:fixed;bottom:8px;inset-inline-end:8px;z-index:9999;'
+      'position:fixed;bottom:8px;left:8px;z-index:9999;'
       'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.02em;'
       'color:var(--color-text-faint);'
       'background:color-mix(in srgb,var(--color-surface-card) 88%,transparent);'
       'border:1px solid var(--color-border-default);border-radius:6px;'
-      'padding:2px 8px;opacity:.5;';
+      'padding:2px 8px;opacity:.5;'
+      'pointer-events:none;';
 
   @override
   Component build(BuildContext context) {
