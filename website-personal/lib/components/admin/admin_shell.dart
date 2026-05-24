@@ -31,6 +31,66 @@ document.documentElement.style.visibility = 'hidden';
 window.__adminReady = new Promise(function(resolve){ window.__adminReadyResolve = resolve; });
 ''';
 
+  // Client-side router: admin pages are separate static documents, but the
+  // Supabase session + auth gate live OUTSIDE `.adm.shell`, while each page's
+  // rail/topbar/editor + scripts live INSIDE it. So we navigate by fetching the
+  // target page and swapping only `.adm.shell`'s innerHTML, then re-executing
+  // the scripts that came with it (innerHTML-injected <script>s don't run).
+  // The session and `__adminReady` (already resolved) are untouched, so no
+  // reload and no auth flash. Wrapped in a View Transition for a crossfade.
+  static const _router = '''
+(function(){
+  if (window.__adminRouter) return;
+  window.__adminRouter = true;
+
+  function runScripts(container){
+    container.querySelectorAll('script').forEach(function(old){
+      var s = document.createElement('script');
+      for (var i = 0; i < old.attributes.length; i++){
+        s.setAttribute(old.attributes[i].name, old.attributes[i].value);
+      }
+      s.textContent = old.textContent;
+      old.parentNode.replaceChild(s, old);
+    });
+  }
+  function doSwap(html){
+    var shell = document.querySelector('.adm.shell');
+    var parsed = new DOMParser().parseFromString(html, 'text/html');
+    var fresh = parsed.querySelector('.adm.shell');
+    if (!shell || !fresh){ window.location.reload(); return; }
+    if (parsed.title) document.title = parsed.title;
+    shell.innerHTML = fresh.innerHTML;
+    runScripts(shell);
+    window.scrollTo(0, 0);
+  }
+  function navigate(href, push){
+    fetch(href, { credentials: 'same-origin' })
+      .then(function(r){ return r.text(); })
+      .then(function(html){
+        if (push) history.pushState({ adm: true }, '', href);
+        if (document.startViewTransition) document.startViewTransition(function(){ doSwap(html); });
+        else doSwap(html);
+      })
+      .catch(function(){ window.location.href = href; });
+  }
+  document.addEventListener('click', function(e){
+    if (!e.target || !e.target.closest) return;
+    var a = e.target.closest('.adm .rail a[href^="/admin/"]');
+    if (!a) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    var href = a.getAttribute('href');
+    if (href === window.location.pathname) return;
+    // Preserve the editors' unsaved guard: they all flag UNSAVED in the chip.
+    var chip = document.querySelector('.adm .topbar .chip');
+    if (chip && /UNSAVED/i.test(chip.textContent || '') &&
+        !window.confirm('لديك تغييرات غير محفوظة — تتجاهلها؟ · Discard unsaved changes?')) return;
+    navigate(href, true);
+  });
+  window.addEventListener('popstate', function(){ navigate(window.location.pathname, false); });
+})();
+''';
+
   // Deferred module: sets up supabase-js, the authed fetch helper, and the
   // session gate. SUPABASE_URL + anon key are public, safe to embed.
   String _moduleScript() => '''
@@ -65,6 +125,8 @@ if (!data.session) {
         AdminRail(current: current),
         ...body,
       ]),
+      // Persistent sibling outside `.adm.shell` — runs once, survives swaps.
+      script(content: _router),
     ]);
   }
 }
