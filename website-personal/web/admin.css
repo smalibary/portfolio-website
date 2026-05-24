@@ -49,6 +49,8 @@
 .adm .chip.on{ color:var(--color-brand); border-color:color-mix(in srgb, var(--color-brand) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-brand) 10%, transparent); }
 .adm .chip.warn{ color:var(--color-status-warm); border-color:color-mix(in srgb, var(--color-status-warm) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-status-warm) 10%, transparent); }
 .adm .chip .dot{ display:inline-block; width:var(--c-adm-chip-dot-size); height:var(--c-adm-chip-dot-size); border-radius:var(--radius-sharp); background:currentColor; }
+.adm .status-badge{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--color-text-muted); letter-spacing:.04em; text-transform:uppercase; }
+.adm .status-badge [data-status-label]{ color:var(--color-brand); }
 
 /* card */
 .adm .card{ background:var(--color-surface-card); border:var(--border-rule); border-radius:var(--c-adm-card-radius); padding:var(--c-adm-card-pad); box-shadow:var(--c-adm-card-shadow); }

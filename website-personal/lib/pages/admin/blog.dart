@@ -169,6 +169,7 @@ class AdminBlogPage extends StatelessComponent {
     renderTags(meta.tags || []);
     renderPreview();
     renderSections(meta.sections || []);
+    setStatusLabel(meta.status || 'draft');
   }
 
   // ---------- sections (live-document feature, #101) ----------
@@ -395,10 +396,15 @@ class AdminBlogPage extends StatelessComponent {
     return { meta: meta, body: bodyEl ? bodyEl.value : '' };
   }
 
-  function save(){
+  // statusOverride: 'published' from the Publish button, 'draft' from
+  // Unpublish, or undefined for a plain Save (which leaves status as-is on
+  // the server). There's no status form field in this editor, so the only
+  // way status changes is through these buttons.
+  function save(statusOverride){
     if (!currentId) return;
     setSaveState('saving', 'SAVING...');
     var payload = readForm();
+    if (statusOverride) payload.meta.status = statusOverride;
     window.adminFetch(API + '/posts/' + currentId, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -406,6 +412,7 @@ class AdminBlogPage extends StatelessComponent {
     }).then(function(r){ return r.json(); }).then(function(res){
       if (res.ok) {
         markSaved();
+        if (res.post && res.post.status) setStatusLabel(res.post.status);
         loadList(); // refresh — title may have changed
         if (pickerTitle) pickerTitle.textContent = payload.meta.title_ar || payload.meta.title_en || currentId;
       } else {
@@ -418,6 +425,11 @@ class AdminBlogPage extends StatelessComponent {
     });
   }
 
+  function setStatusLabel(status){
+    var el = \$('.adm [data-status-label]');
+    if (el) el.textContent = (status || 'draft').toUpperCase();
+  }
+
   function attachDirtyListeners(){
     \$\$('.adm [data-field]').forEach(function(el){
       el.removeEventListener('input', markDirty);
@@ -425,12 +437,8 @@ class AdminBlogPage extends StatelessComponent {
     });
   }
 
-  if (saveBtn)    saveBtn.addEventListener('click', save);
-  if (publishBtn) publishBtn.addEventListener('click', function(){
-    var statusEl = document.querySelector('[data-field="status"]');
-    if (statusEl) statusEl.value = 'published';
-    save();
-  });
+  if (saveBtn)    saveBtn.addEventListener('click', function(){ save(); });
+  if (publishBtn) publishBtn.addEventListener('click', function(){ save('published'); });
 
   // delete: 2-click pattern. First click arms, second confirms (within 4s).
   if (deleteBtn) deleteBtn.addEventListener('click', function(){
@@ -544,6 +552,10 @@ class AdminBlogPage extends StatelessComponent {
               ],
             ),
             div(classes: 'chip on', [span(classes: 'dot', []), text('SAVED')]),
+            div(classes: 'status-badge', [
+              text('STATUS: '),
+              span(attributes: const {'data-status-label': ''}, [text('—')]),
+            ]),
           ]),
         ]),
 
