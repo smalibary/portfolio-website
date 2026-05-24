@@ -74,8 +74,7 @@ Set on the Pages project (per-environment) via `wrangler pages secret put NAME -
 | `SUPABASE_URL` | Production + Preview | Used at **build time** by Dart loaders + at **runtime** by admin Pages Functions |
 | `SUPABASE_ANON_KEY` | Production + Preview | Used at build time only (public reads via RLS) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Production + Preview | Used only by `/api/admin/*` Functions — bypasses RLS for admin writes |
-| `ADMIN_PASSCODE` | Production + Preview | What `/api/admin/login` compares against. Defaults to `1379`; rotate with wrangler |
-| `ADMIN_SESSION_SECRET` | Production + Preview | HMAC key for signing admin session cookies. Rotating it invalidates every session |
+| `ADMIN_EMAILS` | Production + Preview | Comma-separated allowlist of Supabase-authenticated emails permitted to use `/api/admin/*`. Everyone else (incl. future public users) gets 403 |
 | `DEPLOY_HOOK_URL` | Production + Preview | Cloudflare deploy hook the admin Functions POST after every successful write to rebuild the site |
 
 Secrets are environment-scoped — setting one on Preview does NOT set it on Production. Verify both with:
@@ -108,23 +107,43 @@ supabase db push
 | Static site is uploaded to Cloudflare Pages | Standard CI flow |
 | Visitor hits HTML, all content baked in | No request-time DB hits except `/api/*` |
 
-### Admin flow
+### Admin flow (Supabase Auth)
+
+Admin auth is real Supabase Auth, not a passcode. The browser signs in with
+supabase-js; the resulting JWT gates the admin Functions. This is the base
+for future public user accounts — they authenticate the same way but aren't
+on `ADMIN_EMAILS`, so they can't reach `/api/admin/*`.
 
 | Step | Where it happens |
 |---|---|
-| Admin enters passcode at `/admin/login` | POSTs `/api/admin/login`; server checks `ADMIN_PASSCODE`, sets HttpOnly signed cookie |
+| Sign in (email + password) at `/admin/login` | `login.dart` calls `sb.auth.signInWithPassword`; supabase-js stores the session in localStorage and auto-refreshes it |
+| Session gate on every admin page | `admin_shell.dart` loads supabase-js, exposes `window.sb`, `window.adminFetch` (injects the Bearer token), and `window.__adminReady` (redirects to `/admin/login` if no session) |
 | Admin reads/writes profile / posts / papers | `/api/admin/*` Pages Functions in `website-personal/functions/api/admin/` |
-| Auth guard | `_middleware.js` rejects everything except `/login` and `/logout` without a valid signed session cookie |
+| Auth guard | `_middleware.js` → `requireAdmin()` validates the Bearer token via Supabase `/auth/v1/user`, then checks the email against `ADMIN_EMAILS`. 401 unauthenticated, 403 authenticated-but-not-admin |
+| Logout | `rail.dart` calls `sb.auth.signOut()` |
 | Successful write triggers rebuild | `_lib/deploy.js` POSTs `DEPLOY_HOOK_URL` so the public site rebuilds in ~90s |
 
-### Rotating the passcode
+### Managing admin users
 
+Add an admin: create the Supabase user, then add their email to `ADMIN_EMAILS`.
 ```bash
-echo "new-passcode" | wrangler pages secret put ADMIN_PASSCODE --project-name salem-portfolio
-echo "new-passcode" | wrangler pages secret put ADMIN_PASSCODE --project-name salem-portfolio --env preview
+# create a user (service_role key)
+curl -X POST "$SUPABASE_URL/auth/v1/admin/users" \
+  -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"someone@example.com","password":"...","email_confirm":true}'
+
+# allowlist them (comma-separate multiple)
+echo "salimmalibari@gmail.com,someone@example.com" | wrangler pages secret put ADMIN_EMAILS --project-name salem-portfolio
+echo "salimmalibari@gmail.com,someone@example.com" | wrangler pages secret put ADMIN_EMAILS --project-name salem-portfolio --env preview
 ```
 
-To invalidate all existing sessions without changing the passcode, rotate `ADMIN_SESSION_SECRET` instead.
+Change your own password: Supabase dashboard → Authentication → Users → ⋯ → send recovery / set password. Or `sb.auth.updateUser({ password })` from a signed-in admin session.
+
+### Extending auth later (all on the same session model)
+- **Google OAuth:** enable the Google provider in Supabase (needs a Google Cloud OAuth app), then add a button calling `sb.auth.signInWithOAuth({ provider: 'google' })`.
+- **Magic link:** `sb.auth.signInWithOtp({ email })` — needs Supabase SMTP configured (can point at Resend).
+- **6-digit PIN quick-unlock:** after a full login, encrypt the refresh token with a PBKDF2(pin)-derived key in localStorage; on return, the PIN decrypts and restores the session. Needs brute-force throttling. Pure client-side convenience layer.
 
 ### Re-running the one-shot data migration
 
