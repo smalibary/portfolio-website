@@ -77,7 +77,7 @@ class AdminBlogPage extends StatelessComponent {
   if (pickerNew) pickerNew.addEventListener('click', function(){
     var slug = prompt('slug for the new post (e.g. \\'my-new-post\\')');
     if (!slug) return;
-    fetch(API + '/posts', {
+    window.adminFetch(API + '/posts', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ slug: slug, title_ar: '(عنوان جديد)', title_en: '(new title)' })
@@ -125,7 +125,7 @@ class AdminBlogPage extends StatelessComponent {
 
   // ---------- list / select / save / delete ----------
   function loadList(){
-    return fetch(API + '/posts').then(function(r){ return r.json(); }).then(function(data){
+    return window.adminFetch(API + '/posts').then(function(r){ return r.json(); }).then(function(data){
       posts = data;
       renderPicker();
     });
@@ -135,7 +135,7 @@ class AdminBlogPage extends StatelessComponent {
     currentId = id;
     pickerBtn.classList.remove('open');
     setSaveState('saving', 'LOADING');
-    fetch(API + '/posts/' + id).then(function(r){ return r.json(); }).then(function(data){
+    window.adminFetch(API + '/posts/' + id).then(function(r){ return r.json(); }).then(function(data){
       fillForm(data);
       markSaved();
       attachDirtyListeners();
@@ -388,7 +388,7 @@ class AdminBlogPage extends StatelessComponent {
     if (!currentId) return;
     setSaveState('saving', 'SAVING...');
     var payload = readForm();
-    fetch(API + '/posts/' + currentId, {
+    window.adminFetch(API + '/posts/' + currentId, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
@@ -432,7 +432,7 @@ class AdminBlogPage extends StatelessComponent {
       setTimeout(function(){ deleteArmed = false; deleteBtn.textContent = orig; deleteBtn.classList.remove('armed'); }, 4000);
       return;
     }
-    fetch(API + '/posts/' + currentId, { method: 'DELETE' })
+    window.adminFetch(API + '/posts/' + currentId, { method: 'DELETE' })
       .then(function(r){ return r.json(); })
       .then(function(){
         currentId = null;
@@ -443,10 +443,12 @@ class AdminBlogPage extends StatelessComponent {
       });
   });
 
-  // initial load
-  loadList().then(function(){
-    if (posts.length) selectPost(posts[0].id);
-    else { fillForm({meta:{}, body:''}); if (pickerTitle) pickerTitle.textContent = '(no posts — click + NEW)'; markSaved(); }
+  // initial load — wait until the session is confirmed by admin_shell.
+  window.__adminReady.then(function(){
+    loadList().then(function(){
+      if (posts.length) selectPost(posts[0].id);
+      else { fillForm({meta:{}, body:''}); if (pickerTitle) pickerTitle.textContent = '(no posts — click + NEW)'; markSaved(); }
+    });
   });
 })();
 ''';

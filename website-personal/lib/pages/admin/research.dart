@@ -175,7 +175,7 @@ class AdminResearchPage extends StatelessComponent {
 
   function loadAll(){
     setSaveState('saving', 'LOADING');
-    return fetch(API + '/papers').then(function(r){ return r.json(); }).then(function(data){
+    return window.adminFetch(API + '/papers').then(function(r){ return r.json(); }).then(function(data){
       papers = (data && data.papers) || [];
       if (papers.length > 0) {
         currentIdx = 0;
@@ -197,7 +197,7 @@ class AdminResearchPage extends StatelessComponent {
   function save(){
     syncFormToCurrent();
     setSaveState('saving', 'SAVING...');
-    fetch(API + '/papers', {
+    window.adminFetch(API + '/papers', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ papers: papers })
@@ -245,7 +245,7 @@ class AdminResearchPage extends StatelessComponent {
     save();
   });
 
-  loadAll();
+  window.__adminReady.then(loadAll);
 })();
 ''';
 

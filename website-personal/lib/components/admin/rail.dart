@@ -11,10 +11,10 @@ class AdminRail extends StatelessComponent {
   static const _logoutScript = '''
 (function(){
   var btn = document.querySelector('.adm .rail [data-logout]');
-  if (!btn) return;
-  btn.addEventListener('click', function(){
-    fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
-      .finally(function(){ window.location.href = '/admin/login'; });
+  if (btn) btn.addEventListener('click', function(){
+    var done = function(){ window.location.href = '/admin/login'; };
+    if (window.sb && window.sb.auth) window.sb.auth.signOut().finally(done);
+    else done();
   });
   var tBtns = document.querySelectorAll('.adm .rail [data-theme-set]');
   function applyTheme(t){

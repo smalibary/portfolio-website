@@ -1,11 +1,20 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
+import '../../data/supabase_client.dart';
 import 'rail.dart';
 
 /// Role: layout
-/// Layout shell for /admin/* pages — runs the auth gate, mounts the rail,
-/// and slots the page-specific body. Topbar and main are passed in by each page.
+/// Layout shell for /admin/* pages — runs the Supabase-session auth gate,
+/// mounts the rail, and slots the page-specific body.
+///
+/// Auth model: the browser authenticates with supabase-js (session lives in
+/// localStorage, auto-refreshed). This shell loads supabase-js, exposes:
+///   - window.sb           — the Supabase client
+///   - window.adminFetch   — fetch wrapper that injects the Bearer token
+///   - window.__adminReady — Promise that resolves once a session is confirmed
+/// Pages await window.__adminReady before loading data, and call
+/// window.adminFetch instead of fetch so every /api/admin/* call is signed.
 class AdminShell extends StatelessComponent {
   const AdminShell({
     required this.current,
@@ -15,34 +24,43 @@ class AdminShell extends StatelessComponent {
   final String current;
   final List<Component> body;
 
-  /// Auth gate — hides the page until a probe request to /api/admin/profile
-  /// confirms the session cookie is valid. 401 → redirect to /admin/login.
-  /// The HttpOnly session cookie can't be read from JS directly, so we have
-  /// to make a server round-trip; the small flash of hidden content is the
-  /// tradeoff for not exposing the token to XSS.
-  static const _authGate = '''
-(function(){
-  document.documentElement.style.visibility = 'hidden';
-  fetch('/api/admin/profile', { credentials: 'same-origin' })
-    .then(function(r){
-      if (r.status === 401) {
-        window.location.replace('/admin/login');
-        return;
-      }
-      document.documentElement.style.visibility = '';
-    })
-    .catch(function(){
-      // Network blip — let the page render and let individual API calls
-      // surface their own errors.
-      document.documentElement.style.visibility = '';
-    });
-})();
+  // Runs immediately during parse (regular script): hide the page and create
+  // the readiness promise BEFORE any page script registers its .then().
+  static const _bootstrap = '''
+document.documentElement.style.visibility = 'hidden';
+window.__adminReady = new Promise(function(resolve){ window.__adminReadyResolve = resolve; });
+''';
+
+  // Deferred module: sets up supabase-js, the authed fetch helper, and the
+  // session gate. SUPABASE_URL + anon key are public, safe to embed.
+  String _moduleScript() => '''
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const sb = createClient('${SupabaseConfig.url}', '${SupabaseConfig.anonKey}');
+window.sb = sb;
+window.adminFetch = async function(path, opts){
+  opts = opts || {};
+  const { data } = await sb.auth.getSession();
+  const token = data.session ? data.session.access_token : '';
+  opts.headers = Object.assign({}, opts.headers || {}, { 'Authorization': 'Bearer ' + token });
+  return fetch(path, opts);
+};
+const { data } = await sb.auth.getSession();
+if (!data.session) {
+  window.location.replace('/admin/login');
+} else {
+  document.documentElement.style.visibility = '';
+  if (window.__adminReadyResolve) window.__adminReadyResolve(true);
+}
 ''';
 
   @override
   Component build(BuildContext context) {
     return Component.fragment([
-      script(content: _authGate),
+      script(content: _bootstrap),
+      script(
+        attributes: const {'type': 'module'},
+        content: _moduleScript(),
+      ),
       div(classes: 'adm shell', [
         AdminRail(current: current),
         ...body,

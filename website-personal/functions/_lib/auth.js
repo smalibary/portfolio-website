@@ -1,72 +1,55 @@
-// HMAC-SHA256 signed session tokens for the admin panel.
+// Supabase-Auth-based admin gate.
 //
-// Token shape: `{issuedAt}.{expiresAt}.{base64url(hmac)}`
-// HMAC is over `{issuedAt}.{expiresAt}` using ADMIN_SESSION_SECRET. Rotating
-// the secret invalidates every existing session without touching the
-// passcode itself.
+// The browser authenticates with supabase-js (email/password, OAuth, magic
+// link — all produce the same session). It sends the session's access_token
+// as `Authorization: Bearer <jwt>` on every /api/admin/* request.
+//
+// We validate that token by asking Supabase's auth server who it belongs to
+// (GET /auth/v1/user). This works regardless of the project's JWT signing
+// scheme (HS256 shared-secret or asymmetric JWKS) — no local key needed.
+//
+// Authorization (is this user an ADMIN?) is a separate check: the verified
+// email must be in the ADMIN_EMAILS allowlist. When public user accounts
+// arrive later, they'll authenticate the same way but won't be on the
+// allowlist, so they can't touch /api/admin/*.
 
-const enc = new TextEncoder();
-const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
-
-const b64u = (bytes) =>
-  btoa(String.fromCharCode(...new Uint8Array(bytes)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-
-async function hmacSign(secret, data) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
-  return b64u(sig);
+export function extractBearer(request) {
+  const h = request.headers.get('Authorization') || '';
+  const m = h.match(/^Bearer\s+(.+)$/i);
+  return m ? m[1].trim() : null;
 }
 
-// Constant-time-ish compare to dodge timing attacks on the HMAC check.
-function safeCompare(a, b) {
-  if (a.length !== b.length) return false;
-  let r = 0;
-  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return r === 0;
+// Returns the Supabase user object if the token is valid, else null.
+export async function getUserFromToken(token, env) {
+  if (!token) return null;
+  try {
+    const r = await fetch(`${env.SUPABASE_URL.replace(/\/+$/, '')}/auth/v1/user`, {
+      headers: {
+        apikey: env.SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
 }
 
-export async function makeSession(env) {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const expiresAt = issuedAt + SESSION_TTL_SECONDS;
-  const payload = `${issuedAt}.${expiresAt}`;
-  const sig = await hmacSign(env.ADMIN_SESSION_SECRET, payload);
-  return `${payload}.${sig}`;
+export function isAdminEmail(email, env) {
+  if (!email) return false;
+  const allow = (env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return allow.includes(email.toLowerCase());
 }
 
-export async function verifySession(token, env) {
-  if (!token || !env.ADMIN_SESSION_SECRET) return false;
-  const parts = token.split('.');
-  if (parts.length !== 3) return false;
-  const [issuedAt, expiresAt, sig] = parts;
-  const payload = `${issuedAt}.${expiresAt}`;
-  const expected = await hmacSign(env.ADMIN_SESSION_SECRET, payload);
-  if (!safeCompare(sig, expected)) return false;
-  if (Math.floor(Date.now() / 1000) > Number(expiresAt)) return false;
-  return true;
-}
-
-// Cookie attributes — HttpOnly so JS can't read it (XSS-resistant), Secure
-// so it only travels over HTTPS, SameSite=Strict so it doesn't tag along
-// on cross-site requests. Path=/ so every admin endpoint sees it.
-export function sessionCookie(token) {
-  return `admin_session=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_SECONDS}`;
-}
-
-export function clearCookie() {
-  return 'admin_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0';
-}
-
-export function extractSessionToken(request) {
-  const cookie = request.headers.get('Cookie') || '';
-  const m = cookie.match(/admin_session=([^;]+)/);
-  return m ? m[1] : null;
+// One-stop check used by the middleware. Returns { ok, user } or { ok:false }.
+export async function requireAdmin(request, env) {
+  const token = extractBearer(request);
+  const user = await getUserFromToken(token, env);
+  if (!user || !user.email) return { ok: false, reason: 'unauthenticated' };
+  if (!isAdminEmail(user.email, env)) return { ok: false, reason: 'forbidden' };
+  return { ok: true, user };
 }

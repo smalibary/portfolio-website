@@ -135,7 +135,7 @@ class AdminProfilePage extends StatelessComponent {
   // ---- load / save ----
   function load(){
     setSaveState('saving', 'LOADING');
-    fetch(API, { credentials: 'same-origin' })
+    window.adminFetch(API)
       .then(function(r){
         if (r.status === 401) { window.location.replace('/admin/login'); return null; }
         return r.json();
@@ -162,10 +162,9 @@ class AdminProfilePage extends StatelessComponent {
     \$\$('.adm [data-field]').forEach(function(el){ payload[el.dataset.field] = el.value; });
     payload.socials = readSocials();
     payload.hero_meta = readHeroMeta();
-    fetch(API, {
+    window.adminFetch(API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      credentials: 'same-origin',
       body: JSON.stringify(payload)
     }).then(function(r){
       if (r.status === 401) { window.location.replace('/admin/login'); return null; }
@@ -181,7 +180,7 @@ class AdminProfilePage extends StatelessComponent {
   }
 
   if (saveBtn) saveBtn.addEventListener('click', save);
-  load();
+  window.__adminReady.then(load);
 })();
 ''';
 
