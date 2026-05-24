@@ -7,6 +7,8 @@
 /// component contract synchronous.
 library;
 
+import 'dart:io';
+
 import 'package:jaspr/server.dart';
 
 import 'app.dart';
@@ -22,5 +24,27 @@ Future<void> main() async {
   final posts = await BlogPost.loadAll();
   final papers = await Paper.loadAll();
 
-  runApp(App(site: site, posts: posts, papers: papers));
+  runApp(App(
+    site: site,
+    posts: posts,
+    papers: papers,
+    buildLabel: _buildLabel(),
+  ));
+}
+
+/// Build stamp shown in the corner of every page so you can tell which deploy
+/// is live. Cloudflare Pages sets CF_PAGES_COMMIT_SHA + CF_PAGES_BRANCH during
+/// CI, so this changes automatically on every preview/production deploy.
+/// Locally these are unset, so it shows "local@dev".
+String _buildLabel() {
+  String two(int n) => n.toString().padLeft(2, '0');
+  final sha = Platform.environment['CF_PAGES_COMMIT_SHA'] ?? '';
+  final branch = Platform.environment['CF_PAGES_BRANCH'] ?? 'local';
+  final shortSha = sha.isNotEmpty
+      ? (sha.length >= 7 ? sha.substring(0, 7) : sha)
+      : 'dev';
+  final ts = DateTime.now().toUtc();
+  final stamp =
+      '${ts.year}-${two(ts.month)}-${two(ts.day)} ${two(ts.hour)}:${two(ts.minute)}';
+  return '$branch@$shortSha · $stamp UTC';
 }
