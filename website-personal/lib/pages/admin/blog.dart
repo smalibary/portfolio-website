@@ -450,7 +450,7 @@ class AdminBlogPage extends StatelessComponent {
     if (!el) return;
     status = status || 'draft';
     el.textContent = status.toUpperCase();
-    el.className = 'status-pill is-' + status;
+    el.className = 'topbar-status is-' + status;
   }
 
   function attachDirtyListeners(){
@@ -528,7 +528,7 @@ class AdminBlogPage extends StatelessComponent {
               ],
             ),
             div(classes: 'chip on', [span(classes: 'dot', []), text('المقالات')]),
-            span(classes: 'status-pill is-draft', attributes: const {'data-status-label': ''}, [text('—')]),
+            span(classes: 'topbar-status is-draft', attributes: const {'data-status-label': ''}, [text('—')]),
           ]),
         ]),
 

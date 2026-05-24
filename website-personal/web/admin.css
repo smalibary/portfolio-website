@@ -53,9 +53,9 @@
 .adm .hidden{ display:none !important; }
 
 /* status pill (topbar) */
-.adm .status-pill{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; padding:var(--space-0-5) var(--space-2); border-radius:var(--radius-sharp); border:var(--border-rule); }
-.adm .status-pill.is-published{ color:var(--color-brand); border-color:color-mix(in srgb, var(--color-brand) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-brand) 10%, transparent); }
-.adm .status-pill.is-draft{ color:var(--color-status-warm); border-color:color-mix(in srgb, var(--color-status-warm) 50%, var(--color-border-default)); background:color-mix(in srgb, var(--color-status-warm) 10%, transparent); }
+.adm .topbar-status{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; padding:var(--space-0-5) var(--space-2); border-radius:var(--radius-sharp); border:var(--border-rule); }
+.adm .topbar-status.is-published{ color:var(--color-brand); border-color:color-mix(in srgb, var(--color-brand) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-brand) 10%, transparent); }
+.adm .topbar-status.is-draft{ color:var(--color-status-warm); border-color:color-mix(in srgb, var(--color-status-warm) 50%, var(--color-border-default)); background:color-mix(in srgb, var(--color-status-warm) 10%, transparent); }
 
 /* topbar back button + current title */
 .adm .back-btn{ background:none; border:none; color:var(--color-text-muted); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); letter-spacing:.04em; text-transform:uppercase; padding:var(--space-1) var(--space-2); border-radius:var(--radius-sm); }
@@ -72,6 +72,8 @@
 .adm .article-row__status{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); letter-spacing:.06em; padding:var(--space-0-5) var(--space-2); border-radius:var(--radius-sharp); }
 .adm .article-row__status.is-published{ color:var(--color-brand); background:color-mix(in srgb, var(--color-brand) 12%, transparent); }
 .adm .article-row__status.is-draft{ color:var(--color-status-warm); background:color-mix(in srgb, var(--color-status-warm) 12%, transparent); }
+.adm .article-row__status.is-active{ color:var(--color-status-cool); background:color-mix(in srgb, var(--color-status-cool) 12%, transparent); }
+.adm .article-row__status.is-design{ color:var(--color-text-muted); background:var(--color-surface-page); }
 .adm .article-row__date{ font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--color-text-faint); }
 .adm .article-row__title{ font-size:var(--text-lg); font-weight:500; color:var(--color-text-default); }
 .adm .article-row__slug{ font-family:'JetBrains Mono',monospace; font-size:var(--text-xs); color:var(--color-text-muted); }
