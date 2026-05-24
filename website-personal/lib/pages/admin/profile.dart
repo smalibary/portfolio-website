@@ -190,7 +190,7 @@ class AdminProfilePage extends StatelessComponent {
       current: 'profile',
       body: [
         AdminTopbar(sectionAr: 'الملف الشخصي', sectionEn: 'PROFILE'),
-        main_(classes: 'main main--narrow', [
+        main_(classes: 'main', [
           header(classes: 'head', [
             div([
               div(classes: 'eyebrow', [text('SECTION · IDENTITY')]),
