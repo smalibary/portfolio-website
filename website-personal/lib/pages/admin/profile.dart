@@ -3,7 +3,6 @@ import 'package:jaspr/dom.dart';
 
 import '../../components/admin/admin_shell.dart';
 import '../../components/admin/page_header.dart';
-import '../../components/admin/topbar.dart';
 
 /// Profile editor. Form is empty at SSR time; inline JS fetches the API on
 /// load and populates fields. Save button POSTs back to the same endpoint.
@@ -19,6 +18,7 @@ class AdminProfilePage extends StatelessComponent {
   var \$ = function(s, root){ return (root||document).querySelector(s); };
   var \$\$ = function(s, root){ return Array.from((root||document).querySelectorAll(s)); };
   var savedChip = \$('.adm .topbar .chip');
+  var currentTitle = \$('.adm [data-current-title]');
   var saveBtn = \$('.adm [data-save]');
   var socialsTarget = \$('.adm [data-socials]');
   var addSocialBtn = \$('.adm [data-add-social]');
@@ -149,6 +149,7 @@ class AdminProfilePage extends StatelessComponent {
         });
         renderSocials(data.socials);
         renderHeroMeta(data.hero_meta);
+        if (currentTitle) currentTitle.textContent = data.name_ar || data.name_en || '';
         setSaveState('saved', 'SAVED');
         attachDirtyListeners();
       }).catch(function(e){
@@ -190,7 +191,38 @@ class AdminProfilePage extends StatelessComponent {
     return AdminShell(
       current: 'profile',
       body: [
-        AdminTopbar(sectionAr: 'الملف الشخصي', sectionEn: 'PROFILE'),
+        // Singleton editor — same topbar chrome as blog/research, minus the
+        // back button (there's no list to return to).
+        header(classes: 'topbar', [
+          div(classes: 'topbar-l', [
+            div(classes: 'section-name', [text('الملف الشخصي · PROFILE')]),
+            div(classes: 'current-title', attributes: const {'data-current-title': ''}, []),
+          ]),
+          div(classes: 'topbar-r', [
+            a(
+              href: '/',
+              classes: 'view-site',
+              attributes: const {
+                'target': '_blank',
+                'rel': 'noopener',
+                'title': 'View public site',
+                'aria-label': 'View public site',
+              },
+              [
+                raw(
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" '
+                  'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" '
+                  'stroke-linejoin="round">'
+                  '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>'
+                  '<polyline points="15 3 21 3 21 9"/>'
+                  '<line x1="10" y1="14" x2="21" y2="3"/></svg>',
+                ),
+                span([text('VIEW')]),
+              ],
+            ),
+            div(classes: 'chip on', [span(classes: 'dot', []), text('الملف')]),
+          ]),
+        ]),
         main_(classes: 'main', [
           const AdminPageHeader(
             eyebrow: 'SECTION · IDENTITY',
@@ -277,14 +309,16 @@ class AdminProfilePage extends StatelessComponent {
               attributes: const {'data-add-social': '', 'type': 'button'},
               [text('+ إضافة رابط · ADD LINK')],
             ),
-            div(classes: 'actions', [
-              button(classes: 'btn ghost', [text('إلغاء · CANCEL')]),
-              button(
-                classes: 'btn',
-                attributes: const {'data-save': '', 'type': 'button'},
-                [text('حفظ التغييرات · SAVE')],
-              ),
-            ]),
+          ]),
+
+          // Action bar — top-level, like the blog/research editors.
+          div(classes: 'actions', [
+            button(classes: 'btn ghost', [text('إلغاء · CANCEL')]),
+            button(
+              classes: 'btn',
+              attributes: const {'data-save': '', 'type': 'button'},
+              [text('حفظ التغييرات · SAVE')],
+            ),
           ]),
         ]),
         script(content: _script),
