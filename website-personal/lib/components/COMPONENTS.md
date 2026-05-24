@@ -17,7 +17,7 @@ to follow.
 | `theme_toggle.dart` | atom (side-effecting) | Dark/light toggle — switches document data-theme via inline JS, no Dart hydration |
 | `chat_bubble.dart` | chrome (side-effecting) | Floating chat bubble + conversational contact panel — state machine in inline JS, POSTs to /api/contact (Resend) |
 | `admin/admin_shell.dart` | layout | Auth gate + rail mount + page body slot for /admin/* pages |
-| `admin/rail.dart` | chrome | Vertical navigation rail for admin: profile/blog/research + logout |
+| `admin/rail.dart` | chrome | Floating bottom-right nav column for admin: profile/blog/research/style + rotate theme toggle + logout (spin motion) |
 | `admin/topbar.dart` | chrome | Admin header bar: section name + save state + action button |
 
 ## Roles
