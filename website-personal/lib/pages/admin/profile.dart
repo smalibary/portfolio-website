@@ -2,6 +2,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
 import '../../components/admin/admin_shell.dart';
+import '../../components/admin/page_header.dart';
 import '../../components/admin/topbar.dart';
 
 /// Profile editor. Form is empty at SSR time; inline JS fetches the API on
@@ -191,13 +192,11 @@ class AdminProfilePage extends StatelessComponent {
       body: [
         AdminTopbar(sectionAr: 'الملف الشخصي', sectionEn: 'PROFILE'),
         main_(classes: 'main', [
-          header(classes: 'head', [
-            div([
-              div(classes: 'eyebrow', [text('SECTION · IDENTITY')]),
-              h1([text('الهوية و الروابط')]),
-              div(classes: 'en', [text('READS/WRITES portfolio.profile (Supabase)')]),
-            ]),
-          ]),
+          const AdminPageHeader(
+            eyebrow: 'SECTION · IDENTITY',
+            titleAr: 'الهوية و الروابط',
+            subtitle: 'PROFILE · portfolio.profile',
+          ),
 
           // Identity (name + tagline + photos)
           div(classes: 'card card--spaced', [

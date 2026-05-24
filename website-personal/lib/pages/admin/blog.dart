@@ -2,6 +2,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr/dom.dart';
 
 import '../../components/admin/admin_shell.dart';
+import '../../components/admin/page_header.dart';
 
 /// Blog admin — list-first. Default view is a list of all articles with
 /// DRAFT/PUBLISHED badges; click a row to open the editor, or "New Post" to
@@ -534,17 +535,16 @@ class AdminBlogPage extends StatelessComponent {
         main_(classes: 'main', [
           // ===== LIST VIEW =====
           div(attributes: const {'data-view': 'list'}, [
-            div(classes: 'list-head', [
-              div([
-                h1([text('المقالات')]),
-                div(classes: 'en', [text('ARTICLES · click a row to edit')]),
-              ]),
-              button(
+            AdminPageHeader(
+              eyebrow: 'SECTION · BLOG',
+              titleAr: 'المقالات',
+              subtitle: 'ARTICLES · click a row to edit',
+              action: button(
                 classes: 'btn',
                 attributes: const {'data-new': '', 'type': 'button'},
                 [text('+ مقال جديد · NEW POST')],
               ),
-            ]),
+            ),
             div(classes: 'article-list', attributes: const {'data-article-list': ''}, []),
           ]),
 
