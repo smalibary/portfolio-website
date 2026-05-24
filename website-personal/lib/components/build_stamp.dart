@@ -34,8 +34,12 @@ class BuildStamp extends StatelessComponent {
   // entry to clean up when this is deleted. position:fixed pins it to the
   // viewport (floats as you scroll); bottom-left corner. left/bottom are
   // explicit (not inset-inline-*) so it stays bottom-left regardless of RTL.
+  // display:block is load-bearing: styles.css has `body > div { display:
+  // contents; }`, and this badge is a direct child of <body>. Without an
+  // explicit display, it becomes display:contents — which generates no box,
+  // so position:fixed is ignored and the badge falls into normal flow.
   static const _style =
-      'position:fixed;bottom:8px;left:8px;z-index:9999;'
+      'display:block;position:fixed;bottom:8px;left:8px;z-index:9999;'
       'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.02em;'
       'color:var(--color-text-faint);'
       'background:color-mix(in srgb,var(--color-surface-card) 88%,transparent);'
