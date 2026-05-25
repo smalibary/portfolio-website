@@ -138,11 +138,12 @@ body { background: transparent; }
 .nav__split-menu {
   position: absolute; top: calc(100% + var(--space-2)); left: 0;
   background: var(--color-surface-card); border: var(--border-rule);
-  border-radius: var(--c-pill-radius);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   min-width: 200px;
   z-index: 100; overflow: hidden;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-1-5);
   opacity: 0; visibility: hidden;
   transition: opacity .2s, visibility 0s .3s;
   pointer-events: none;
@@ -159,6 +160,7 @@ body { background: transparent; }
 }
 .nav__split-menu a {
   padding: var(--space-2-5) var(--space-4);
+  border-radius: var(--radius-pill);
   color: var(--color-text-muted); text-decoration: none;
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-sm);
   letter-spacing: 0.04em;
@@ -298,7 +300,7 @@ body { background: transparent; }
   aspect-ratio: 4/5;
   max-width: var(--c-hero-portrait-max);
   width: 100%;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
   background: var(--color-surface-card);
