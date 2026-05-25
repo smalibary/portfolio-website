@@ -420,63 +420,59 @@ body { background: transparent; }
 
 /* WRITING */
 .writing { max-width: var(--c-content-max); margin: 0 auto; width: 100%; padding: var(--space-8) var(--space-12) var(--space-16); }
-.writing__list { display: flex; flex-direction: column; border-top: var(--border-rule); }
-.writing__item {
-  display: flex; flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-1); border-bottom: var(--border-rule);
-  text-decoration: none; color: var(--color-text-default);
-  transition: background 0.2s, padding 0.2s;
-  position: relative;
-}
-.writing__item::before {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: var(--border-bar-w);
-  background: var(--color-brand);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.writing__item:hover::before {
-  opacity: 1;
-}
-.writing__item:hover {
-  background: var(--color-surface-elevated);
-  padding-inline-start: var(--space-4); padding-inline-end: var(--space-4);
-}
-.writing__meta {
-  display: flex; justify-content: space-between; align-items: baseline;
-  direction: ltr;
-}
 .writing__date {
   font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs); color: var(--color-text-faint);
   direction: ltr; flex-shrink: 0;
 }
 .writing__lang {
-  font-family: 'JetBrains Mono', monospace; font-size: var(--text-xs);
-  color: var(--color-text-faint); letter-spacing: 0.04em;
-  direction: ltr;
-  flex-shrink: 0;
-}
-.writing__titles {
-  display: flex; justify-content: space-between; align-items: baseline;
-  gap: var(--space-4);
-}
-.writing__title-ar {
-  font-size: var(--text-sm); font-weight: 500; line-height: 1.45; color: var(--color-text-default);
-  flex: 1; min-width: 0;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  direction: rtl;
-}
-.writing__title-en {
-  font-family: 'Inter', sans-serif;
-  font-size: var(--text-sm); color: var(--color-text-faint); line-height: 1.4;
-  direction: ltr; text-align: left;
-  flex: 1; min-width: 0;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-2xs);
+  color: var(--color-text-muted); letter-spacing: 0.06em;
+  background: var(--color-surface-elevated); border-radius: var(--radius-pill);
+  padding: 3px var(--space-2-5); /* intentionally literal: 3px optical-tight pill pad-y */
+  direction: ltr; flex-shrink: 0;
 }
 
+/* === V3 writings: featured latest + compact rows === */
+.writing__feat {
+  display: block; text-decoration: none; color: var(--color-text-default);
+  background: var(--color-surface-card); border: var(--border-rule);
+  border-radius: var(--radius-lg); padding: var(--space-6) var(--space-7);
+  margin-bottom: var(--space-3);
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.writing__feat:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-interactive-primary) 45%, var(--color-border-default));
+  box-shadow: var(--shadow-card);
+}
+.writing__feat-tags { display: flex; align-items: center; gap: var(--space-2-5); margin-bottom: var(--space-4); direction: ltr; }
+.writing__feat-pin {
+  font-family: 'JetBrains Mono', monospace; font-size: var(--text-2xs);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 14%, transparent);
+  border-radius: var(--radius-pill); padding: var(--space-1) var(--space-3);
+}
+.writing__feat-title-ar { display: block; font-size: var(--text-2xl-tight); font-weight: 600; line-height: 1.45; }
+.writing__feat-title-en {
+  display: block; font-family: 'Inter', sans-serif; font-size: var(--text-sm);
+  color: var(--color-text-faint); direction: ltr; margin-top: var(--space-1);
+}
+.writing__feat-ex {
+  margin: var(--space-3) 0 0; font-size: var(--text-base); line-height: 1.7; color: var(--color-text-muted);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.writing__mini { display: flex; flex-direction: column; gap: var(--space-1); }
+.writing__row {
+  display: flex; align-items: center; gap: var(--space-4);
+  text-decoration: none; color: var(--color-text-default);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+  transition: background .15s;
+}
+.writing__row:hover { background: var(--color-surface-elevated); }
+.writing__row-title {
+  flex: 1; min-width: 0; font-size: var(--text-sm); font-weight: 500; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 /* PORTRAIT — light/dark variants. Both images render; CSS hides the wrong
    one based on the html[data-theme] attribute set by ThemeToggle. */
 .portrait-img--light { opacity: 0; }
@@ -1046,7 +1042,6 @@ body { background: transparent; }
 }
 .index__entry { padding-block: var(--space-1); border-bottom: var(--border-rule); }
 .index__entry:last-child { border-bottom: none; }
-.index__entry .writing__item { border-bottom: none; padding-bottom: var(--space-2); }
 .index__tags { display: flex; flex-wrap: wrap; gap: var(--space-1-5); padding: 0 var(--space-6) var(--space-4); }
 
 /* "View all" link below the homepage writing list */
@@ -1305,7 +1300,7 @@ body { background: transparent; }
 
   /* WRITING (homepage) */
   .writing { padding-inline: var(--space-5); }
-  /* .writing__item is flex — no grid-template-columns needed */
+  .writing__feat { padding: var(--space-5); }
   .writing__lang { display: none; }
 
   /* FOOTER */
@@ -1351,10 +1346,6 @@ body { background: transparent; }
 
   /* RESEARCH CARDS — stack metric and title */
   .card__metric { font-size: 24px; } /* intentionally literal: mobile metric shrink */
-
-  /* WRITING (homepage) — title rows stack */
-  .writing__titles { flex-direction: column; gap: var(--space-1); }
-  .writing__title-ar, .writing__title-en { white-space: normal; overflow: visible; text-overflow: unset; }
 
   /* WRITING PAGE (/writing) */
   .writing-page__head h1 { font-size: var(--text-md); }
