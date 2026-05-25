@@ -48,7 +48,7 @@
 .adm .chip{ display:inline-flex; align-items:center; gap:var(--space-1-5); padding:3px var(--space-2-5); border:var(--border-rule); border-radius:var(--radius-pill); font-family:'JetBrains Mono',monospace; font-size:var(--text-2xs); color:var(--color-text-muted); letter-spacing:.04em; text-transform:uppercase; /* intentionally literal: 3px optical-tight chip pad-y, sub-token detail */ }
 .adm .chip.on{ color:var(--color-brand); border-color:color-mix(in srgb, var(--color-brand) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-brand) 10%, transparent); }
 .adm .chip.warn{ color:var(--color-status-warm); border-color:color-mix(in srgb, var(--color-status-warm) 60%, var(--color-border-default)); background:color-mix(in srgb, var(--color-status-warm) 10%, transparent); }
-.adm .chip .dot{ display:inline-block; width:var(--c-adm-chip-dot-size); height:var(--c-adm-chip-dot-size); border-radius:var(--radius-sharp); background:currentColor; }
+.adm .chip .dot{ display:inline-block; width:var(--c-adm-chip-dot-size); height:var(--c-adm-chip-dot-size); border-radius:var(--radius-pill); background:currentColor; }
 /* view toggle */
 .adm .hidden{ display:none !important; }
 

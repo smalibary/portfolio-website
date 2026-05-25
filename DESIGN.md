@@ -96,8 +96,10 @@ Classification (mirrors brand-vs-interactive):
 - **Containers → `--radius-lg`** (cards, panels, popovers, the chat panel,
   the article/research rows) **or `--radius-md`** (form fields, code blocks,
   list-row items).
-- **Sharp keepers → `--radius-sharp`.** Status dots, chat message tails,
-  decorative accent bars, scrollbars — tiny marks read crisp, not rounded.
+- **Status dots & small indicators → `--radius-pill`** (perfect circles):
+  the hero "now" dot, the admin save-state chip dot.
+- **Sharp keepers → `--radius-sharp`.** Chat message tails, decorative
+  accent bars, scrollbars — structural marks read crisp, not rounded.
 
 Prefer the component radius token (`--c-btn-radius`, `--c-card-radius`,
 `--c-adm-card-radius`, …) where one exists; it already points at the right

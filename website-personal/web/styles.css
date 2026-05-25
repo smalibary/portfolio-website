@@ -200,7 +200,7 @@ body { background: transparent; }
   display: flex; align-items: center; gap: var(--space-2-5);
 }
 .status-dot {
-  width: var(--c-status-dot-size); height: var(--c-status-dot-size); border-radius: var(--radius-sharp);
+  width: var(--c-status-dot-size); height: var(--c-status-dot-size); border-radius: var(--radius-pill);
   background: var(--color-brand); box-shadow: 0 0 8px var(--color-brand);
   animation: pulse 2s ease-in-out infinite;
   flex-shrink: 0;
