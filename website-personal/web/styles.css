@@ -110,11 +110,11 @@ body { background: transparent; }
   transition: color 0.2s; font-weight: 500;
 }
 .nav__links a:hover { color: var(--color-text-default); }
-.nav__split-btn { position: relative; display: flex; direction: ltr; }
+.nav__split-btn { position: relative; display: flex; direction: rtl; }
 .nav__split-main {
   padding: var(--c-toggle-btn-py) var(--space-3) var(--c-toggle-btn-py) var(--c-toggle-btn-px);
   background: var(--color-brand); color: var(--color-surface-page);
-  border: none; border-radius: var(--c-pill-radius) 0 0 var(--c-pill-radius);
+  border: none; border-radius: 0 var(--c-pill-radius) var(--c-pill-radius) 0;
   font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
   font-size: var(--text-base); font-weight: 500;
   text-decoration: none; cursor: pointer; transition: filter 0.2s;
@@ -123,8 +123,8 @@ body { background: transparent; }
 .nav__split-arrow {
   padding: var(--c-toggle-btn-py) var(--space-3);
   background: var(--color-brand); color: var(--color-surface-page);
-  border: none; border-radius: 0 var(--c-pill-radius) var(--c-pill-radius) 0;
-  border-left: 1px solid color-mix(in srgb, var(--color-surface-page) 30%, var(--color-brand));
+  border: none; border-radius: var(--c-pill-radius) 0 0 var(--c-pill-radius);
+  border-right: 1px solid color-mix(in srgb, var(--color-surface-page) 30%, var(--color-brand));
   font-size: 14px; cursor: pointer;
   transition: background 0.2s;
   display: flex; align-items: center; justify-content: center;
