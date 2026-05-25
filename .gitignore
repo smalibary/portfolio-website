@@ -10,6 +10,9 @@ inbox/
 # Throwaway design explorations (Track 1 / Track 2 mockup loops).
 mockups/
 
+# Terax-AI fork — its own independent git repo, not part of the website.
+terax-ai/
+
 # Private 100-item feature backlog.
 ROADMAP.md
 

@@ -5,6 +5,24 @@
 Every push to `main` auto-deploys to production (`smalibary.me`).
 Pushes to `preview` get preview URLs (`*.salem-portfolio.pages.dev`).
 
+## Shorthand — what Salem says ↔ what Claude does
+
+Plain phrases, each mapped to a fixed action so we don't re-explain every time.
+
+| Salem says | Claude does |
+|---|---|
+| **"implement it" / "do it" / "build it"** | Write the code change only. **No** commit, push, or deploy. |
+| **"commit it" / "commit to preview"** | `git add -A` (everything pending) → one commit → push to `preview` → reply with the preview URL. One commit per session. |
+| **"preview" / "preview link"** | Push current `preview` and return the live preview URL (`*.salem-portfolio.pages.dev`). |
+| **"merge" / "ship it" / "go live"** | Fast-forward `preview` → `main` → push (production rebuilds `smalibary.me`) → switch back to `preview`. Both branches kept and aligned. |
+| **"revert that" / "roll it back"** | Undo the last change on `preview` (revert/reset) and push; report the new state. |
+| **"what's pending?"** | Show what's on `preview` but not yet on `main` (`git log main..preview`) and any uncommitted work. |
+
+Rules of the road:
+- `preview` is the **permanent** staging branch — never deleted. `main` = production.
+- Claude only commits/pushes/deploys when Salem uses a **commit / preview / merge** word. "implement it" or "do it" alone never deploys.
+- Rename any trigger word to whatever feels natural — say it once and this table gets updated.
+
 ## Architecture
 
 ```
