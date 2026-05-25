@@ -96,7 +96,7 @@ class BlogPostPage extends StatelessComponent {
               ]),
               div(classes: 'sidebar-divider', [text('')]),
             ],
-            div(classes: 'newsletter sq-bar', attributes: {'data-newsletter-card': ''}, [
+            div(classes: 'newsletter', attributes: {'data-newsletter-card': ''}, [
               button(classes: 'newsletter__close', attributes: {'type': 'button', 'aria-label': 'Close', 'data-newsletter-close': ''}, [
                 text('✕'),
               ]),

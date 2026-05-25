@@ -536,6 +536,7 @@ body { background: transparent; }
 .newsletter {
   position: relative;
   border: var(--border-rule);
+  border-color: color-mix(in srgb, var(--color-brand) 60%, var(--color-border-default));
   border-radius: var(--c-newsletter-radius);
   background: color-mix(in srgb, var(--color-text-default) 2%, var(--color-surface-page));
   padding: var(--c-newsletter-pad);
