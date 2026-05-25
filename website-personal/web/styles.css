@@ -525,14 +525,11 @@ body { background: transparent; }
   display: block; padding: var(--space-1) 0;
   font-size: var(--text-sm); line-height: 1.45;
   color: var(--color-text-muted); text-decoration: none;
-  border-right: 2px solid transparent; /* intentionally literal: 2px right-border indicator for active TOC entries */
-  padding-right: var(--space-2-5);
-  transition: color .15s, border-color .15s;
+  transition: color .15s;
 }
 .toc__link:hover { color: var(--color-text-default); }
 .toc__link.active {
   color: var(--color-interactive-primary); font-weight: 500;
-  border-right-color: var(--color-interactive-primary);
 }
 
 /* Newsletter card */
