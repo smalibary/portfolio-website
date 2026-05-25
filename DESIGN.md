@@ -75,6 +75,35 @@ Rules:
   is interactive — these are "you are here" markers on clickable
   structures.
 
+## Shape language: radius (pills + soft containers)
+
+The system is **rounded**: interactive controls are full pills, containers
+have soft corners, and only genuinely tiny decorative marks stay sharp.
+
+Radius scale (`primitives.css`):
+
+- `--radius-sharp: 2px` — status dots, message tails, hairline accent bars.
+- `--radius-sm: 4px` — inline `code`, `kbd`, minimal small marks.
+- `--radius-md: 10px` — inputs, textareas, small containers, list rows.
+- `--radius-lg: 16px` — cards, panels, popovers / menus, tooltips.
+- `--radius-pill: 999px` — all controls.
+
+Classification (mirrors brand-vs-interactive):
+
+- **Controls → `--radius-pill`.** Buttons, badges / status pills, chips,
+  tags, segmented toggles, filter chips, icon buttons, "add" buttons. If you
+  click it — or it's a status pill — it's fully round.
+- **Containers → `--radius-lg`** (cards, panels, popovers, the chat panel,
+  the article/research rows) **or `--radius-md`** (form fields, code blocks,
+  list-row items).
+- **Sharp keepers → `--radius-sharp`.** Status dots, chat message tails,
+  decorative accent bars, scrollbars — tiny marks read crisp, not rounded.
+
+Prefer the component radius token (`--c-btn-radius`, `--c-card-radius`,
+`--c-adm-card-radius`, …) where one exists; it already points at the right
+scale value. Radius is the one place a selector may reference a primitive
+directly, but new code should classify by the rules above.
+
 ## Worked examples
 
 Real classifications from the `--accent` migration (Commit 12):

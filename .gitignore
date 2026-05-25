@@ -13,6 +13,9 @@ mockups/
 # Terax-AI fork — its own independent git repo, not part of the website.
 terax-ai/
 
+# salem-terax-ai — from-scratch app, its own independent git repo.
+salem-terax-ai/
+
 # Private 100-item feature backlog.
 ROADMAP.md
 

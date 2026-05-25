@@ -36,27 +36,27 @@
   /* ── Social ─────────────────────────────────────────────────────── */
   --c-social-size: 38px;
   --c-social-icon: 16px;
-  --c-social-radius: var(--radius-sharp);
+  --c-social-radius: var(--radius-md);
 
   /* ── Section head ───────────────────────────────────────────────── */
   --c-section-head-mb: var(--space-7);
   --c-section-bar-w:   24px;
 
   /* ── Card ───────────────────────────────────────────────────────── */
-  --c-card-radius:  var(--radius-sm);
+  --c-card-radius:  var(--radius-lg);
   --c-card-pad:     var(--space-6);
   --c-card-min-h:   300px;
   --c-card-head-mb: var(--space-5-5);
 
   /* ── Pill ───────────────────────────────────────────────────────── */
-  --c-pill-radius: var(--radius-sharp);
+  --c-pill-radius: var(--radius-pill);
   --c-pill-pad:    5px 11px;
 
   /* ── Tag pill ───────────────────────────────────────────────────── */
   --c-tag-pad:    3px var(--space-2);
 
   /* ── Button (outline) ───────────────────────────────────────────── */
-  --c-btn-radius: var(--radius-sm);
+  --c-btn-radius: var(--radius-pill);
   --c-btn-pad:    var(--space-3) var(--space-5);
 
   /* ── Blockquote ─────────────────────────────────────────────────── */
@@ -70,7 +70,7 @@
   --c-writing-col: 110px;
 
   /* ── Newsletter ─────────────────────────────────────────────────── */
-  --c-newsletter-radius: var(--radius-sm);
+  --c-newsletter-radius: var(--radius-pill);
   --c-newsletter-pad:    var(--space-2-5) var(--space-3);
 
   /* ── sq-mark ────────────────────────────────────────────────────── */
@@ -82,12 +82,12 @@
   --c-portrait-bottom: var(--space-5);
 
   /* ── Admin (--c-adm-*) ──────────────────────────────────────────── */
-  --c-adm-card-radius:       var(--radius-sm);
+  --c-adm-card-radius:       var(--radius-lg);
   --c-adm-card-pad:          var(--space-8);
   --c-adm-card-shadow:       0 24px 60px -30px rgba(var(--color-shadow-rgb), 0.4);
   --c-adm-rail-w:            72px;
   --c-adm-rail-item-size:    48px;
-  --c-adm-rail-item-radius:  var(--radius-sm);
+  --c-adm-rail-item-radius:  var(--radius-md);
   --c-adm-rail-brand-size:   40px;
   --c-adm-pin-input-w:       56px;
   --c-adm-pin-input-h:       64px;
@@ -110,7 +110,7 @@
   /* Floating launcher (FAB) — squarish like every other button on the site */
   --c-chat-bubble-size:      56px;
   --c-chat-bubble-size-sm:   54px; /* mobile shrink */
-  --c-chat-bubble-radius:    var(--radius-sm);
+  --c-chat-bubble-radius:    var(--radius-pill);
   --c-chat-bubble-shadow:    0 8px 24px -6px rgba(var(--color-shadow-rgb), 0.5);
   --c-chat-bubble-bottom:    var(--space-5);
   --c-chat-bubble-side:      var(--space-5);
@@ -144,13 +144,13 @@
 
   /* Choice chips — share the button radius so they read as part of the
      same clickable family as the FAB, send, and submit buttons. */
-  --c-chat-chip-radius:      var(--radius-sm);
+  --c-chat-chip-radius:      var(--radius-pill);
   --c-chat-chip-pad-y:       var(--space-2);
   --c-chat-chip-pad-x:       var(--space-3-5);
 
   /* Bottom input bar (floating card) — radius matches the send button it
      wraps so they read as one cohesive control, not two competing shapes. */
-  --c-chat-input-radius:     var(--radius-sm);
+  --c-chat-input-radius:     var(--radius-pill);
   --c-chat-input-pad:        var(--space-1-5);
   --c-chat-input-gap:        var(--space-1-5);
   --c-chat-input-margin-y:   var(--space-2);
@@ -162,13 +162,13 @@
 
   /* Send button (squarish, matches site button language) */
   --c-chat-send-size:        38px;
-  --c-chat-send-radius:      var(--radius-sm);
+  --c-chat-send-radius:      var(--radius-pill);
 
   /* Country code chip */
   --c-chat-cc-radius:        var(--radius-pill);
   --c-chat-cc-pad-y:         var(--space-2);
   --c-chat-cc-pad-x:         var(--space-2-5);
-  --c-chat-cc-menu-radius:   var(--radius-md);
+  --c-chat-cc-menu-radius:   var(--radius-lg);
 
   /* Runtime-set variables — declared so audit_css_tokens recognises them
      as intentional. JS writes the actual values on the .chat-panel:
